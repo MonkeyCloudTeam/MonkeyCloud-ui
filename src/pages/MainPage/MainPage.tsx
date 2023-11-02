@@ -7,6 +7,7 @@ import {LiaTelegramPlane} from "react-icons/lia";
 import {Link} from "react-router-dom";
 const MainPage= () => {
 console.log(localStorage.getItem('token'));
+    console.log(localStorage.getItem('status'));
     return (
         <section className={styles.body}>
         <div className={styles.signUp_section}>

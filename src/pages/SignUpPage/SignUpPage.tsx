@@ -45,7 +45,6 @@ const navigate = useNavigate()
       last_name: lastName,
     }
     try {
-      // поменять УРЛ на урл локально развернутого бэка
       const response = await axiosInstance.post('/registration', requestBody)
       localStorage.setItem('token',response.data.token);
       console.log(response)
@@ -69,8 +68,7 @@ const navigate = useNavigate()
               <AiOutlineUser />
             </span>
             <input
-                {...register('name', {
-                  pattern: /^[A-Za-z]+$/i})}
+                {...register('name')}
                 type='text' required
                 id='name'
             />
@@ -135,10 +133,14 @@ const navigate = useNavigate()
               <LiaTelegramPlane />
             </span>
             <input
-                type='text' required
+                className={styles.telegramInput}
+                type='text'
                 id='telegrammId'
             />
-            <label>Telegram id</label>
+            <label
+                className={styles.labelTelegram}
+            >Telegram id
+            </label>
           </div>
           <button  type='submit' className={styles.signUpButton}
           >

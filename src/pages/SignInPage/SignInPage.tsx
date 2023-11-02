@@ -37,9 +37,8 @@ const SignInPage = () => {
     }
 
     try {
-      // поменять УРЛ на урл локально развернутого бэка
       const response = await axiosInstance.post('/login', requestBody)
-      localStorage.setItem('token',response.data.token);
+      localStorage.setItem('token', response.data.token);
       console.log(response)
     } catch (error) {
       console.error(error)
@@ -53,7 +52,6 @@ const SignInPage = () => {
         <form
             onSubmit={handleSubmit(onSubmit)}
             id='signIn-form'
-            action=''
         >
           <h2>Вход</h2>
           <div className={styles.inputBox}>
@@ -77,7 +75,6 @@ const SignInPage = () => {
               type='password'
               required
               id='password'
-              pattern='^[a-zA-Z0-9_.-]*$'
             />
             <label>Пароль</label>
           </div>

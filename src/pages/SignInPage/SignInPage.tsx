@@ -42,6 +42,8 @@ const SignInPage = () => {
       console.log(response)
     } catch (error) {
       console.error(error)
+    //@ts-ignore
+      alert(error?.message)
     }
     console.log(requestBody)
     navigate('/main');

@@ -14,7 +14,6 @@ const customStyles = {
         transform: 'translate(-50%, -50%)',
     },
 };
-
 const MainPage= () => {
     const [modalIsOpen, setIsOpen] = useState(false);
     function openModal() {

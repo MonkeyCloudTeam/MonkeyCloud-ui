@@ -2,10 +2,12 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './SignUpPage.module.css';
+import Modal from 'react-modal';
 import {SiSurveymonkey} from "react-icons/si";
 import {BiSolidLockAlt} from "react-icons/bi";
 import {AiOutlineUser} from "react-icons/ai";
 import {LiaTelegramPlane} from "react-icons/lia"
+import {useState} from "react";
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080',
   timeout: 1000,
@@ -14,6 +16,17 @@ const axiosInstance = axios.create({
     'Content-Type': 'application/json',
   }
 });
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
 
 type Inputs = {
   name: string
@@ -30,6 +43,13 @@ const SignUpPage = () => {
     formState: { errors },
   } = useForm<Inputs>()
 const navigate = useNavigate()
+  const [modalIsOpen, setIsOpen] = useState(false);
+  function openModal() {
+    setIsOpen(true);
+  }
+  function closeModal() {
+    setIsOpen(false);
+  }
   const onSubmit: SubmitHandler<Inputs> = async ({
     name,
     middleName,
@@ -47,12 +67,18 @@ const navigate = useNavigate()
     try {
       const response = await axiosInstance.post('/registration', requestBody)
       localStorage.setItem('token',response.data.token);
+      localStorage.setItem('token',response.data.username);
       console.log(response)
+      navigate('/main');
     } catch (error) {
       console.error(error)
+      //@ts-ignore
+      if (error?.status === 401)
+      {
+        openModal()
+      }
     }
     console.log(requestBody)
-    navigate('/main');
   }
 
   return (
@@ -159,6 +185,20 @@ const navigate = useNavigate()
           </div>
         </form>
       </div>
+      <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Example Modal"
+      >
+        <div
+            className={styles.textModal}>
+          Пользователь с таким логином уже существует.</div>
+        <button onClick={closeModal}
+                className={styles.signUpButton}
+        >Закрыть</button>
+
+      </Modal>
     </div>
   )
 }

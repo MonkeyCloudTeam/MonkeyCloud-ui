@@ -114,3 +114,11 @@
     color: #ff0000;
     font-weight: 600;
 }
+
+
+
+.textModal{
+    position: relative;
+    margin: 12px;
+    color: black;
+}

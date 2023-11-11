@@ -55,7 +55,7 @@ const SignInPage = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/login', requestBody)
+      const response = await axiosInstance.post('/sign-in', requestBody)
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('username',response.data.username);
       console.log(response)

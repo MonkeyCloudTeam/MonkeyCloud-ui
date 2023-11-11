@@ -65,7 +65,7 @@ const navigate = useNavigate()
       last_name: lastName,
     }
     try {
-      const response = await axiosInstance.post('/registration', requestBody)
+      const response = await axiosInstance.post('/sign-up', requestBody)
       localStorage.setItem('token',response.data.token);
       localStorage.setItem('token',response.data.username);
       console.log(response)

@@ -1,22 +1,11 @@
-import { useForm, SubmitHandler } from 'react-hook-form'
-import axios from 'axios'
-import { Link, useNavigate } from 'react-router-dom'
+import {SubmitHandler, useForm} from 'react-hook-form'
+import {Link, useNavigate} from 'react-router-dom'
 import styles from './SignInPage.module.css'
 import {SiSurveymonkey} from 'react-icons/si'
 import {BiSolidLockAlt} from 'react-icons/bi'
 import Modal from 'react-modal';
-import {link} from "fs/promises";
 import {useState} from "react";
-//const [login, setLogin] = useState('')
-//const [password, setPassword] = useState('')
-export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080',
-  timeout: 1000,
-  headers:{
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json',
-  }
-});
+import {axiosInstance} from "../api";
 const customStyles = {
   content: {
     top: '50%',

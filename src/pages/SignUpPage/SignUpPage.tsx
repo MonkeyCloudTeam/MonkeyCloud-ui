@@ -8,14 +8,7 @@ import {BiSolidLockAlt} from "react-icons/bi";
 import {AiOutlineUser} from "react-icons/ai";
 import {LiaTelegramPlane} from "react-icons/lia"
 import {useState} from "react";
-const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080',
-  timeout: 1000,
-  headers:{
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json',
-  }
-});
+import {axiosInstance} from "../api";
 
 const customStyles = {
   content: {

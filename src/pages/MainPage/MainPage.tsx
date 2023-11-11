@@ -1,13 +1,8 @@
-import {SubmitHandler, useForm} from "react-hook-form";
-import styles from "./MainPage.module.css"
-import {AiOutlineUser} from "react-icons/ai";
-import {SiSurveymonkey} from "react-icons/si";
-import {BiSolidLockAlt} from "react-icons/bi";
-import {LiaTelegramPlane} from "react-icons/lia";
-import {Link} from "react-router-dom";
-import {axiosInstance} from "../SignInPage/SignInPage";
-import Modal from "react-modal";
-import {useState , useEffect} from "react";
+import styles from './MainPage.module.css'
+import { Link } from 'react-router-dom'
+import Modal from 'react-modal'
+import { useState } from 'react'
+import {axiosInstance} from "../api";
 
 const customStyles = {
     content: {
@@ -32,7 +27,7 @@ console.log(localStorage.getItem('token'));
     console.log(localStorage.getItem('username'));
     const handleLogOff = async ()=> {
         try {
-            const response = await axiosInstance.post('/sign-out', {})
+            const response = await axiosInstance.post('/sign-out')
             console.log(response)
         } catch (error) {
             console.error(error)

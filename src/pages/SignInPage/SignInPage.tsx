@@ -18,7 +18,6 @@ const customStyles = {
 };
 
 type Inputs = {
-
   login: string
   password: string
 }
@@ -42,7 +41,9 @@ const SignInPage = () => {
       username: login,
       password: password,
     }
-
+    if (localStorage.getItem('token')){
+      return navigate('/main');
+    }
     try {
       const response = await axiosInstance.post('/sign-in', requestBody)
       localStorage.setItem('token', response.data.token);
@@ -51,7 +52,10 @@ const SignInPage = () => {
       navigate('/main');
     } catch (error) {
       console.error(error)
-      openModal()
+      //@ts-ignore
+      if (error?.response.status === 401 ){
+        openModal();
+      }
     }
     console.log(requestBody)
   }

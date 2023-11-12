@@ -9,6 +9,9 @@ export const axiosInstance = axios.create({
     }
 });
 axiosInstance.interceptors.request.use(function(config) {
-    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
+    const token = localStorage.getItem('token');
+    if(token) {
+        config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
+    }
     return config
 })

@@ -59,13 +59,13 @@ const navigate = useNavigate()
     try {
       const response = await axiosInstance.post('/sign-up', requestBody)
       localStorage.setItem('token',response.data.token);
-      localStorage.setItem('token',response.data.username);
+      localStorage.setItem('username',response.data.username);
       console.log(response)
       navigate('/main');
     } catch (error) {
       console.error(error)
       //@ts-ignore
-      if (error?.status === 401)
+      if (error.response.status === 400)
       {
         openModal()
       }

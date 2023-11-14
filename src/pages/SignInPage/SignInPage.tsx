@@ -1,11 +1,16 @@
 import {SubmitHandler, useForm} from 'react-hook-form'
-import {Link, useNavigate} from 'react-router-dom'
+import {Link, Navigate, useNavigate} from 'react-router-dom'
 import styles from './SignInPage.module.css'
 import {SiSurveymonkey} from 'react-icons/si'
 import {BiSolidLockAlt} from 'react-icons/bi'
 import Modal from 'react-modal';
-import {useState} from "react";
+import React, {useState} from "react";
 import {axiosInstance} from "../api";
+
+Modal.setAppElement('#root');
+
+let text = '';
+
 const customStyles = {
   content: {
     top: '50%',
@@ -18,7 +23,6 @@ const customStyles = {
 };
 
 type Inputs = {
-
   login: string
   password: string
 }
@@ -31,6 +35,13 @@ const SignInPage = () => {
   } = useForm<Inputs>()
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false);
+
+  const userToken = localStorage.getItem('token')
+
+  if(userToken) {
+    return <Navigate to='/main' />
+  }
+
   function openModal() {
     setIsOpen(true);
   }
@@ -42,16 +53,23 @@ const SignInPage = () => {
       username: login,
       password: password,
     }
-
+    if (localStorage.getItem('token')){
+      return navigate('/main');
+    }
     try {
       const response = await axiosInstance.post('/sign-in', requestBody)
-      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('token', response.data.accessToken);
       localStorage.setItem('username',response.data.username);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
       console.log(response)
       navigate('/main');
     } catch (error) {
       console.error(error)
-      openModal()
+      //@ts-ignore
+      if (error?.response.status === 401 ){
+        text = ' Неверное имя пользователя или пароль.';
+        openModal();
+      }
     }
     console.log(requestBody)
   }
@@ -111,7 +129,8 @@ const SignInPage = () => {
       >
         <div
         className={styles.textModal}>
-          Неверное имя пользователя или пароль.</div>
+          {text}
+         </div>
         <button onClick={closeModal}
                 className={styles.signInButton}
         >Закрыть</button>

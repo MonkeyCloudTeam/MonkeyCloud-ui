@@ -6,10 +6,13 @@ import {SiSurveymonkey} from "react-icons/si";
 import {BiSolidLockAlt} from "react-icons/bi";
 import {AiOutlineUser} from "react-icons/ai";
 import {LiaTelegramPlane} from "react-icons/lia"
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import {axiosInstance} from "../api";
+import { ErrorMessage } from "@hookform/error-message"
 
 Modal.setAppElement('#root');
+
+
 
 const customStyles = {
   content: {
@@ -28,18 +31,24 @@ type Inputs = {
   lastName: string
   login: string
   password: string
+  passwordSubmit: string
 }
 
 const SignUpPage = () => {
   const {
     register,
+    watch,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }, getValues
   } = useForm<Inputs>()
+  const password = useRef({});
+  password.current = watch("password", "");
 const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false);
   const userToken = localStorage.getItem('token')
-
+const validatePassSubmit = () => {
+    return getValues('password') === getValues('passwordSubmit') || 'Пароли не совпадают'
+}
   if(userToken) {
     return <Navigate to='/main' />
   }
@@ -138,7 +147,7 @@ const navigate = useNavigate()
               <BiSolidLockAlt />
             </span>
             <input
-                {...register('password')}
+                {...register('password', { maxLength: 20 })}
                 type='password' required
                 id='password'
             />
@@ -151,6 +160,9 @@ const navigate = useNavigate()
             <input
                 type='password' required
                 id='passwordSumbit'
+                {...register('passwordSubmit',
+                {required: true , validate: validatePassSubmit})}
+
             />
             <label>Подтвердите пароль</label>
           </div>
@@ -168,9 +180,14 @@ const navigate = useNavigate()
             >Telegram id
             </label>
           </div>
+          <ErrorMessage
+              errors={errors}
+              name="passwordSubmit"
+              render={({ message }) => <div className={styles.Errors}>{'⚠ Пароли не совпадают'}</div>}
+          />
           <button  type='submit' className={styles.signUpButton}
           >
-            Зарегестрироваться
+            Вход
           </button>
           <div className={styles.alreadyHave}>
             <p>

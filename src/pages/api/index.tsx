@@ -12,9 +12,7 @@ export const axiosInstance = axios.create({
 
  export const refreshAuthLogic = (failedRequest: AxiosError) => {
      return axiosInstance
-        .post('/refresh', {
-            token: localStorage.getItem('refreshToken')
-        })
+        .post('/refresh')
         .then(({ data: { accessToken, refreshToken } }) => {
             localStorage.setItem('token', accessToken)
             localStorage.setItem('refreshToken', refreshToken)
@@ -26,20 +24,15 @@ export const axiosInstance = axios.create({
         })
 }
 
-createAuthRefreshInterceptor(axiosInstance, refreshAuthLogic,{statusCodes:[408]})
+createAuthRefreshInterceptor(axiosInstance, refreshAuthLogic,{statusCodes:[401]})
 
 axiosInstance.interceptors.request.use(function (config) {
-  if (localStorage.getItem('token') && !config?.url?.toLowerCase().includes('refresh')) {
+  if (localStorage.getItem('token')) {
     config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
   }
-
-  // if (config?.url?.toLowerCase().includes('refresh')) {
-  //     config.data.token = localStorage.getItem(
-  //         'refreshToken')
-    // config.headers.Authorization = `Bearer ${localStorage.getItem(
-    //   'refreshToken',
-    // )}`
-  // }
+  if (config?.url?.toLowerCase().includes('refresh')) {
+      config.headers.Authorization = `${localStorage.getItem('refreshToken')}`
+  }
   return config
 })
 

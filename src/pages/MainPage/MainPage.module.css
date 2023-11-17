@@ -32,7 +32,6 @@
 }
 
 .ModalButton {
-    background-color: #fff;
     width: 100%;
     height: 45px;
     outline: none;
@@ -43,4 +42,10 @@
     color: #fff;
     background: #c2bc29;
     box-shadow: rgba(0,0,0,0.4);
+}
+
+.message{
+    margin: 400px;
+    position: absolute;
+    color: black;
 }

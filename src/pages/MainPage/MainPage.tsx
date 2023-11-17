@@ -27,7 +27,7 @@ const MainPage= () => {
     }, []);
 
     if(!userToken) {
-        navigate('/sign-in')
+        return <Navigate to='/sign-in' />
     }
 
     function openModal() {
@@ -37,6 +37,7 @@ const MainPage= () => {
     function closeModal() {
         setIsOpen(false);
     }
+
     console.log(localStorage.getItem('token'));
     console.log(localStorage.getItem('username'));
     const handleLogOff = async ()=> {
@@ -46,12 +47,21 @@ const MainPage= () => {
             localStorage.clear()
         } catch (error) {
             console.error(error)
+            //@ts-ignore
+            if (error?.response.status === 408 ){
+                localStorage.clear()
+                navigate('/sign-in')
+            }
         }
         navigate('/sign-in')
     }
 
     return (
         <div className={styles.MainPageContainer}>
+            <div
+                className={styles.message}>
+                Пользователь {localStorage.getItem('username')} вошел
+            </div>
             <Link
                 to='/sign-in'
                 onClick={handleLogOff}
@@ -59,23 +69,19 @@ const MainPage= () => {
             >
                <span>Выход</span>
             </Link>
-            <div>
-                <Modal
-                    isOpen={modalIsOpen}
-                    onRequestClose={closeModal}
-                    style={customStyles}
-                    contentLabel="Example Modal"
-                >
-                    <div
-                        className={styles.textModal}>
-                        Пользователь {localStorage.getItem('username')} вошел</div>
-                    <button onClick={closeModal}
-                            className={styles.ModalButton}
-                    >Закрыть</button>
-
-                </Modal>
-            </div>
-
+                {/*<Modal*/}
+                {/*    isOpen={modalIsOpen}*/}
+                {/*    onRequestClose={closeModal}*/}
+                {/*    style={customStyles}*/}
+                {/*    contentLabel="Example Modal"*/}
+                {/*>*/}
+                {/*    <div*/}
+                {/*        className={styles.textModal}>*/}
+                {/*        Пользователь {localStorage.getItem('username')} вошел</div>*/}
+                {/*    <button onClick={closeModal}*/}
+                {/*            className={styles.ModalButton}*/}
+                {/*    >Закрыть</button>*/}
+                {/*</Modal>*/}
         </div>
     )
 }

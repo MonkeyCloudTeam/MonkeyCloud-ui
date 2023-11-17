@@ -48,7 +48,7 @@ const MainPage= () => {
         } catch (error) {
             console.error(error)
             //@ts-ignore
-            if (error?.response.status === 408 ){
+            if (error?.response.status === 409 ){
                 localStorage.clear()
                 navigate('/sign-in')
             }

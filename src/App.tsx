@@ -1,12 +1,18 @@
 import React from 'react'
+import { StyledEngineProvider } from '@mui/material/styles'
+import { RouterProvider } from 'react-router-dom'
 
-import './App.css'
-//import { SignUpPage } from './pages/SignUpPage/SignUpPage'
-import {StartPage} from './pages/StartPage/StartPage'
-const rootContainerClassName = 'root-container'
+import './App.scss'
+import { router } from './router'
 
 const App = () => {
-  return <StartPage />
+  return (
+    <React.StrictMode>
+      <StyledEngineProvider injectFirst>
+        <RouterProvider router={router} />
+      </StyledEngineProvider>
+    </React.StrictMode>
+  )
 }
 
 export default App

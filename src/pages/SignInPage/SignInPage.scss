@@ -1,16 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-*{
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    color: #fff;
-}
 
-
-.signUp_section{
-    border: 2px solid rgba(173, 159, 47, 0.87);
-    height: 900px;
-    width: 550px;
+.signIn_section{
+    border: 2px solid rgb(175, 148, 60);
+    height: 490px;
+    width: 400px;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -20,11 +13,11 @@
     transition: .3s;
 }
 
-.signUp_section:hover{
+.signIn_section:hover{
     box-shadow: 0 0 60px #7d8626;
 }
 
-.signUp_section .boxForm{
+.signIn_section .formBox{
     position: absolute;
     display: flex;
     justify-content: center;
@@ -33,29 +26,21 @@
     width: 100%;
 }
 
-.boxForm h2{
+.formBox h2{
     text-align: center;
     font-size: 35px;
 
 }
 
-.boxForm .inputBox {
+.formBox .inputBox {
     width: 340px;
-    height: 50px;
+    height: 60px;
     border-bottom: 2px solid #ffffff;
     margin: 30px 0;
     position: relative;
 }
 
-.inputBoxTelegram {
-    width: 340px;
-    height: 50px;
-    border-bottom: 2px solid #ffffff;
-    margin: 30px 0;
-    position: relative;
-}
-
-.boxForm input{
+.inputBox input{
     width: 100%;
     height: 100%;
     background: transparent;
@@ -67,45 +52,30 @@
 
 }
 
-.boxForm label{
+.inputBox label{
     position: absolute;
-    top: 50%;
+    top: 60%;
     left: 0;
-    transform: translateY(-50%);
+    transform: translateY(-70%);
     font-size: 16px;
     font-weight: 500;
-    color: #fff;
+    color: #ffffff;
     transition: .3s ease;
 }
 
-.boxForm .icon{
+.inputBox .icon{
     position: absolute;
     top: 11px;
     right: 0;
     font-size: 19px;
 }
 
-.boxForm input:focus ~ label,
-.boxForm input:valid ~ label{
+.inputBox input:focus ~ label,
+.inputBox input:valid ~ label{
     top: -5px;
 }
 
-.boxForm .telegramInput:focus~ label,
-.boxForm .telegramInput:invalid~ label{
-    top: -5px;
-}
-
-.boxForm .inputBox .labelTelegram{
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 16px;
-    font-weight: 500;
-    color: #fff;
-    transition: .3s ease;
-}
-
-.signUpButton{
+.signInButton{
     background-color: #fff;
     width: 100%;
     height: 45px;
@@ -120,23 +90,25 @@
 
 }
 
-.alreadyHave{
+.createAccount{
     font-size: 14.5px;
     text-align: center;
     margin: 25px;
 
 }
 
-.alreadyHave p a{
+.createAccount p a{
     color: #fff;
     font-weight: 600;
     text-decoration: none;
 }
 
-.alreadyHave p a:hover{
+.createAccount p a:hover{
     color: #ff0000;
     font-weight: 600;
 }
+
+
 
 .textModal{
     position: relative;
@@ -144,10 +116,8 @@
     color: black;
 }
 
-.Errors{
-    height: 45px;
-    margin: 0px;
-    left: 115px;
-    color: #690505;
-    font-weight: 550;
+.main{
+    height: 100vh;
+    background-size: cover;
+    background-image: url("../../assets/images/background_banana.png");
 }

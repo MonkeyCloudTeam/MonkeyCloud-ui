@@ -3,16 +3,23 @@
   font-family: 'Roboto', sans-serif;
   margin: 0;
   padding: 0;
-  color: #fff;
 }
 
-body, #root {
+body  {
+  /*background-size: auto;*/
+}
+
+#root {
+  width: 100vw;
   height: 100vh;
-  background-size: cover;
-  background-image: url("background_banana.png");
 }
 
 .ReactModal__Overlay.ReactModal__Overlay--after-open{
   background-color: rgba(0,0,0,0.2) !important;
   backdrop-filter: blur(1px);
+}
+
+
+.css-hip9hq-MuiPaper-root-MuiAppBar-root{
+  /*background-color: #af943c !important;*/
 }

@@ -1,21 +1,18 @@
-import styles from './StartPage.module.css'
 import { Link } from 'react-router-dom'
+import './StartPage'
 
 const StartPage = () => {
   return (
-    <div className={styles.SignUp_section}>
+    <div className='SignUp_section'>
       <h2>Hello</h2>
-      <Link className={styles.SignUpButton} to='/sign-in'>
-          <span>Войти</span>
+      <Link className='SignUpButton' to='/sign-in'>
+        <span>Войти</span>
       </Link>
-      <Link className={styles.SignUpButton} to='/sign-up'>
+      <Link className='SignUpButton' to='/sign-up'>
         <span>Зарегистрироваться</span>
       </Link>
-
     </div>
   )
 }
 
-export {
-    StartPage,
-}
+export { StartPage }

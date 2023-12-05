@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 
-import { axiosInstance } from '../../api'
+import { axiosInstance, axiosInstanceForDownload } from '../../api'
 import { Header } from '../../components/Header/Header'
 
 import { Grid } from '@mui/material'
@@ -9,6 +9,7 @@ import { CurrentPath } from '../../components/CurrentPath/CurrentPath'
 import { SideBar } from '../../components/SideBar/SideBar'
 import { FilesList } from '../../components/FilesList/FilesList'
 import Modal from '@mui/material/Modal'
+import { useLazyGetFilesQuery } from '../../store/filesSlice'
 
 const customStyles = {
   content: {
@@ -22,51 +23,19 @@ const customStyles = {
 }
 
 const MainPage = () => {
+  const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
+  const { path } = useParams()
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
+
   const [currentPath, setCurrentPath] = useState(
     localStorage.getItem('username') || '',
   )
   const userToken = localStorage.getItem('token')
-  const dataForDeleteFolder = {
-    params: {
-      username: localStorage.getItem('username'),
-      fullPath: '228',
-    },
-  }
-  const handleMenuCloseForDeleteFolder = async () => {
-    try {
-      const response = await axiosInstance.delete(
-        '/deleteFolder',
-        dataForDeleteFolder,
-      )
-      console.log(response)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const dataForRename = {
-    username: localStorage.getItem('username'),
-    fullPath: '228/',
-    oldName: '23',
-    //TODO Нельзя давать пользователю ставить расширешние (.) в название папки P.S Запретить пользователю использовать точку.
-    newName: '444',
-  }
-  const handleMenuCloseForRename = async () => {
-    try {
-      const response = await axiosInstance.put('/renameFolder', dataForRename)
-      console.log(response)
-    } catch (error) {
-      console.error(error)
-    }
-  }
 
   useEffect(() => {
-    //handleMenuCloseForRename()
+    //DownloadFile()
     //openModal()
-    //getUploadFiles()
-    //handleMenuCloseForDeleteFolder()
   }, [])
 
   if (!userToken) {
@@ -81,13 +50,10 @@ const MainPage = () => {
     setIsOpen(false)
   }
 
-  console.log(localStorage.getItem('token'))
-  console.log(localStorage.getItem('username'))
-
   const handleLogOff = async () => {
     try {
       const response = await axiosInstance.post('/sign-out')
-      console.log(response)
+      console.log(response.data)
       localStorage.clear()
     } catch (error) {
       console.error(error)
@@ -109,8 +75,16 @@ const MainPage = () => {
         <SideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
-        <CurrentPath currentPath={currentPath} />
-        <FilesList setCurrentPath={setCurrentPath} />
+        <CurrentPath
+          currentPath={currentPath}
+          triggerGetFiles={triggerGetFiles}
+          setCurrentPath={setCurrentPath}
+        />
+        <FilesList
+          setCurrentPath={setCurrentPath}
+          triggerGetFiles={triggerGetFiles}
+          data={result?.data}
+        />
       </Grid>
     </Grid>
   )

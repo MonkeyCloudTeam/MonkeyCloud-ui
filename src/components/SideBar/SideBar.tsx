@@ -12,7 +12,7 @@ const SideBar = () => {
       <Link to='/main' className={styles.SideBar__link}>
         Общий доступ
       </Link>
-      <Link to='/main' className={styles.SideBar__link}>
+      <Link to='/favorites' className={styles.SideBar__link}>
         Избранное
       </Link>
     </aside>

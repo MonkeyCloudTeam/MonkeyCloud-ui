@@ -6,6 +6,7 @@ import { SignInPage } from './pages/SignInPage/SignInPage'
 import { SignUpPage } from './pages/SignUpPage/SignUpPage'
 import { ProtectedRoute } from './pages/ProtectedRoute/ProtectedRoute'
 import { MainPage } from './pages/MainPage/MainPage'
+import { FavoritePage } from './pages/FavoritePage/FavoritePage'
 
 export const router = createBrowserRouter([
   {
@@ -28,4 +29,23 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+  {
+    path: '/favorites',
+    element: (
+      <ProtectedRoute>
+        <FavoritePage />
+      </ProtectedRoute>
+    ),
+  },
 ])
+
+// children: [
+//   {
+//     path: 'main/favorites/',
+//     element: (
+//       <ProtectedRoute>
+//         <FavoritePage />
+//       </ProtectedRoute>
+//     ),
+//   },
+// ],

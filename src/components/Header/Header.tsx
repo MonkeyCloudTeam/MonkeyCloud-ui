@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { axiosInstance } from '../../api'
+import React, { useEffect, useState } from 'react'
+import { axiosInstance, axiosInstanceForUpload, getFiles } from '../../api'
 import { useNavigate } from 'react-router-dom'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -15,6 +15,10 @@ import MenuItem from '@mui/material/MenuItem'
 import AdbIcon from '@mui/icons-material/Adb'
 import { Button, TextField } from '@mui/material'
 import styles from './Header.module.scss'
+import { useMenus } from '../../hooks/useMenus'
+import { useLazyGetFilesQuery } from '../../store/filesSlice'
+import { IFile } from '../../store/types'
+import { CurrentPath } from '../CurrentPath/CurrentPath'
 
 //TODO Вставить картинку 133
 
@@ -23,41 +27,102 @@ const Header = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
   )
+  const username = localStorage.getItem('username')
+  const { setMenus } = useMenus()
   const navigate = useNavigate()
   const [file, setFile] = useState<File | null>(null)
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [triggerGetFiles, result] = useLazyGetFilesQuery()
+  const { data } = result
+
+  useEffect(() => {
+    triggerGetFiles('')
+    //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
+  }, [])
+
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    file: IFile,
+  ) => {
     if (e.target.files) {
-      const file = structuredClone(e.target.files[0])
-      console.log(file)
-      setFile(file)
-    }
-  }
-  const handleUpload = async () => {
-    if (file) {
-      console.log('Uploading file...')
-      console.log(file.name)
+      const pathForRequest = localStorage.getItem('breadCrums')
+      const fileToUpload = structuredClone(e.target.files[0])
       const formData = new FormData()
-      formData.append('multipartFile', file)
-      formData.append('fileName', file.name)
-      const requestBody = {
-        // username: localStorage.getItem('username'),
-        // fullPath: '',
-        multipartFile: formData,
+      formData.append('multipartFile', fileToUpload)
+      formData.append('fileName', fileToUpload.name)
+      let pathForGet = ''
+      if (pathForRequest === username) {
+        pathForGet = ''
+      } else {
+        pathForGet =
+          pathForRequest?.substring(pathForRequest?.indexOf('/') + 1) + '/'
+        console.log(pathForGet)
       }
-      //const fullPAth = `/${file.name}
       try {
-        const response = await axiosInstance.post('/uploadFile', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
+        const response = await axiosInstanceForUpload.post(
+          '/uploadFile',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            params: {
+              username: localStorage.getItem('username'),
+              fullPath: pathForGet,
+            },
           },
-        })
-        //@ts-ignore
+        )
+        // await getFiles().then((files) => setFiles(files))
         //const data = await response.json()
-        //console.log(data);
         console.log(response)
       } catch (error) {
         console.error(error)
       }
+      triggerGetFiles(pathForGet)
+    }
+  }
+
+  const handleFolderChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    file: IFile,
+  ) => {
+    if (e.target.files) {
+      const pathForRequest = localStorage.getItem('breadCrums')
+      let pathForGet = ''
+      if (pathForRequest === username) {
+        pathForGet = ''
+      } else {
+        pathForGet =
+          pathForRequest?.substring(pathForRequest?.indexOf('/') + 1) + '/'
+        console.log(pathForGet)
+      }
+      const formData = new FormData()
+      for (let i = 0; i < e.target.files.length; i++) {
+        formData.append(`multipartFile`, structuredClone(e.target.files[i]))
+        formData.append('fileName', structuredClone(e.target.files[i]).name)
+      }
+      const Path = data?.list[0].breadCrums
+      console.log(file)
+      try {
+        const response = await axiosInstanceForUpload.post(
+          '/uploadFolder',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            params: {
+              username: localStorage.getItem('username'),
+              fullPath: pathForGet,
+            },
+          },
+        )
+        // await getFiles().then((files) => setFiles(files))
+        //const data = await response.json()
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+      triggerGetFiles(pathForGet)
     }
   }
 
@@ -147,14 +212,47 @@ const Header = () => {
             Monkey Cloud
           </Typography>{' '}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box>
-          <input type='file' id='input' onChange={handleFileChange} />
-          <Button
-            className={styles.UploadButton}
-            variant='contained'
-            onClick={handleUpload}
-          >
-            UPLOAD
-          </Button>
+          <Container>
+            <div className='input__wrapper__folder'>
+              <input
+                name='folder'
+                type='file'
+                id='input__folder'
+                multiple
+                webkitdirectory='true'
+                className={styles.input__file}
+                //@ts-ignore
+                onChange={handleFolderChange}
+              />
+              <label htmlFor='input__folder' className='input__file-button'>
+                <span className='input__file-button-text'>Выберите папку</span>
+              </label>
+            </div>
+          </Container>
+          <Container>
+            <div className='input__wrapper'>
+              <input
+                name='file'
+                type='file'
+                id='input__file'
+                className={styles.input__file}
+                //@ts-ignore
+                onChange={handleFileChange}
+              />
+              <ul id='listing'></ul>
+              <label htmlFor='input__file' className='input__file-button'>
+                <span className='input__file-button-text'>Выберите файл</span>
+              </label>
+            </div>
+          </Container>
+          {/*<div>*/}
+          {/*  <input*/}
+          {/*    type='file'*/}
+          {/*    id='input'*/}
+          {/*    //@ts-ignore*/}
+          {/*    onChange={handleFileChange}*/}
+          {/*  />*/}
+          {/*</div>*/}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title='Open settings'>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

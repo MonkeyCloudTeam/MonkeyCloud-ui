@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   Button,
+  Container,
   IconButton,
   Paper,
   Table,
@@ -9,7 +10,7 @@ import {
   TableContainer,
   TableRow,
   TextField,
-  Container,
+  Checkbox,
 } from '@mui/material'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -19,10 +20,20 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Modal from '@mui/material/Modal'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { axiosInstance } from '../../api'
-import { useLocation } from 'react-router-dom'
-import { inspect } from 'util'
+import { axiosInstance, axiosInstanceForDownload } from '../../api'
 import styles from './FilesList.module.scss'
+import { useMenus } from '../../hooks/useMenus'
+import { useGetFilesQuery, useLazyGetFilesQuery } from '../../store/filesSlice'
+import { IFile } from '../../store/types'
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
+import Favorite from '@mui/icons-material/Favorite'
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
+import BookmarkIcon from '@mui/icons-material/Bookmark'
+import { Link, useParams } from 'react-router-dom'
+import { GoStar, GoStarFill } from 'react-icons/go'
+import StarBorderIcon from '@mui/icons-material/StarBorder'
+import StarIcon from '@mui/icons-material/Star'
+
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -37,15 +48,38 @@ const style = {
 
 const FilesList = ({
   setCurrentPath,
+  triggerGetFiles,
+  data,
 }: {
   setCurrentPath: (currentPath: string) => void
+  triggerGetFiles: any
+  data: any
 }) => {
-  const location: any = useLocation()
-  const [files, setFiles] = useState([])
+  const bc = data?.list[0]?.breadCrums as string
+  localStorage.setItem('breadCrums', bc)
+  const { path } = useParams()
+  const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
+  //const { data, error, isLoading } = useGetFilesQuery(path || '')
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [menus, setMenus] = useState([])
   const open = Boolean(anchorEl)
   const [openModal, setOpen] = React.useState(false)
+  const username = localStorage.getItem('username')
+  const label1 = { inputProps: { 'aria-label': 'Checkbox none' } }
+  useEffect(() => {
+    if (data && data?.list) {
+      const nextMenus = data.list.map((m: any) => false)
+      // @ts-ignore
+      setMenus(nextMenus)
+    }
+  }, [data])
+  useEffect(() => {
+    triggerGetFiles('')
+    const bc = data?.list[0]?.breadCrums as string
+    localStorage.setItem('breadCrums', bc)
+    //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
+  }, [])
+
   const handleOpen = () => {
     setOpen(true)
   }
@@ -59,42 +93,92 @@ const FilesList = ({
       setAnchorEl(event.currentTarget)
     }
 
-  const config = {
-    params: {
-      username: localStorage.getItem('username'),
-      folder: '',
-    },
+  const FavoriteFileRequest = (index: number) => async () => {
+    const Path = data?.list[index].breadCrums
+    let pathToTriger = ''
+    if (username === data?.list[index].breadCrums) {
+      pathToTriger = ''
+    } else {
+      pathToTriger = Path?.substring(Path?.indexOf('/') + 1) + '/'
+    }
+    if (data?.list[index].isDir) {
+      if (data?.list[index].isFavorite) {
+        try {
+          const response = await axiosInstance.post(
+            '/removeFolderFromFavorite',
+            {
+              username: username,
+              fullPath: data.list[index].path,
+            },
+          )
+          console.log(response)
+        } catch (error) {
+          console.error(error)
+        }
+      } else {
+        try {
+          const response = await axiosInstance.post('/addFolderToFavorite', {
+            username: username,
+            fullPath: data.list[index].path,
+          })
+          console.log(response)
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    } else {
+      if (data?.list[index].isFavorite) {
+        try {
+          const response = await axiosInstance.post('/removeFromFavorite', {
+            username: username,
+            fullPath: data?.list[index].path,
+          })
+          console.log(response)
+        } catch (error) {
+          console.error(error)
+        }
+      } else {
+        try {
+          const response = await axiosInstance.post('/addToFavorite', {
+            username: username,
+            fullPath: data?.list[index].path,
+          })
+          console.log(response)
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    }
+    await triggerGetFiles(pathToTriger)
   }
 
-  const getUploadFiles = async () => {
-    const response = await axiosInstance.get('/getFiles', config)
-    // console.log(response)
-    setFiles(response.data.list)
-    const menus = response.data.list.map((m: any) => false)
-    setMenus(menus)
-  }
-
-  const handleTableRowClick = (file: any) => async () => {
-    const response = await axiosInstance.get('/getFiles', {
-      params: {
-        username: localStorage.getItem('username'),
-        folder: '123/',
-      },
-    })
-    setCurrentPath(response.data.list[0].breadCrums)
-    // console.log(response)
-    setFiles(response.data.list)
-    const menus = response.data.list.map((m: any) => false)
-    setMenus(menus)
+  const handleTableRowClick = (file: IFile) => async () => {
+    let headerPath = file.path
+    if (file.isDir) {
+      //@ts-ignore
+      await triggerGetFiles(headerPath).then((data1) => {
+        const bc = data1?.data?.list[0]?.breadCrums as string
+        let path_full = bc.substring(bc.indexOf('/') + 1) + '/'
+        localStorage.setItem('breadCrums', bc)
+        console.log('breadCrums', bc)
+        setCurrentPath(bc)
+      })
+    }
+    // const response = await axiosInstance.get('/getFiles', {
+    //   params: {
+    //     username: localStorage.getItem('username'),
+    //     folder: '123/',
+    //   },
+    // })
+    //setCurrentPath(file.breadCrums)
+    // // console.log(response)
+    // const menus = response.data.list.map((m: any) => false)
+    // setMenus(menus)
   }
   //@ts-ignore
   // const GetFilesFromFolder = (index: number) => async () => {
   //   if (files[index].)
   // }
-
-  useEffect(() => {
-    getUploadFiles()
-  }, [])
 
   const handleMenuClose = (index: number) => () => {
     const nextMenus = menus
@@ -105,69 +189,150 @@ const FilesList = ({
   }
 
   const handleMenuCloseForDelete = (index: number) => async () => {
-    try {
-      const response = await axiosInstance.delete('/deleteFile', {
-        params: {
-          username: localStorage.getItem('username'),
-          //@ts-ignore
-          fullPath: files[index].path,
-        },
-      })
-      console.log(response)
-    } catch (error) {
-      console.error(error)
+    const Path = data?.list[index].breadCrums
+    let pathToTriger = ''
+    if (username === data?.list[index].breadCrums) {
+      pathToTriger = ''
+    } else {
+      pathToTriger = Path?.substring(Path?.indexOf('/') + 1) + '/'
     }
-    setFiles(files)
-    getUploadFiles()
+    if (data?.list[index].isDir === true) {
+      try {
+        const response = await axiosInstance.delete('/deleteFolder', {
+          params: {
+            username: username,
+            fullPath: data.list[index].path,
+          },
+        })
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+    } else {
+      try {
+        const response = await axiosInstance.delete('/deleteFile', {
+          params: {
+            username: username,
+            fullPath: data?.list[index].path,
+          },
+        })
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    await triggerGetFiles(pathToTriger)
     handleMenuClose(index)
   }
 
   const responseForRenameFile = (index: number) => async () => {
     const renameFile = document.getElementById('rename') as HTMLInputElement
     //@ts-ignore
-    const file = files[index].name
-    const extension = file.substring(file.lastIndexOf('.'))
+    const fileName = data.list[index].name
+    const extension = fileName.substring(fileName.lastIndexOf('.'))
     //@ts-ignore
-    const path = files[index].breadCrums
+    const path = data.list[index].breadCrums
     let cutPath = ''
     //@ts-ignore
-    if (files[index].breadCrums === localStorage.getItem('username')) {
+    if (data.list[index].breadCrums === localStorage.getItem('username')) {
       cutPath = ''
     } else {
       cutPath = path.substring(path.indexOf('/') + 1) + '/'
     }
-    //@ts-ignore
-    console.log(cutPath)
-    const requestBody = {
-      username: localStorage.getItem('username'),
-      fullPath: cutPath,
-      //@ts-ignore
-      oldName: files[index].name,
-      //TODO Нельзя давать пользователю менять расширение файла
-      //@ts-ignore
-      newName: renameFile.value + extension,
+    const Path = data?.list[index].breadCrums
+    let pathToTriger = ''
+    if (username === data?.list[index].breadCrums) {
+      pathToTriger = ''
+    } else {
+      pathToTriger = Path?.substring(Path?.indexOf('/') + 1) + '/'
     }
-    console.log(files[index])
+    //@ts-ignore
+    if (data.list[index].isDir === true) {
+      try {
+        const response = await axiosInstance.put('/renameFolder', {
+          username: username,
+          fullPath: cutPath,
+          //@ts-ignore
+          oldName: data.list[index].name,
+          //TODO Нельзя давать пользователю ставить расширешние (.) в название папки P.S Запретить пользователю использовать точку.
+          newName: renameFile.value,
+        })
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+    } else {
+      try {
+        const response = await axiosInstance.put('/renameFile', {
+          username: username,
+          fullPath: cutPath,
+          //@ts-ignore
+          oldName: data.list[index].name,
+          //TODO Нельзя давать пользователю менять расширение файла
+          //@ts-ignore
+          newName: renameFile.value + extension,
+        })
+        //@ts-ignore
+        data.list[index].name = renameFile.value + extension
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    await triggerGetFiles(pathToTriger)
+    handleClose()
+  }
+
+  // const downloadFile = () => {
+  //   window.open(
+  //     'http://localhost:8080/downloadFile?username=user1&fullPath=32.psd',
+  //     '_blank',
+  //     'noopener,noreferrer',
+  //   )
+  // }
+  const DownloadFile = (index: number) => async () => {
+    function saveAs(uri: any, filename: any) {
+      const link = document.createElement('a')
+      if (typeof link.download === 'string') {
+        link.href = uri
+        link.download = filename
+
+        //Firefox requires the link to be in the body
+        document.body.appendChild(link)
+
+        //simulate click
+        link.click()
+
+        //remove the link when done
+        document.body.removeChild(link)
+      } else {
+        window.open(uri)
+      }
+    }
     try {
-      const response = await axiosInstance.put('/renameFile', requestBody)
-      const nextFiles = structuredClone(files)
-      //@ts-ignore
-      nextFiles[index].name = renameFile.value + extension
-      setFiles(nextFiles)
+      const response = await axiosInstanceForDownload.get('/downloadFile', {
+        params: {
+          username: username,
+          fullPath: data?.list[index].path,
+        },
+      })
+      const blob_file = response.data
+      const file_url = URL.createObjectURL(blob_file)
+      saveAs(file_url, data?.list[index].name)
+      console.log(response.headers)
     } catch (error) {
       console.error(error)
     }
-    getUploadFiles()
-    handleClose()
+    handleMenuClose(index)
   }
-  if (!files.length) {
+
+  if (!data?.list.length) {
     return <div>Папка пуста. Загрузите файлы.</div>
   }
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label='customized table'>
         <TableBody>
-          {files.map((file: any, index) => (
+          {data?.list.map((file: IFile, index: number) => (
             <TableRow
               //Поставить on click и проверить is dir //set files // вызывать функцию
               key={file.name}
@@ -185,13 +350,36 @@ const FilesList = ({
                   {file.name}
                 </TableCell>
                 <TableCell align='left'>{file.username}</TableCell>
-                <TableCell align='left'>{file.data}</TableCell>
+                {/*<TableCell align='left'>{file.data}</TableCell>*/}
                 {file.isDir !== true ? (
                   <TableCell align='left'>{file.size}</TableCell>
                 ) : (
                   <TableCell align='left'>‒</TableCell>
                 )}
               </Container>
+              {file.isFavorite ? (
+                <Container>
+                  <Checkbox
+                    onClick={FavoriteFileRequest(index)}
+                    className={styles.TableRowInnerFavorite}
+                    id='favorite'
+                    {...label}
+                    icon={<StarIcon />}
+                    checkedIcon={<StarIcon />}
+                  />
+                </Container>
+              ) : (
+                <Container>
+                  <Checkbox
+                    onClick={FavoriteFileRequest(index)}
+                    className={styles.TableRowInnerFavorite}
+                    id='favorite'
+                    {...label}
+                    icon={<StarBorderIcon />}
+                    checkedIcon={<StarBorderIcon />}
+                  />
+                </Container>
+              )}
               <TableCell align='right'>
                 <IconButton
                   id='basic-button'
@@ -212,7 +400,13 @@ const FilesList = ({
                     'aria-labelledby': 'basic-button',
                   }}
                 >
-                  <MenuItem onClick={handleMenuClose(index)}>Скачать</MenuItem>
+                  {file.isDir ? (
+                    <MenuItem onClick={handleMenuClose(index)}>
+                      Поделиться
+                    </MenuItem>
+                  ) : (
+                    <MenuItem onClick={DownloadFile(index)}>Скачать</MenuItem>
+                  )}
                   <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
                   <MenuItem onClick={handleMenuCloseForDelete(index)}>
                     Удалить

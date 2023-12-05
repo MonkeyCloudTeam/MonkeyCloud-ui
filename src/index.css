@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+*{
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+}
+
+body, #root {
+  height: 100vh;
+  background-size: cover;
+  background-image: url("background_banana.png");
+}
+
+.ReactModal__Overlay.ReactModal__Overlay--after-open{
+  background-color: rgba(0,0,0,0.2) !important;
+  backdrop-filter: blur(1px);
+}

@@ -6,10 +6,13 @@
   color: #fff;
 }
 
-
-
 body, #root {
   height: 100vh;
-  background: url("background_banana.png");
-  background-size: 1920px 1080px;
+  background-size: cover;
+  background-image: url("background_banana.png");
+}
+
+.ReactModal__Overlay.ReactModal__Overlay--after-open{
+  background-color: rgba(0,0,0,0.2) !important;
+  backdrop-filter: blur(1px);
 }

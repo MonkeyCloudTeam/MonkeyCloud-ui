@@ -1,0 +1,9 @@
+.SideBar {
+    padding: 8px;
+    border: 1px solid;
+
+    &__link {
+        display: block;
+        text-decoration: none;
+    }
+}

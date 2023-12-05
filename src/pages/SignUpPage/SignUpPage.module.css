@@ -137,3 +137,17 @@
     color: #ff0000;
     font-weight: 600;
 }
+
+.textModal{
+    position: relative;
+    margin: 12px;
+    color: black;
+}
+
+.Errors{
+    height: 45px;
+    margin: 0px;
+    left: 115px;
+    color: #690505;
+    font-weight: 550;
+}

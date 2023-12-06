@@ -245,14 +245,6 @@ const Header = () => {
               </label>
             </div>
           </Container>
-          {/*<div>*/}
-          {/*  <input*/}
-          {/*    type='file'*/}
-          {/*    id='input'*/}
-          {/*    //@ts-ignore*/}
-          {/*    onChange={handleFileChange}*/}
-          {/*  />*/}
-          {/*</div>*/}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title='Open settings'>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

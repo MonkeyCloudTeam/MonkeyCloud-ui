@@ -47,16 +47,19 @@ const style = {
 }
 
 const FavoriteFilesList = ({
-  setCurrentPath, // files,
-} // setFiles,
-: {
+  setCurrentPath,
+  triggerGetFiles,
+  data,
+}: {
   setCurrentPath: (currentPath: string) => void
+  triggerGetFiles: any
+  data: any
 }) => {
+  const bc = data?.list[0]?.breadCrums as string
+  localStorage.setItem('breadCrums', bc)
   const { path } = useParams()
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
   //const { data, error, isLoading } = useGetFilesQuery(path || '')
-  const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
-  const { data } = result
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [menus, setMenus] = useState([])
   const open = Boolean(anchorEl)
@@ -70,9 +73,11 @@ const FavoriteFilesList = ({
       setMenus(nextMenus)
     }
   }, [data])
-
   useEffect(() => {
     triggerGetFiles('')
+    const bc = data?.list[0]?.breadCrums as string
+    localStorage.setItem('breadCrums', bc)
+    //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
   }, [])
 
   const handleOpen = () => {
@@ -150,16 +155,22 @@ const FavoriteFilesList = ({
   const handleTableRowClick = (file: IFile) => async () => {
     let headerPath = file.path
     if (file.isDir) {
-      await triggerGetFiles(headerPath)
+      //@ts-ignore
+      await triggerGetFiles(headerPath).then((data1) => {
+        const bc = data1?.data?.list[0]?.breadCrums as string
+        let path_full = bc.substring(bc.indexOf('/') + 1) + '/'
+        localStorage.setItem('breadCrums', bc)
+        console.log('breadCrums', bc)
+        setCurrentPath(bc)
+      })
     }
-    console.log(result)
     // const response = await axiosInstance.get('/getFiles', {
     //   params: {
     //     username: localStorage.getItem('username'),
     //     folder: '123/',
     //   },
     // })
-    setCurrentPath(file.breadCrums)
+    //setCurrentPath(file.breadCrums)
     // // console.log(response)
     // const menus = response.data.list.map((m: any) => false)
     // setMenus(menus)
@@ -271,7 +282,32 @@ const FavoriteFilesList = ({
     handleClose()
   }
 
+  // const downloadFile = () => {
+  //   window.open(
+  //     'http://localhost:8080/downloadFile?username=user1&fullPath=32.psd',
+  //     '_blank',
+  //     'noopener,noreferrer',
+  //   )
+  // }
   const DownloadFile = (index: number) => async () => {
+    function saveAs(uri: any, filename: any) {
+      const link = document.createElement('a')
+      if (typeof link.download === 'string') {
+        link.href = uri
+        link.download = filename
+
+        //Firefox requires the link to be in the body
+        document.body.appendChild(link)
+
+        //simulate click
+        link.click()
+
+        //remove the link when done
+        document.body.removeChild(link)
+      } else {
+        window.open(uri)
+      }
+    }
     try {
       const response = await axiosInstanceForDownload.get('/downloadFile', {
         params: {
@@ -281,13 +317,14 @@ const FavoriteFilesList = ({
       })
       const blob_file = response.data
       const file_url = URL.createObjectURL(blob_file)
-      window.open(file_url, '_blank', 'noopener,noreferrer')
+      saveAs(file_url, data?.list[index].name)
       console.log(response.headers)
     } catch (error) {
       console.error(error)
     }
     handleMenuClose(index)
   }
+
   if (!data?.list.length) {
     return <div>Папка пуста. Загрузите файлы.</div>
   }

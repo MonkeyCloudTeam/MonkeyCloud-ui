@@ -9,6 +9,7 @@ import { CurrentPath } from '../../components/CurrentPath/CurrentPath'
 import { SideBar } from '../../components/SideBar/SideBar'
 import { FavoriteFilesList } from '../../components/FavoriteFileList/FavoriteFileList'
 import Modal from '@mui/material/Modal'
+import { useLazyGetFilesQuery } from '../../store/filesSlice'
 
 const customStyles = {
   content: {
@@ -22,6 +23,7 @@ const customStyles = {
 }
 
 const FavoritePage = () => {
+  const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
   const { path } = useParams()
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
@@ -47,9 +49,6 @@ const FavoritePage = () => {
   function closeModal() {
     setIsOpen(false)
   }
-
-  console.log(localStorage.getItem('token'))
-  console.log(localStorage.getItem('username'))
 
   const handleLogOff = async () => {
     try {
@@ -79,8 +78,8 @@ const FavoritePage = () => {
         {/*<CurrentPath currentPath={currentPath} />*/}
         <FavoriteFilesList
           setCurrentPath={setCurrentPath}
-          // files={files}
-          // setFiles={setFiles}
+          triggerGetFiles={triggerGetFiles}
+          data={result?.data}
         />
       </Grid>
     </Grid>

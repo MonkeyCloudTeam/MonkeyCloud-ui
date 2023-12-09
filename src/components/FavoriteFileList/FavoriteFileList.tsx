@@ -50,9 +50,11 @@ const FavoriteFilesList = ({
   setCurrentPath,
   triggerGetFiles,
   data,
+  triggerFavorite,
 }: {
   setCurrentPath: (currentPath: string) => void
   triggerGetFiles: any
+  triggerFavorite: any
   data: any
 }) => {
   const bc = data?.list[0]?.breadCrums as string
@@ -74,7 +76,7 @@ const FavoriteFilesList = ({
     }
   }, [data])
   useEffect(() => {
-    triggerGetFiles('')
+    triggerFavorite('')
     const bc = data?.list[0]?.breadCrums as string
     localStorage.setItem('breadCrums', bc)
     //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
@@ -221,7 +223,7 @@ const FavoriteFilesList = ({
         console.error(error)
       }
     }
-    await triggerGetFiles(pathToTriger)
+    await triggerFavorite('')
     handleMenuClose(index)
   }
 
@@ -278,7 +280,7 @@ const FavoriteFilesList = ({
         console.error(error)
       }
     }
-    await triggerGetFiles(pathToTriger)
+    await triggerFavorite('')
     handleClose()
   }
 
@@ -333,6 +335,7 @@ const FavoriteFilesList = ({
       <Table sx={{ minWidth: 650 }} aria-label='customized table'>
         <TableBody>
           {data?.list.map((file: IFile, index: number) => {
+            console.log(file)
             if (!file.isFavorite) {
               return <></>
             }

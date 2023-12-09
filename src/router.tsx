@@ -7,6 +7,7 @@ import { SignUpPage } from './pages/SignUpPage/SignUpPage'
 import { ProtectedRoute } from './pages/ProtectedRoute/ProtectedRoute'
 import { MainPage } from './pages/MainPage/MainPage'
 import { FavoritePage } from './pages/FavoritePage/FavoritePage'
+import { PublicPage } from './pages/PublicPage/PublicPage'
 
 export const router = createBrowserRouter([
   {
@@ -37,10 +38,18 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+  {
+    path: '/public',
+    element: (
+      <ProtectedRoute>
+        <PublicPage />
+      </ProtectedRoute>
+    ),
+  },
 ])
 
 // children: [
-//   {
+//   {PublicPage
 //     path: 'main/favorites/',
 //     element: (
 //       <ProtectedRoute>

@@ -23,7 +23,7 @@ import {
   styled,
   TextField,
 } from '@mui/material'
-import styles from './Header.module.scss'
+import styles from './HeaderPublic.module.scss'
 import SearchIcon from '@mui/icons-material/Search'
 import { useMenus } from '../../hooks/useMenus'
 import { useLazyGetFilesQuery } from '../../store/filesSlice'
@@ -44,10 +44,12 @@ const style = {
   p: 4,
 }
 
-const Header = ({
+const HeaderPublic = ({
+  setSearchString,
   triggerSearch,
   triggerSearchByDate,
 }: {
+  setSearchString?: any
   triggerSearch?: any
   triggerSearchByDate?: any
 }) => {
@@ -69,7 +71,7 @@ const Header = ({
   const [openModal, setOpen] = React.useState(false)
 
   useEffect(() => {
-    triggerGetFiles('')
+    //triggerGetFiles('')
     //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
   }, [])
 
@@ -266,13 +268,8 @@ const Header = ({
             Monkey Cloud
           </Typography>{' '}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box>
-          <SearchField
-            triggerGetFiles={triggerGetFiles}
-            triggerSearch={triggerSearch}
-            triggerSearchByDate={triggerSearchByDate}
-          />
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title='Open settings'>
+            <Tooltip title='Настройки'>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar src={avatar} sx={{ bgcolor: 'lightBlue' }} />
               </IconButton>
@@ -334,4 +331,4 @@ const Header = ({
   )
 }
 
-export { Header }
+export { HeaderPublic }

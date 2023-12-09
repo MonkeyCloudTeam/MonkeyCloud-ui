@@ -9,7 +9,10 @@ import { CurrentPath } from '../../components/CurrentPath/CurrentPath'
 import { SideBar } from '../../components/SideBar/SideBar'
 import { FavoriteFilesList } from '../../components/FavoriteFileList/FavoriteFileList'
 import Modal from '@mui/material/Modal'
-import { useLazyGetFilesQuery } from '../../store/filesSlice'
+import {
+  useLazyFilesFavoriteQuery,
+  useLazyGetFilesQuery,
+} from '../../store/filesSlice'
 
 const customStyles = {
   content: {
@@ -27,16 +30,13 @@ const FavoritePage = () => {
   const { path } = useParams()
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
-
+  const [favorite, setFavorite] = useState([])
+  const [triggerFavorite, resultFavorite] = useLazyFilesFavoriteQuery()
+  const favoriteData = resultFavorite.data
   const [currentPath, setCurrentPath] = useState(
     localStorage.getItem('username') || '',
   )
   const userToken = localStorage.getItem('token')
-
-  useEffect(() => {
-    //DownloadFile()
-    //openModal()
-  }, [])
 
   if (!userToken) {
     return <Navigate to='/sign-in' />
@@ -77,9 +77,10 @@ const FavoritePage = () => {
       <Grid xs={10} padding='8px'>
         {/*<CurrentPath currentPath={currentPath} />*/}
         <FavoriteFilesList
+          triggerFavorite={triggerFavorite}
           setCurrentPath={setCurrentPath}
           triggerGetFiles={triggerGetFiles}
-          data={result?.data}
+          data={resultFavorite?.data}
         />
       </Grid>
     </Grid>

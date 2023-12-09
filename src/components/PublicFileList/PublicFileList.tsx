@@ -21,13 +21,9 @@ import MenuItem from '@mui/material/MenuItem'
 import Modal from '@mui/material/Modal'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { axiosInstance, axiosInstanceForDownload } from '../../api'
-import styles from './FilesList.module.scss'
+import styles from './PublicFileList.module.scss'
 import { useMenus } from '../../hooks/useMenus'
-import {
-  useGetFilesQuery,
-  useLazyGetFilesQuery,
-  useRenameFileMutation,
-} from '../../store/filesSlice'
+import { useGetFilesQuery, useLazyGetFilesQuery } from '../../store/filesSlice'
 import { IFile } from '../../store/types'
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
 import Favorite from '@mui/icons-material/Favorite'
@@ -50,18 +46,16 @@ const style = {
   p: 4,
 }
 
-const FilesList = ({
+const PublicFileList = ({
   setCurrentPath,
-  triggerGetFiles,
-  triggerSearch,
-  triggerSearchByDate,
   data,
+  triggerPublicFolders,
+  trigerPublicFiles,
 }: {
   setCurrentPath: (currentPath: string) => void
-  triggerGetFiles: any
-  triggerSearchByDate: any
-  triggerSearch: any
   data: any
+  triggerPublicFolders: any
+  trigerPublicFiles: any
 }) => {
   const bc = data?.list[0]?.breadCrums as string
   localStorage.setItem('breadCrums', bc)
@@ -71,7 +65,6 @@ const FilesList = ({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [menus, setMenus] = useState([])
   const open = Boolean(anchorEl)
-  const [triggerRenameMutation, resultMutationRename] = useRenameFileMutation()
   const [openModal, setOpen] = React.useState(false)
   const [openShareModal, setOpenShareModal] = React.useState(false)
   const [openPublicAccessModal, setOpenPublicAccessModal] =
@@ -86,7 +79,7 @@ const FilesList = ({
     }
   }, [data])
   useEffect(() => {
-    triggerGetFiles('')
+    triggerPublicFolders('')
     const bc = data?.list[0]?.breadCrums as string
     localStorage.setItem('breadCrums', bc)
     //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
@@ -115,70 +108,11 @@ const FilesList = ({
       setAnchorEl(event.currentTarget)
     }
 
-  const FavoriteFileRequest = (index: number) => async () => {
-    const Path = data?.list[index].breadCrums
-    let pathToTriger = ''
-    if (username === data?.list[index].breadCrums) {
-      pathToTriger = ''
-    } else {
-      pathToTriger = Path?.substring(Path?.indexOf('/') + 1) + '/'
-    }
-    if (data?.list[index].isDir) {
-      if (data?.list[index].isFavorite) {
-        try {
-          const response = await axiosInstance.post(
-            '/removeFolderFromFavorite',
-            {
-              username: username,
-              fullPath: data.list[index].path,
-            },
-          )
-          console.log(response)
-        } catch (error) {
-          console.error(error)
-        }
-      } else {
-        try {
-          const response = await axiosInstance.post('/addFolderToFavorite', {
-            username: username,
-            fullPath: data.list[index].path,
-          })
-          console.log(response)
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    } else {
-      if (data?.list[index].isFavorite) {
-        try {
-          const response = await axiosInstance.post('/removeFromFavorite', {
-            username: username,
-            fullPath: data?.list[index].path,
-          })
-          console.log(response)
-        } catch (error) {
-          console.error(error)
-        }
-      } else {
-        try {
-          const response = await axiosInstance.post('/addToFavorite', {
-            username: username,
-            fullPath: data?.list[index].path,
-          })
-          console.log(response)
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    }
-    await triggerGetFiles(pathToTriger)
-  }
-
   const handleTableRowClick = (file: IFile) => async () => {
-    let headerPath = file.path
+    let FolderId = file.folderId
     if (file.isDir) {
       //@ts-ignore
-      await triggerGetFiles(headerPath).then((data1) => {
+      await trigerPublicFiles(FolderId).then((data1) => {
         const bc = data1?.data?.list[0]?.breadCrums as string
         let path_full = bc.substring(bc.indexOf('/') + 1) + '/'
         localStorage.setItem('breadCrums', bc)
@@ -243,21 +177,15 @@ const FilesList = ({
         console.error(error)
       }
     }
-    await triggerGetFiles(pathToTriger)
+    //await triggerGetFiles(pathToTriger)
     handleMenuClose(index)
   }
 
   const responseForPublicAccess = (index: number) => async () => {
     try {
-      const response = await axiosInstance.put(
-        '/openFolder',
-        {},
-        {
-          params: {
-            folderId: data.list[index].folderId as String,
-          },
-        },
-      )
+      const response = await axiosInstance.put('/openFolder', {
+        folderId: data.list[index].folderId,
+      })
       console.log(response)
     } catch (error) {
       console.log(error)
@@ -265,81 +193,6 @@ const FilesList = ({
     setOpenPublicAccessModal(false)
   }
 
-  const responseForRenameFile = (index: number) => async () => {
-    const renameFile = document.getElementById('rename') as HTMLInputElement
-    console.log(renameFile)
-    //@ts-ignore
-    const fileName = data.list[index].name
-    const extension = fileName.substring(fileName.lastIndexOf('.'))
-    //@ts-ignore
-    const path = data.list[index].breadCrums
-    let cutPath = ''
-    //@ts-ignore
-    if (data.list[index].breadCrums === localStorage.getItem('username')) {
-      cutPath = ''
-    } else {
-      cutPath = path.substring(path.indexOf('/') + 1) + '/'
-    }
-    const Path = data?.list[index].breadCrums
-    let pathToTriger = ''
-    if (username === data?.list[index].breadCrums) {
-      pathToTriger = ''
-    } else {
-      pathToTriger = Path?.substring(Path?.indexOf('/') + 1) + '/'
-    }
-    //@ts-ignore
-    if (data.list[index].isDir === true) {
-      try {
-        const response = await axiosInstance.put('/renameFolder', {
-          username: username,
-          fullPath: cutPath,
-          //@ts-ignore
-          oldName: data.list[index].name,
-          //TODO Нельзя давать пользователю ставить расширешние (.) в название папки P.S Запретить пользователю использовать точку.
-          newName: renameFile.value,
-        })
-        console.log(response)
-      } catch (error) {
-        console.error(error)
-      }
-    } else {
-      try {
-        await triggerRenameMutation({
-          username: username as string,
-          fullPath: cutPath as string,
-          //@ts-ignore
-          oldName: data.list[index].name as string,
-          //@ts-ignore
-          newName: (renameFile.value + extension) as string,
-        })
-        // const response = await axiosInstance.put('/renameFile', {
-        //   username: username,
-        //   fullPath: cutPath,
-        //   //@ts-ignore
-        //   oldName: data.list[index].name,
-        //   //@ts-ignore
-        //   newName: renameFile.value + extension,
-        //   })
-        //   //@ts-ignore
-        //   data.list[index].name = renameFile.value + extension
-        // } catch (error) {
-        //   console.error(error)
-        // }
-        triggerGetFiles(pathToTriger)
-        handleClose()
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  }
-
-  // const downloadFile = () => {
-  //   window.open(
-  //     'http://localhost:8080/downloadFile?username=user1&fullPath=32.psd',
-  //     '_blank',
-  //     'noopener,noreferrer',
-  //   )
-  // }
   const DownloadFile = (index: number) => async () => {
     function saveAs(uri: any, filename: any) {
       const link = document.createElement('a')
@@ -408,29 +261,6 @@ const FilesList = ({
                   <TableCell align='left'>‒</TableCell>
                 )}
               </Container>
-              {file.isFavorite ? (
-                <Container>
-                  <Checkbox
-                    onClick={FavoriteFileRequest(index)}
-                    className={styles.TableRowInnerFavorite}
-                    id='favorite'
-                    {...label}
-                    icon={<StarIcon />}
-                    checkedIcon={<StarIcon />}
-                  />
-                </Container>
-              ) : (
-                <Container>
-                  <Checkbox
-                    onClick={FavoriteFileRequest(index)}
-                    className={styles.TableRowInnerFavorite}
-                    id='favorite'
-                    {...label}
-                    icon={<StarBorderIcon />}
-                    checkedIcon={<StarBorderIcon />}
-                  />
-                </Container>
-              )}
               <TableCell align='right'>
                 <IconButton
                   id='basic-button'
@@ -463,7 +293,6 @@ const FilesList = ({
                   ) : (
                     <MenuItem onClick={DownloadFile(index)}>Скачать</MenuItem>
                   )}
-                  <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
                   <MenuItem onClick={handleMenuCloseForDelete(index)}>
                     Удалить
                   </MenuItem>
@@ -486,7 +315,6 @@ const FilesList = ({
                       </Button>
                       <Button
                         //@ts-ignore
-                        onClick={responseForRenameFile(index)}
                         type='submit'
                         variant='contained'
                       >
@@ -509,7 +337,7 @@ const FilesList = ({
                       </Typography>
                       <TextField fullWidth id='rename' />
                       <Button
-                        onClick={handleCloseShareModal}
+                        //onClick={handleCloseShareModal}
                         //@ts-ignore
                         //onClick={responseForRenameFile(index)}
                         type='submit'
@@ -536,14 +364,14 @@ const FilesList = ({
                       <Button
                         //onClick={handleClosePublicModal}
                         //@ts-ignore
-                        onClick={responseForPublicAccess(index)}
+                        //onClick={responseForPublicAccess(index)}
                         type='submit'
                         variant='contained'
                       >
                         Открыть
                       </Button>
                       <Button
-                        onClick={handleClosePublicModal}
+                        //onClick={handleClosePublicModal}
                         //@ts-ignore
                         //onClick={responseForRenameFile(index)}
                         type='submit'
@@ -562,5 +390,5 @@ const FilesList = ({
     </TableContainer>
   )
 }
-export { FilesList }
+export { PublicFileList }
 //handleMenuCloseForRename(index)

@@ -1,0 +1,31 @@
+.Header {
+  color: #000000
+}
+
+.UploadButton {
+  color: #000000;
+}
+
+.input__wrapper {
+  width: 100%;
+  position: relative;
+  margin: 15px 0;
+  text-align: center;
+  display: flex;
+  flex-grow: initial;
+}
+
+.input__file {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+}
+
+.input__wrapper__folder{
+  width: 100%;
+  position: relative;
+  margin: 15px 0;
+  text-align: center;
+  display: flex;
+  flex-grow: initial;
+}

@@ -1,7 +1,9 @@
 import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react'
-import type { Files } from './types'
+import type { Files, RenameFileRequestArgs } from './types'
 import { axiosInstance } from '../api'
 import type { AxiosError, AxiosRequestConfig } from 'axios'
+import { PublicFiles } from './types'
+import { BaseQueryArg } from '@reduxjs/toolkit/dist/query/baseQueryTypes'
 
 const axiosBaseQuery =
   (
@@ -56,9 +58,208 @@ export const filesApi = createApi({
         } catch {}
       },
     }),
+    searchFilesByName: builder.query<Files, string>({
+      query: (path = '') => ({
+        url: '/privateSearchByFilename',
+        method: 'get',
+        params: {
+          username: localStorage.getItem('username'),
+          filename: path,
+        },
+      }),
+      async onCacheEntryAdded(args, { getState }) {
+        try {
+          //await getState
+          console.log('queryFulfilled', getState())
+        } catch {}
+      },
+    }),
+    filesFavorite: builder.query<Files, string>({
+      query: (path = '') => ({
+        url: '/favorite',
+        method: 'get',
+        params: {
+          username: localStorage.getItem('username'),
+        },
+      }),
+      async onCacheEntryAdded(args, { getState }) {
+        try {
+          //await getState
+          console.log('queryFulfilled', getState())
+        } catch {}
+      },
+    }),
+    searchFilesByDate: builder.query<Files, string>({
+      query: (path = '') => ({
+        url: '/privateSearchByDate',
+        method: 'get',
+        params: {
+          username: localStorage.getItem('username'),
+          date: path,
+        },
+      }),
+      async onCacheEntryAdded(args, { getState }) {
+        try {
+          //await getState
+          console.log('queryFulfilled', getState())
+        } catch {}
+      },
+    }),
+    publicFolders: builder.query<Files, string>({
+      query: () => ({
+        url: '/publicAccess',
+        method: 'get',
+      }),
+      async onCacheEntryAdded(args, { getState }) {
+        try {
+          //await getState
+          console.log('queryFulfilled', getState())
+        } catch {}
+      },
+    }),
+    publicFiles: builder.query<PublicFiles, string>({
+      query: (folderId = '') => ({
+        url: '/getFilesInPublicFolder',
+        method: 'get',
+        params: {
+          folderId: folderId,
+        },
+      }),
+      async onCacheEntryAdded(args, { getState }) {
+        try {
+          //await getState
+          console.log('queryFulfilled', getState())
+        } catch {}
+      },
+    }),
+    renameFile: builder.mutation<any, RenameFileRequestArgs>({
+      query: (arg) => {
+        console.log(arg)
+        return {
+          url: '/renameFile',
+          method: 'put',
+          data: arg,
+        }
+      },
+      invalidatesTags: ['FILES'],
+    }),
   }),
 })
 
-// Export hooks for usage in function components, which are
-// auto-generated based on the defined endpoints
-export const { useGetFilesQuery, useLazyGetFilesQuery } = filesApi
+// export const filesSearchApi = createApi({
+//   reducerPath: 'FILESSEARCH',
+//   tagTypes: ['FILESSEARCH'],
+//   baseQuery: axiosBaseQuery({ baseUrl: 'http://localhost:8080' }),
+//   endpoints: (builder) => ({
+//
+//   }),
+// })
+
+// export const filesSearchByDateApi = createApi({
+//   reducerPath: 'FILESSEARCHBYDATE',
+//   tagTypes: ['FILESSEARCHBYDATE'],
+//   baseQuery: axiosBaseQuery({ baseUrl: 'http://localhost:8080' }),
+//   endpoints: (builder) => ({
+//     searchFilesByDate: builder.query<Files, string>({
+//       query: (path = '') => ({
+//         url: '/privateSearchByDate',
+//         method: 'get',
+//         params: {
+//           username: localStorage.getItem('username'),
+//           date: path,
+//         },
+//       }),
+//       async onCacheEntryAdded(args, { getState }) {
+//         try {
+//           //await getState
+//           console.log('queryFulfilled', getState())
+//         } catch {}
+//       },
+//     }),
+//   }),
+// })
+
+// export const foldersPublicApi = createApi({
+//   reducerPath: 'PUBLICFOLDERS',
+//   tagTypes: ['PUBLICFOLDERS'],
+//   baseQuery: axiosBaseQuery({ baseUrl: 'http://localhost:8080' }),
+//   endpoints: (builder) => ({
+//     PublicFolders: builder.query<Files, string>({
+//       query: () => ({
+//         url: '/publicAccess',
+//         method: 'get',
+//       }),
+//       async onCacheEntryAdded(args, { getState }) {
+//         try {
+//           //await getState
+//           console.log('queryFulfilled', getState())
+//         } catch {}
+//       },
+//     }),
+//   }),
+// })
+
+// export const filesPublicApi = createApi({
+//   reducerPath: 'PUBLICFILES',
+//   tagTypes: ['PUBLICFILES'],
+//   baseQuery: axiosBaseQuery({ baseUrl: 'http://localhost:8080' }),
+//   endpoints: (builder) => ({
+//     PublicFiles: builder.query<PublicFiles, string>({
+//       query: (folderId = '') => ({
+//         url: '/getFilesInPublicFolder',
+//         method: 'get',
+//         params: {
+//           folderId: folderId,
+//         },
+//       }),
+//       async onCacheEntryAdded(args, { getState }) {
+//         try {
+//           //await getState
+//           console.log('queryFulfilled', getState())
+//         } catch {}
+//       },
+//     }),
+//   }),
+// })
+
+// export const filesFavoriteApi = createApi({
+//   reducerPath: 'FILESFAVORITE',
+//   tagTypes: ['FILESFAVORITE'],
+//   baseQuery: axiosBaseQuery({ baseUrl: 'http://localhost:8080' }),
+//   endpoints: (builder) => ({
+//     FilesFavorite: builder.query<Files, string>({
+//       query: (path = '') => ({
+//         url: '/favorite',
+//         method: 'get',
+//         params: {
+//           username: localStorage.getItem('username'),
+//         },
+//       }),
+//       async onCacheEntryAdded(args, { getState }) {
+//         try {
+//           //await getState
+//           console.log('queryFulfilled', getState())
+//         } catch {}
+//       },
+//     }),
+//   }),
+// })
+
+export const {
+  useGetFilesQuery,
+  useLazyGetFilesQuery,
+  useRenameFileMutation,
+  useLazySearchFilesByNameQuery,
+  useLazyFilesFavoriteQuery,
+  useLazySearchFilesByDateQuery,
+  useLazyPublicFoldersQuery,
+  useLazyPublicFilesQuery,
+} = filesApi
+//export const { useSearchFilesByNameQuery, useLazySearchFilesByNameQuery } =
+//filesSearchApi
+// export const { useSearchFilesByDateQuery, useLazySearchFilesByDateQuery } =
+//   filesSearchByDateApi
+// export const { usePublicFoldersQuery, useLazyPublicFoldersQuery } =
+//   foldersPublicApi
+// export const { usePublicFilesQuery, useLazyPublicFilesQuery } = filesPublicApi
+// export const { useLazyFilesFavoriteQuery } = filesFavoriteApi

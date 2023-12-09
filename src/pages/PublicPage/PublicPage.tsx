@@ -8,16 +8,17 @@ import { Grid } from '@mui/material'
 import { CurrentPath } from '../../components/CurrentPath/CurrentPath'
 import { SideBar } from '../../components/SideBar/SideBar'
 import { FilesList } from '../../components/FilesList/FilesList'
+import { PublicFileList } from '../../components/PublicFileList/PublicFileList'
 import { Tooltip } from '../../components/Tooltip/tooltip'
 import Modal from '@mui/material/Modal'
 import {
   useLazyGetFilesQuery,
+  useLazyPublicFilesQuery,
+  useLazyPublicFoldersQuery,
   useLazySearchFilesByDateQuery,
   useLazySearchFilesByNameQuery,
-  useRenameFileMutation,
 } from '../../store/filesSlice'
-import { useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
+import { HeaderPublic } from '../../components/HeaderPublic/HeaderPublic'
 
 const customStyles = {
   content: {
@@ -30,23 +31,33 @@ const customStyles = {
   },
 }
 
-const MainPage = () => {
-  const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
-  const [triggerSearch, resultSearch] = useLazySearchFilesByNameQuery()
-  const [triggerSearchByDate, resultSearchByDate] =
-    useLazySearchFilesByDateQuery()
+const PublicPage = () => {
+  const [triggerPublicFolders, resultPublicFolders] =
+    useLazyPublicFoldersQuery()
+  const [trigerPublicFiles, resultPublicFiles] = useLazyPublicFilesQuery()
   const { path } = useParams()
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
+  const [searchString, setSearchString] = useState('')
   const [currentPath, setCurrentPath] = useState(
     localStorage.getItem('username') || '',
   )
   const userToken = localStorage.getItem('token')
-  const searchString = useSelector(
-    (state: RootState) => state.appState.searchString,
-  )
-  const data = searchString ? resultSearch?.data : result?.data
+  const data = resultPublicFolders.data
+  const filesData = resultPublicFiles.data
+  // const getContent = () => {
+  //   if (resultPublicFiles.isUninitialized){
+  //    return  <PublicFileList
+  //      triggerPublicFolders={triggerPublicFolders}
+  //      setCurrentPath={setCurrentPath}
+  //      data={data}
+  //      trigerPublicFiles={trigerPublicFiles}
+  //    />
+  //   }
+  //   if (resultPublicFolders.)
+  // }
   useEffect(() => {
+    triggerPublicFolders('')
     //DownloadFile()
     //openModal()
   }, [])
@@ -63,49 +74,23 @@ const MainPage = () => {
     setIsOpen(false)
   }
 
-  const handleLogOff = async () => {
-    try {
-      const response = await axiosInstance.post('/sign-out')
-      console.log(response.data)
-      localStorage.clear()
-    } catch (error) {
-      console.error(error)
-      //@ts-ignore
-      if (error?.response.status === 409) {
-        localStorage.clear()
-        navigate('/sign-in')
-      }
-    }
-    navigate('/sign-in')
-  }
-
   return (
     <Grid container spacing={0}>
       <Grid xs={12}>
-        <Header
-          triggerSearch={triggerSearch}
-          triggerSearchByDate={triggerSearchByDate}
-        />
+        <HeaderPublic setSearchString={setSearchString} />
       </Grid>
       <Grid xs={2}>
-        <Tooltip />
         <SideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
-        <CurrentPath
-          currentPath={currentPath}
-          triggerGetFiles={triggerGetFiles}
-          setCurrentPath={setCurrentPath}
-        />
-        <FilesList
-          setCurrentPath={setCurrentPath}
-          triggerGetFiles={triggerGetFiles}
-          triggerSearch={triggerSearch}
-          triggerSearchByDate={triggerSearchByDate}
-          data={data}
-        />
+        {/*<CurrentPath*/}
+        {/*  currentPath={currentPath}*/}
+        {/*  triggerGetFiles={triggerGetFiles}*/}
+        {/*  setCurrentPath={setCurrentPath}*/}
+        {/*/>*/}
+        {/*{getContent()}*/}
       </Grid>
     </Grid>
   )
 }
-export { MainPage }
+export { PublicPage }

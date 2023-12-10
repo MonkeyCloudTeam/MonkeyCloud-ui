@@ -3,17 +3,15 @@ import * as React from 'react'
 import Typography from '@mui/material/Typography'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Link from '@mui/material/Link'
-import { setCurrentPath } from '../../store/commonReducer'
 import { useDispatch } from 'react-redux'
-const CurrentPath = ({
+const PublicPath = ({
   currentPath,
-  triggerGetFiles,
+  setCurrentPath,
 }: {
   currentPath: string
-  triggerGetFiles: any
+  setCurrentPath: any
 }) => {
   const dispatch = useDispatch()
-  const username = localStorage.getItem('username')
   const splittedPath = currentPath.split('/')
   const handleClick = (currentPath: string) => () => {
     let index: number = 0
@@ -24,7 +22,7 @@ const CurrentPath = ({
       }
     }
     if (currentPath === splittedPath[0]) {
-      triggerGetFiles('')
+      // triggerGetFiles('')
       dispatch(setCurrentPath(splittedPath[0]))
     } else if (currentPath == splittedPath.at(-1)) {
       const pathStr =
@@ -33,7 +31,7 @@ const CurrentPath = ({
           .map((element) => `/${element}`)
           .join('')
           .slice(1) + '/'
-      triggerGetFiles(pathStr)
+      // triggerGetFiles(pathStr)
       //setCurrentPath()
     } else {
       const pathStr =
@@ -42,7 +40,7 @@ const CurrentPath = ({
           .map((element) => `/${element}`)
           .join('')
           .slice(1) + '/'
-      triggerGetFiles(pathStr)
+      // triggerGetFiles(pathStr)
       setCurrentPath(splittedPath[0] + '/' + pathStr.slice(0, -1))
     }
     //`
@@ -57,4 +55,4 @@ const CurrentPath = ({
   //return <div>{currentPath}</div>
 }
 
-export { CurrentPath }
+export { PublicPath }

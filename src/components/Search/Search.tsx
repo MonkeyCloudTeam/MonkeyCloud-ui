@@ -15,7 +15,7 @@ import { axiosInstance, axiosInstanceForUpload } from '../../api'
 import styles from '../Header/Header.module.scss'
 import { alpha, InputBase, styled } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
-import { setSearchString } from '../../store/commonReducer'
+import { setSearchMode, setSearchString } from '../../store/commonReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 
@@ -72,19 +72,21 @@ const SearchField = ({
   const searchString = useSelector(
     (state: RootState) => state.appState.searchString,
   )
+  console.log(searchString)
   const username = localStorage.getItem('username')
   const getSearchItem = (e: any) => {
     dispatch(setSearchString(e.target.value))
     console.log(e)
   }
-
   const handleFileSearchClick = () => {
     console.log(searchString)
+    dispatch(setSearchMode(true))
     triggerSearch(searchString)
   }
 
   const handleFileSearchByDateClick = () => {
     triggerSearchByDate(searchString)
+    dispatch(setSearchMode(true))
   }
 
   // const responseForSearchByName = () => async () => {
@@ -116,11 +118,13 @@ const SearchField = ({
   // }
 
   return (
-    <Search value={searchString} onChange={getSearchItem}>
+    <Search>
       <SearchIconWrapper>
         <SearchIcon />
       </SearchIconWrapper>
       <StyledInputBase
+        value={searchString}
+        onChange={getSearchItem}
         placeholder='Search…'
         inputProps={{ 'aria-label': 'search' }}
       />

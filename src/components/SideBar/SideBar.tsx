@@ -15,10 +15,15 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import InboxIcon from '@mui/icons-material/MoveToInbox'
 import MailIcon from '@mui/icons-material/Mail'
+import { useLazyGetFilesQuery } from '../../store/filesSlice'
+import { setCurrentPath, setSearchMode } from '../../store/commonReducer'
+import { useDispatch } from 'react-redux'
 
 const drawerWidth = 320
 
 const SideBar = () => {
+  const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
+  const dispatch = useDispatch()
   return (
     <Drawer
       variant='permanent'
@@ -32,13 +37,20 @@ const SideBar = () => {
       <Box sx={{ overflow: 'auto' }}>
         <List>
           {[
-            { name: 'Мои файлы', url: '/main' },
-            { name: 'Общий доступ', url: '/public' },
-            { name: 'Избранное', url: '/favorites' },
-          ].map(({ name, url }, index) => (
+            {
+              name: 'Мои файлы',
+              url: '/main',
+              onClick: () => {
+                dispatch(setSearchMode(false))
+                dispatch(setCurrentPath(''))
+              },
+            },
+            { name: 'Общий доступ', url: '/public', onClick: () => {} },
+            { name: 'Избранное', url: '/favorites', onClick: () => {} },
+          ].map(({ name, url, onClick }, index) => (
             <ListItem key={name} disablePadding>
               <ListItemButton>
-                <Link to={url}>
+                <Link onClick={onClick} to={url}>
                   <ListItemIcon>
                     {index === 1 ? <InboxIcon /> : <MailIcon />}
                   </ListItemIcon>

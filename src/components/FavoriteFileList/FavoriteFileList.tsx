@@ -33,6 +33,7 @@ import { Link, useParams } from 'react-router-dom'
 import { GoStar, GoStarFill } from 'react-icons/go'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarIcon from '@mui/icons-material/Star'
+import { useDispatch } from 'react-redux'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -57,6 +58,7 @@ const FavoriteFilesList = ({
   triggerFavorite: any
   data: any
 }) => {
+  const dispatch = useDispatch()
   const bc = data?.list[0]?.breadCrums as string
   localStorage.setItem('breadCrums', bc)
   const { path } = useParams()
@@ -163,7 +165,7 @@ const FavoriteFilesList = ({
         let path_full = bc.substring(bc.indexOf('/') + 1) + '/'
         localStorage.setItem('breadCrums', bc)
         console.log('breadCrums', bc)
-        setCurrentPath(bc)
+        // dispatch(setCurrentPath(bc))
       })
     }
     // const response = await axiosInstance.get('/getFiles', {

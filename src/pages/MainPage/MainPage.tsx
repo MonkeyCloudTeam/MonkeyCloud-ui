@@ -37,19 +37,38 @@ const MainPage = () => {
     useLazySearchFilesByDateQuery()
   const { path } = useParams()
   const navigate = useNavigate()
+  const [data, setData] = useState(result?.data)
   const [modalIsOpen, setIsOpen] = useState(false)
-  const [currentPath, setCurrentPath] = useState(
-    localStorage.getItem('username') || '',
-  )
+  // const [currentPath, setCurrentPath] = useState(
+  //   localStorage.getItem('username') || '',
+  // )
   const userToken = localStorage.getItem('token')
+
+  const searchMode = useSelector(
+    (state: RootState) => state.appState.searchMode,
+  )
+  const currentPath = useSelector(
+    (state: RootState) => state.appState.currentPath,
+  )
+  console.log('DDDDDDDDDDDDDDDDDD', data)
   const searchString = useSelector(
     (state: RootState) => state.appState.searchString,
   )
-  const data = searchString ? resultSearch?.data : result?.data
+  let dataForFileList = result?.data
+  if (resultSearch?.data) {
+    dataForFileList = resultSearch.data
+  }
+  // const data = searchString ? resultSearch?.data : result?.data
   useEffect(() => {
+    const data = searchMode ? resultSearch?.data : result?.data
+    setData(data)
     //DownloadFile()
     //openModal()
-  }, [])
+  }, [searchMode, resultSearch, resultSearchByDate, result])
+
+  useEffect(() => {
+    triggerGetFiles(currentPath)
+  }, [currentPath])
 
   if (!userToken) {
     return <Navigate to='/sign-in' />
@@ -95,10 +114,8 @@ const MainPage = () => {
         <CurrentPath
           currentPath={currentPath}
           triggerGetFiles={triggerGetFiles}
-          setCurrentPath={setCurrentPath}
         />
         <FilesList
-          setCurrentPath={setCurrentPath}
           triggerGetFiles={triggerGetFiles}
           triggerSearch={triggerSearch}
           triggerSearchByDate={triggerSearchByDate}

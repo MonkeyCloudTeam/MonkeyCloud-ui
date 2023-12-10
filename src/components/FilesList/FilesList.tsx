@@ -37,6 +37,9 @@ import { Link, useParams } from 'react-router-dom'
 import { GoStar, GoStarFill } from 'react-icons/go'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarIcon from '@mui/icons-material/Star'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
+import { setCurrentPath } from '../../store/commonReducer'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -51,13 +54,12 @@ const style = {
 }
 
 const FilesList = ({
-  setCurrentPath,
   triggerGetFiles,
   triggerSearch,
   triggerSearchByDate,
   data,
 }: {
-  setCurrentPath: (currentPath: string) => void
+  // setCurrentPath: (currentPath: string) => void
   triggerGetFiles: any
   triggerSearchByDate: any
   triggerSearch: any
@@ -76,6 +78,12 @@ const FilesList = ({
   const [openShareModal, setOpenShareModal] = React.useState(false)
   const [openPublicAccessModal, setOpenPublicAccessModal] =
     React.useState(false)
+  const dispatch = useDispatch()
+
+  const searchString = useSelector(
+    (state: RootState) => state.appState.searchString,
+  )
+
   const username = localStorage.getItem('username')
   const label1 = { inputProps: { 'aria-label': 'Checkbox none' } }
   useEffect(() => {
@@ -86,7 +94,7 @@ const FilesList = ({
     }
   }, [data])
   useEffect(() => {
-    triggerGetFiles('')
+    // triggerGetFiles('')
     const bc = data?.list[0]?.breadCrums as string
     localStorage.setItem('breadCrums', bc)
     //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
@@ -176,15 +184,17 @@ const FilesList = ({
 
   const handleTableRowClick = (file: IFile) => async () => {
     let headerPath = file.path
+    console.log(headerPath)
     if (file.isDir) {
+      dispatch(setCurrentPath(headerPath))
       //@ts-ignore
-      await triggerGetFiles(headerPath).then((data1) => {
-        const bc = data1?.data?.list[0]?.breadCrums as string
-        let path_full = bc.substring(bc.indexOf('/') + 1) + '/'
-        localStorage.setItem('breadCrums', bc)
-        console.log('breadCrums', bc)
-        setCurrentPath(bc)
-      })
+      // await triggerGetFiles(headerPath).then((data1) => {
+      //   const bc = data1?.data?.list[0]?.breadCrums as string
+      //   let path_full = bc.substring(bc.indexOf('/') + 1) + '/'
+      //   // localStorage.setItem('breadCrums', bc)
+      //   // console.log('breadCrums', bc)
+      //   setCurrentPath(bc)
+      // })
     }
     // const response = await axiosInstance.get('/getFiles', {
     //   params: {
@@ -325,7 +335,11 @@ const FilesList = ({
         // } catch (error) {
         //   console.error(error)
         // }
-        triggerGetFiles(pathToTriger)
+        if (searchString) {
+          triggerSearch(searchString)
+        } else {
+          triggerGetFiles(pathToTriger)
+        }
         handleClose()
       } catch (error) {
         console.log(error)
@@ -386,7 +400,7 @@ const FilesList = ({
           {data?.list.map((file: IFile, index: number) => (
             <TableRow
               //Поставить on click и проверить is dir //set files // вызывать функцию
-              key={file.name}
+              key={`${file.name}-${index}`}
               sx={{
                 '&:last-child td, &:last-child th': { border: 0 },
                 verticalAlign: 'baseline',

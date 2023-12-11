@@ -4,7 +4,7 @@ import { useMenus } from '../hooks/useMenus'
 
 export const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080',
-  timeout: 1000,
+  timeout: 300000,
   headers: {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',

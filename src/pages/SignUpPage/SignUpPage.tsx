@@ -45,15 +45,18 @@ const SignUpPage = () => {
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
   const userToken = localStorage.getItem('token')
+  const role = localStorage.getItem('role')
   const validatePassSubmit = () => {
     return (
       getValues('password') === getValues('passwordSubmit') ||
       'Пароли не совпадают'
     )
   }
-  if (userToken) {
-    return <Navigate to='/main' />
-  }
+  // if (userToken && role === 'user') {
+  //   return <Navigate to='/main' />
+  // } else {
+  //   return <Navigate to='/admin' />
+  // }
 
   function openModal() {
     setIsOpen(true)
@@ -76,6 +79,7 @@ const SignUpPage = () => {
       password: password,
       name: name,
       last_name: lastName,
+      telegramId: '',
     }
     try {
       const response = await axiosInstance.post('/sign-up', requestBody)

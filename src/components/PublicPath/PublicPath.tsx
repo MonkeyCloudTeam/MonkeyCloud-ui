@@ -3,37 +3,35 @@ import * as React from 'react'
 import Typography from '@mui/material/Typography'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Link from '@mui/material/Link'
-import { setCurrentPath } from '../../store/commonReducer'
 import { useDispatch } from 'react-redux'
-const CurrentPath = ({
+const PublicPath = ({
   currentPath,
-  triggerGetFiles,
+  setCurrentPath,
 }: {
   currentPath: string
-  triggerGetFiles: any
+  setCurrentPath: any
 }) => {
   const dispatch = useDispatch()
-  const username = localStorage.getItem('username')
-  const PathTransform = username + '/' + currentPath
-  const splittedPath = PathTransform.split('/')
-  console.log('SPLRTTKD', splittedPath)
-  const handleClick = (PathTransform: string) => () => {
+  const splittedPath = currentPath.split('/')
+  const handleClick = (currentPath: string) => () => {
     let index: number = 0
     for (let i = 0; i < splittedPath.length - 1; i++) {
-      if (splittedPath[i] === PathTransform) {
+      if (splittedPath[i] === currentPath) {
         index = i
         break
       }
     }
-    if (PathTransform === splittedPath[0]) {
-      dispatch(setCurrentPath(''))
-    } else if (PathTransform == splittedPath.at(-1)) {
+    if (currentPath === splittedPath[0]) {
+      // triggerGetFiles('')
+      dispatch(setCurrentPath(splittedPath[0]))
+    } else if (currentPath == splittedPath.at(-1)) {
       const pathStr =
         splittedPath
           .slice(1)
           .map((element) => `/${element}`)
           .join('')
           .slice(1) + '/'
+      // triggerGetFiles(pathStr)
       //setCurrentPath()
     } else {
       const pathStr =
@@ -42,18 +40,19 @@ const CurrentPath = ({
           .map((element) => `/${element}`)
           .join('')
           .slice(1) + '/'
-      dispatch(setCurrentPath(pathStr))
+      // triggerGetFiles(pathStr)
+      setCurrentPath(splittedPath[0] + '/' + pathStr.slice(0, -1))
     }
     //`
   }
   return (
     <div>
       {splittedPath.map((currentPath) => {
-        return <a onClick={handleClick(currentPath)}>{currentPath}/ </a>
+        return <a onClick={handleClick(currentPath)}>{currentPath} / </a>
       })}
     </div>
   )
   //return <div>{currentPath}</div>
 }
 
-export { CurrentPath }
+export { PublicPath }

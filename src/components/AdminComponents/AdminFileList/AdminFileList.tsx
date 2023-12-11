@@ -20,15 +20,16 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Modal from '@mui/material/Modal'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { axiosInstance, axiosInstanceForDownload } from '../../api'
-import styles from './FilesList.module.scss'
-import { useMenus } from '../../hooks/useMenus'
+import { axiosInstance, axiosInstanceForDownload } from '../../../api'
+import styles from './AdminFileList.module.scss'
+import { useMenus } from '../../../hooks/useMenus'
 import {
   useGetFilesQuery,
   useLazyGetFilesQuery,
+  useLazyPublicFilesQuery,
   useRenameFileMutation,
-} from '../../store/filesSlice'
-import { IFile } from '../../store/types'
+} from '../../../store/filesSlice'
+import { IFile } from '../../../store/types'
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
 import Favorite from '@mui/icons-material/Favorite'
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
@@ -38,8 +39,8 @@ import { GoStar, GoStarFill } from 'react-icons/go'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarIcon from '@mui/icons-material/Star'
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
-import { setCurrentPath } from '../../store/commonReducer'
+import { RootState } from '../../../store/store'
+import { setCurrentPath } from '../../../store/commonReducer'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -53,20 +54,19 @@ const style = {
   p: 4,
 }
 
-const FilesList = ({
+const AdminFileList = ({
+  triggerAdminFiles,
   triggerGetFiles,
-  triggerSearch,
-  triggerSearchByDate,
+
   data,
 }: {
   // setCurrentPath: (currentPath: string) => void
   triggerGetFiles: any
-  triggerSearchByDate: any
-  triggerSearch: any
   data: any
+  triggerAdminFiles: any
 }) => {
-  const bc = data?.list[0]?.breadCrums as string
-  localStorage.setItem('breadCrums', bc)
+  // const bc = data?.list[0]?.breadCrums as string
+  //localStorage.setItem('breadCrums', bc)
   const { path } = useParams()
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
   //const { data, error, isLoading } = useGetFilesQuery(path || '')
@@ -85,6 +85,7 @@ const FilesList = ({
   )
 
   const username = localStorage.getItem('username')
+  const label1 = { inputProps: { 'aria-label': 'Checkbox none' } }
   useEffect(() => {
     if (data && data?.list) {
       const nextMenus = data.list.map((m: any) => false)
@@ -92,6 +93,12 @@ const FilesList = ({
       setMenus(nextMenus)
     }
   }, [data])
+  useEffect(() => {
+    // triggerGetFiles('')
+    const bc = data?.list[0]?.breadCrums as string
+    localStorage.setItem('breadCrums', bc)
+    //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
+  }, [])
 
   const handleOpen = () => {
     setOpen(true)
@@ -177,6 +184,7 @@ const FilesList = ({
   }
 
   const handleTableRowClick = (file: IFile) => async () => {
+    console.log(file)
     let headerPath = file.path
     console.log(headerPath)
     if (file.isDir) {
@@ -330,12 +338,7 @@ const FilesList = ({
         // } catch (error) {
         //   console.error(error)
         // }
-        if (searchString) {
-          triggerSearch(searchString)
-        } else {
-          //@ts-ignore
-          triggerGetFiles({ username, path: pathToTriger })
-        }
+        triggerGetFiles({ username, path: pathToTriger })
         handleClose()
       } catch (error) {
         console.log(error)
@@ -372,7 +375,7 @@ const FilesList = ({
     try {
       const response = await axiosInstanceForDownload.get('/downloadFile', {
         params: {
-          username: username,
+          username: data?.list[index].username,
           fullPath: data?.list[index].path,
         },
       })
@@ -387,192 +390,167 @@ const FilesList = ({
   }
 
   if (!data?.list.length) {
-    return <div></div>
+    return <div>Папка пуста. Загрузите файлы.</div>
   }
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label='customized table'>
         <TableBody>
           {data?.list.map((file: IFile, index: number) => (
-            <TableRow
-              //Поставить on click и проверить is dir //set files // вызывать функцию
-              key={`${file.name}-${index}`}
-              sx={{
-                '&:last-child td, &:last-child th': { border: 0 },
-                verticalAlign: 'baseline',
-              }}
-            >
-              <Container
-                onClick={handleTableRowClick(file)}
-                className={styles.TableRowInnerContainer}
-              >
-                {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
-                <TableCell component='th' scope='row'>
-                  {file.name}
-                </TableCell>
-                <TableCell align='left'>{file.username}</TableCell>
-                <TableCell align='left'>{file.date}</TableCell>
-                {file.isDir !== true ? (
-                  <TableCell align='left'>{file.size}</TableCell>
-                ) : (
-                  <TableCell align='left'>‒</TableCell>
-                )}
-              </Container>
-              {file.isFavorite ? (
-                <Container>
-                  {file.isDir !== true ? (
-                    <Checkbox
-                      onClick={FavoriteFileRequest(index)}
-                      className={styles.TableRowInnerFavorite}
-                      id='favorite'
-                      {...label}
-                      icon={<StarIcon />}
-                      checkedIcon={<StarIcon />}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </Container>
-              ) : (
-                <Container>
-                  {file.isDir !== true ? (
-                    <Checkbox
-                      onClick={FavoriteFileRequest(index)}
-                      className={styles.TableRowInnerFavorite}
-                      id='favorite'
-                      {...label}
-                      icon={<StarBorderIcon />}
-                      checkedIcon={<StarBorderIcon />}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </Container>
-              )}
-              <TableCell align='right'>
-                <IconButton
-                  id='basic-button'
-                  aria-controls={open ? 'basic-menu' : undefined}
-                  aria-haspopup='true'
-                  aria-expanded={open ? 'true' : undefined}
-                  onClick={handleClick(index)}
-                >
-                  <MoreVertIcon />
-                </IconButton>
-                <Menu
-                  onClick={(event) => console.log(event)}
-                  id='basic-menu'
-                  anchorEl={anchorEl}
-                  open={menus[index]}
-                  onClose={handleMenuClose(index)}
-                  MenuListProps={{
-                    'aria-labelledby': 'basic-button',
+            <TableRow>
+              <Link to={`/admin/${file.path}`}>
+                <TableRow
+                  //Поставить on click и проверить is dir //set files // вызывать функцию
+                  key={`${file.name}-${index}`}
+                  sx={{
+                    '&:last-child td, &:last-child th': { border: 0 },
+                    verticalAlign: 'baseline',
                   }}
                 >
-                  {file.isDir ? (
-                    <Box>
-                      <MenuItem onClick={handleOpenPublicModal}>
-                        Открыть доступ
+                  <Container
+                    onClick={handleTableRowClick(file)}
+                    className={styles.TableRowInnerContainer}
+                  >
+                    {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
+                    <TableCell component='th' scope='row'>
+                      {file.name}
+                    </TableCell>
+                    <TableCell align='left'>{file.username}</TableCell>
+                    <TableCell align='left'>{file.date}</TableCell>
+                    {file.isDir !== true ? (
+                      <TableCell align='left'>{file.size}</TableCell>
+                    ) : (
+                      <TableCell align='left'>‒</TableCell>
+                    )}
+                  </Container>
+                  <TableCell align='right'>
+                    <IconButton
+                      id='basic-button'
+                      aria-controls={open ? 'basic-menu' : undefined}
+                      aria-haspopup='true'
+                      aria-expanded={open ? 'true' : undefined}
+                      onClick={handleClick(index)}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      onClick={(event) => console.log(event)}
+                      id='basic-menu'
+                      anchorEl={anchorEl}
+                      open={menus[index]}
+                      onClose={handleMenuClose(index)}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                      }}
+                    >
+                      {file.isDir ? (
+                        <Box>
+                          <MenuItem onClick={handleOpenPublicModal}>
+                            Открыть доступ
+                          </MenuItem>
+                          <MenuItem onClick={handleOpenShareModal}>
+                            Поделиться
+                          </MenuItem>
+                        </Box>
+                      ) : (
+                        <MenuItem onClick={DownloadFile(index)}>
+                          Скачать
+                        </MenuItem>
+                      )}
+                      <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
+                      <MenuItem onClick={handleMenuCloseForDelete(index)}>
+                        Удалить
                       </MenuItem>
-                      <MenuItem onClick={handleOpenShareModal}>
-                        Поделиться
-                      </MenuItem>
-                    </Box>
-                  ) : (
-                    <MenuItem onClick={DownloadFile(index)}>Скачать</MenuItem>
-                  )}
-                  <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
-                  <MenuItem onClick={handleMenuCloseForDelete(index)}>
-                    Удалить
-                  </MenuItem>
-                  <Modal
-                    open={openModal}
-                    aria-labelledby='modal-modal-title'
-                    aria-describedby='modal-modal-description'
-                  >
-                    <Box sx={style}>
-                      <Typography
-                        id='modal-modal-title'
-                        variant='h6'
-                        component='h2'
+                      <Modal
+                        open={openModal}
+                        aria-labelledby='modal-modal-title'
+                        aria-describedby='modal-modal-description'
                       >
-                        Переименовать
-                      </Typography>
-                      <TextField fullWidth id='rename' />
-                      <Button onClick={handleClose} variant='text'>
-                        Отмена
-                      </Button>
-                      <Button
-                        //@ts-ignore
-                        onClick={responseForRenameFile(index)}
-                        type='submit'
-                        variant='contained'
+                        <Box sx={style}>
+                          <Typography
+                            id='modal-modal-title'
+                            variant='h6'
+                            component='h2'
+                          >
+                            Переименовать
+                          </Typography>
+                          <TextField fullWidth id='rename' />
+                          <Button onClick={handleClose} variant='text'>
+                            Отмена
+                          </Button>
+                          <Button
+                            //@ts-ignore
+                            onClick={responseForRenameFile(index)}
+                            type='submit'
+                            variant='contained'
+                          >
+                            Ок
+                          </Button>
+                        </Box>
+                      </Modal>
+                      <Modal
+                        open={openShareModal}
+                        aria-labelledby='modal-modal-title'
+                        aria-describedby='modal-modal-description'
                       >
-                        Ок
-                      </Button>
-                    </Box>
-                  </Modal>
-                  <Modal
-                    open={openShareModal}
-                    aria-labelledby='modal-modal-title'
-                    aria-describedby='modal-modal-description'
-                  >
-                    <Box sx={style}>
-                      <Typography
-                        id='modal-modal-title'
-                        variant='h6'
-                        component='h2'
+                        <Box sx={style}>
+                          <Typography
+                            id='modal-modal-title'
+                            variant='h6'
+                            component='h2'
+                          >
+                            Доступ - {file.name}
+                          </Typography>
+                          <TextField fullWidth id='rename' />
+                          <Button
+                            onClick={handleCloseShareModal}
+                            //@ts-ignore
+                            //onClick={responseForRenameFile(index)}
+                            type='submit'
+                            variant='contained'
+                          >
+                            Ок
+                          </Button>
+                        </Box>
+                      </Modal>
+                      <Modal
+                        open={openPublicAccessModal}
+                        aria-labelledby='modal-modal-title'
+                        aria-describedby='modal-modal-description'
                       >
-                        Доступ - {file.name}
-                      </Typography>
-                      <TextField fullWidth id='rename' />
-                      <Button
-                        onClick={handleCloseShareModal}
-                        //@ts-ignore
-                        //onClick={responseForRenameFile(index)}
-                        type='submit'
-                        variant='contained'
-                      >
-                        Ок
-                      </Button>
-                    </Box>
-                  </Modal>
-                  <Modal
-                    open={openPublicAccessModal}
-                    aria-labelledby='modal-modal-title'
-                    aria-describedby='modal-modal-description'
-                  >
-                    <Box sx={style}>
-                      <Typography
-                        id='modal-modal-title'
-                        variant='h6'
-                        component='h2'
-                      >
-                        Вы действительно хотите открыть доступ?
-                      </Typography>
-                      {/*<TextField fullWidth id='rename' />*/}
-                      <Button
-                        //onClick={handleClosePublicModal}
-                        //@ts-ignore
-                        onClick={responseForPublicAccess(index)}
-                        type='submit'
-                        variant='contained'
-                      >
-                        Открыть
-                      </Button>
-                      <Button
-                        onClick={handleClosePublicModal}
-                        //@ts-ignore
-                        //onClick={responseForRenameFile(index)}
-                        type='submit'
-                        variant='contained'
-                      >
-                        Отмена
-                      </Button>
-                    </Box>
-                  </Modal>
-                </Menu>
-              </TableCell>
+                        <Box sx={style}>
+                          <Typography
+                            id='modal-modal-title'
+                            variant='h6'
+                            component='h2'
+                          >
+                            Вы действительно хотите открыть доступ?
+                          </Typography>
+                          {/*<TextField fullWidth id='rename' />*/}
+                          <Button
+                            //onClick={handleClosePublicModal}
+                            //@ts-ignore
+                            onClick={responseForPublicAccess(index)}
+                            type='submit'
+                            variant='contained'
+                          >
+                            Открыть
+                          </Button>
+                          <Button
+                            onClick={handleClosePublicModal}
+                            //@ts-ignore
+                            //onClick={responseForRenameFile(index)}
+                            type='submit'
+                            variant='contained'
+                          >
+                            Отмена
+                          </Button>
+                        </Box>
+                      </Modal>
+                    </Menu>
+                  </TableCell>
+                </TableRow>
+              </Link>
             </TableRow>
           ))}
         </TableBody>
@@ -580,5 +558,5 @@ const FilesList = ({
     </TableContainer>
   )
 }
-export { FilesList }
+export { AdminFileList }
 //handleMenuCloseForRename(index)

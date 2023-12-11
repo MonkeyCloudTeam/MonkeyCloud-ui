@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 
 import { axiosInstance, axiosInstanceForDownload } from '../../api'
-import { Header } from '../../components/Header/Header'
-
+import { AdminHeader } from '../../components/AdminComponents/AdminHeader/AdminHeader'
+import { AdminFileList } from '../../components/AdminComponents/AdminFileList/AdminFileList'
 import { Grid } from '@mui/material'
 import { CurrentPath } from '../../components/CurrentPath/CurrentPath'
 import { SideBar } from '../../components/SideBar/SideBar'
@@ -11,6 +11,7 @@ import { FilesList } from '../../components/FilesList/FilesList'
 import { ToolTip } from '../../components/Tooltip/ToolTip'
 import Modal from '@mui/material/Modal'
 import {
+  useLazyAdminFilesQuery,
   useLazyGetFilesQuery,
   useLazySearchFilesByDateQuery,
   useLazySearchFilesByNameQuery,
@@ -18,6 +19,8 @@ import {
 } from '../../store/filesSlice'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { Header } from '../../components/Header/Header'
+import { AdminBucketsList } from '../../components/AdminComponents/AdminFileList/AdminBucketsList'
 
 const customStyles = {
   content: {
@@ -30,20 +33,21 @@ const customStyles = {
   },
 }
 
-const MainPage = () => {
+const AdminFilesPage = () => {
   const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
-  const [triggerSearch, resultSearch] = useLazySearchFilesByNameQuery()
   const [triggerSearchByDate, resultSearchByDate] =
     useLazySearchFilesByDateQuery()
+  const [triggerAdminFiles, resultAdminFiles] = useLazyAdminFilesQuery()
   const { path } = useParams()
   const navigate = useNavigate()
-  const [data, setData] = useState(result?.data)
+  const [itemsList, setItemsList] = useState([])
+  const [data, setData] = useState()
   const [modalIsOpen, setIsOpen] = useState(false)
   // const [currentPath, setCurrentPath] = useState(
   //   localStorage.getItem('username') || '',
   // )
   const userToken = localStorage.getItem('token')
-  const username = localStorage.getItem('username')
+
   const searchMode = useSelector(
     (state: RootState) => state.appState.searchMode,
   )
@@ -53,24 +57,29 @@ const MainPage = () => {
   const searchString = useSelector(
     (state: RootState) => state.appState.searchString,
   )
-  let dataForFileList = result?.data
-  if (resultSearch?.data) {
-    dataForFileList = resultSearch.data
-  }
-  // const data = searchString ? resultSearch?.data : result?.data
-  useEffect(() => {
-    const data = searchMode ? resultSearch?.data : result?.data
-    setData(data)
-    //DownloadFile()
-    //openModal()
-  }, [searchMode, resultSearch, resultSearchByDate, result])
+  // let dataForFileList = result?.data
+  // if (resultSearch?.data) {
+  //   dataForFileList = resultSearch.data
+  // }
+  // // const data = searchString ? resultSearch?.data : result?.data
+  // useEffect(() => {
+  //   const data = searchMode ? resultSearch?.data : result?.data
+  //   setData(data)
+  //   //DownloadFile()
+  //   //openModal()
+  // }, [searchMode, resultSearch, resultSearchByDate, result])
 
   useEffect(() => {
-    console.log('PATH', currentPath)
-    console.log('NAME', username)
     //@ts-ignore
-    triggerGetFiles({ username, path: currentPath })
-  }, [username, currentPath])
+    triggerGetFiles({ username: 'user50', path })
+    if (path) {
+      //@ts-ignore
+      triggerGetFiles({ username: 'user50', path })
+      //@ts-ignore
+      setItemsList(result?.data)
+    }
+    //triggerGetFiles()
+  }, [path])
 
   if (!userToken) {
     return <Navigate to='/sign-in' />
@@ -103,13 +112,9 @@ const MainPage = () => {
   return (
     <Grid container spacing={0}>
       <Grid xs={12}>
-        <Header
-          triggerSearch={triggerSearch}
-          triggerSearchByDate={triggerSearchByDate}
-        />
+        <AdminHeader triggerSearchByDate={triggerSearchByDate} />
       </Grid>
       <Grid xs={2}>
-        <ToolTip />
         <SideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
@@ -117,14 +122,18 @@ const MainPage = () => {
           currentPath={currentPath}
           triggerGetFiles={triggerGetFiles}
         />
-        <FilesList
+        {/*<AdminFileList*/}
+        {/*  triggerGetFiles={triggerGetFiles}*/}
+        {/*  triggerAdminFiles={triggerAdminFiles}*/}
+        {/*  data={data}*/}
+        {/*/>*/}
+        <AdminFileList
           triggerGetFiles={triggerGetFiles}
-          triggerSearch={triggerSearch}
-          triggerSearchByDate={triggerSearchByDate}
-          data={data}
+          triggerAdminFiles={triggerAdminFiles}
+          data={result.data}
         />
       </Grid>
     </Grid>
   )
 }
-export { MainPage }
+export { AdminFilesPage }

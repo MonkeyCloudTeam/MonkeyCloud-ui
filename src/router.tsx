@@ -8,7 +8,11 @@ import { ProtectedRoute } from './pages/ProtectedRoute/ProtectedRoute'
 import { MainPage } from './pages/MainPage/MainPage'
 import { FavoritePage } from './pages/FavoritePage/FavoritePage'
 import { PublicPage } from './pages/PublicPage/PublicPage'
-
+import { AdminPage } from './pages/AdminPage/AdminPage'
+import { AdminProtectedRoute } from './pages/ProtectedRoute/AdminProtectedRoute'
+import { PublicFilesPage } from './pages/PublicPage/PublicFilesPage'
+import { AdminFilesPage } from './pages/AdminPage/AdminFilesPage'
+import { PrivatePage } from './pages/PrivatePage/PrivatePage'
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -46,12 +50,44 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+  {
+    path: '/private',
+    element: (
+      <ProtectedRoute>
+        <PrivatePage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/public/:path',
+    element: (
+      <ProtectedRoute>
+        <PublicFilesPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin',
+    element: (
+      <AdminProtectedRoute>
+        <AdminPage />
+      </AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/:bucket',
+    element: (
+      <AdminProtectedRoute>
+        <AdminFilesPage />
+      </AdminProtectedRoute>
+    ),
+  },
 ])
 
 // children: [
-//   {PublicPage
+//   {PublicPage PrivatePage
 //     path: 'main/favorites/',
-//     element: (
+//     element: (AdminPage
 //       <ProtectedRoute>
 //         <FavoritePage />
 //       </ProtectedRoute>

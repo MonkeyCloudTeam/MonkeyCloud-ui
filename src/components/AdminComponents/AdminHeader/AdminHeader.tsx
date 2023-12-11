@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { axiosInstance, axiosInstanceForUpload, getFiles } from '../../api'
+import { axiosInstance, axiosInstanceForUpload, getFiles } from '../../../api'
 import { useNavigate } from 'react-router-dom'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -10,7 +10,7 @@ import Menu from '@mui/material/Menu'
 import MenuIcon from '@mui/icons-material/Menu'
 import Container from '@mui/material/Container'
 import Avatar from '@mui/material/Avatar'
-import avatar from '../../assets/images/avatar.jpg'
+import avatar from '../../../assets/images/admin.jpg'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 import AdbIcon from '@mui/icons-material/Adb'
@@ -23,12 +23,12 @@ import {
   styled,
   TextField,
 } from '@mui/material'
-import styles from './Header.module.scss'
+import styles from './AdminHeader.module.scss'
 import SearchIcon from '@mui/icons-material/Search'
-import { useMenus } from '../../hooks/useMenus'
-import { useLazyGetFilesQuery } from '../../store/filesSlice'
-import { IFile } from '../../store/types'
-import { SearchField } from '../Search/Search'
+import { useMenus } from '../../../hooks/useMenus'
+import { useLazyGetFilesQuery } from '../../../store/filesSlice'
+import { IFile } from '../../../store/types'
+import { SearchField } from '../../Search/Search'
 import Modal from '@mui/material/Modal'
 //TODO Вставить картинку 133
 
@@ -44,7 +44,7 @@ const style = {
   p: 4,
 }
 
-const Header = ({
+const AdminHeader = ({
   triggerSearch,
   triggerSearchByDate,
 }: {
@@ -269,11 +269,6 @@ const Header = ({
             Monkey Cloud
           </Typography>{' '}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box>
-          <SearchField
-            triggerGetFiles={triggerGetFiles}
-            triggerSearch={triggerSearch}
-            triggerSearchByDate={triggerSearchByDate}
-          />
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title='Open settings'>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -337,4 +332,4 @@ const Header = ({
   )
 }
 
-export { Header }
+export { AdminHeader }

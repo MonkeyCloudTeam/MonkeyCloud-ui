@@ -12,12 +12,16 @@ import { ToolTip } from '../../components/Tooltip/ToolTip'
 import Modal from '@mui/material/Modal'
 import {
   useLazyGetFilesQuery,
+  useLazyGetPrivateFolderQuery,
+  useLazyPublicFilesQuery,
   useLazySearchFilesByDateQuery,
   useLazySearchFilesByNameQuery,
   useRenameFileMutation,
 } from '../../store/filesSlice'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { PrivateFileList } from '../../components/PrivateFileList/PrivateFileList'
+import { HeaderPrivate } from '../../components/HeaderPrivate/HeaderPrivate'
 
 const customStyles = {
   content: {
@@ -30,14 +34,14 @@ const customStyles = {
   },
 }
 
-const MainPage = () => {
+const PrivatePage = () => {
+  const [triggerGetPublicFolder, resultPublicFolder] =
+    useLazyGetPrivateFolderQuery()
+  const [trigerPublicFiles, resultPublicFiles] = useLazyPublicFilesQuery()
   const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
-  const [triggerSearch, resultSearch] = useLazySearchFilesByNameQuery()
-  const [triggerSearchByDate, resultSearchByDate] =
-    useLazySearchFilesByDateQuery()
+  const data = resultPublicFolder.data
   const { path } = useParams()
   const navigate = useNavigate()
-  const [data, setData] = useState(result?.data)
   const [modalIsOpen, setIsOpen] = useState(false)
   // const [currentPath, setCurrentPath] = useState(
   //   localStorage.getItem('username') || '',
@@ -53,24 +57,15 @@ const MainPage = () => {
   const searchString = useSelector(
     (state: RootState) => state.appState.searchString,
   )
-  let dataForFileList = result?.data
-  if (resultSearch?.data) {
-    dataForFileList = resultSearch.data
-  }
-  // const data = searchString ? resultSearch?.data : result?.data
-  useEffect(() => {
-    const data = searchMode ? resultSearch?.data : result?.data
-    setData(data)
-    //DownloadFile()
-    //openModal()
-  }, [searchMode, resultSearch, resultSearchByDate, result])
 
   useEffect(() => {
-    console.log('PATH', currentPath)
-    console.log('NAME', username)
     //@ts-ignore
-    triggerGetFiles({ username, path: currentPath })
-  }, [username, currentPath])
+    triggerGetPublicFolder({
+      owner: 'user50',
+      customer: 'hsebanov',
+      folderId: '92',
+    })
+  }, [])
 
   if (!userToken) {
     return <Navigate to='/sign-in' />
@@ -103,28 +98,19 @@ const MainPage = () => {
   return (
     <Grid container spacing={0}>
       <Grid xs={12}>
-        <Header
-          triggerSearch={triggerSearch}
-          triggerSearchByDate={triggerSearchByDate}
-        />
+        <HeaderPrivate />
       </Grid>
       <Grid xs={2}>
-        <ToolTip />
         <SideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
         <CurrentPath
+          triggerGetFiles={triggerGetFiles}
           currentPath={currentPath}
-          triggerGetFiles={triggerGetFiles}
         />
-        <FilesList
-          triggerGetFiles={triggerGetFiles}
-          triggerSearch={triggerSearch}
-          triggerSearchByDate={triggerSearchByDate}
-          data={data}
-        />
+        <PrivateFileList trigerPublicFiles={trigerPublicFiles} data={data} />
       </Grid>
     </Grid>
   )
 }
-export { MainPage }
+export { PrivatePage }

@@ -23,7 +23,7 @@ import {
   styled,
   TextField,
 } from '@mui/material'
-import styles from './Header.module.scss'
+import styles from './HeaderPrivate.module.scss'
 import SearchIcon from '@mui/icons-material/Search'
 import { useMenus } from '../../hooks/useMenus'
 import { useLazyGetFilesQuery } from '../../store/filesSlice'
@@ -44,13 +44,7 @@ const style = {
   p: 4,
 }
 
-const Header = ({
-  triggerSearch,
-  triggerSearchByDate,
-}: {
-  triggerSearch?: any
-  triggerSearchByDate?: any
-}) => {
+const HeaderPrivate = ({}: {}) => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
@@ -68,100 +62,7 @@ const Header = ({
   const { data } = result
   const [openModal, setOpen] = React.useState(false)
 
-  useEffect(() => {
-    //@ts-ignore
-    triggerGetFiles({ username, path: '' })
-    //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
-  }, [])
-
-  const handleFileChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    file: IFile,
-  ) => {
-    if (e.target.files) {
-      const pathForRequest = localStorage.getItem('breadCrums')
-      const fileToUpload = structuredClone(e.target.files[0])
-      const formData = new FormData()
-      formData.append('multipartFile', fileToUpload)
-      formData.append('fileName', fileToUpload.name)
-      let pathForGet = ''
-      if (pathForRequest === username) {
-        pathForGet = ''
-      } else {
-        pathForGet =
-          pathForRequest?.substring(pathForRequest?.indexOf('/') + 1) + '/'
-        console.log(pathForGet)
-      }
-      try {
-        const response = await axiosInstanceForUpload.post(
-          '/uploadFile',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-            params: {
-              username: localStorage.getItem('username'),
-              fullPath: pathForGet,
-            },
-          },
-        )
-        // await getFiles().then((files) => setFiles(files))
-        //const data = await response.json()
-        console.log(response)
-      } catch (error) {
-        console.error(error)
-      }
-      //@ts-ignore
-      triggerGetFiles({ username, path: pathForGet })
-    }
-  }
-
-  const handleFolderChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    file: IFile,
-  ) => {
-    if (e.target.files) {
-      const pathForRequest = localStorage.getItem('breadCrums')
-      let pathForGet = ''
-      if (pathForRequest === username) {
-        pathForGet = ''
-      } else {
-        pathForGet =
-          pathForRequest?.substring(pathForRequest?.indexOf('/') + 1) + '/'
-        console.log(pathForGet)
-      }
-      const formData = new FormData()
-      for (let i = 0; i < e.target.files.length; i++) {
-        formData.append(`multipartFile`, structuredClone(e.target.files[i]))
-        formData.append('fileName', structuredClone(e.target.files[i]).name)
-      }
-      const Path = data?.list[0].breadCrums
-      console.log(file)
-      try {
-        const response = await axiosInstanceForUpload.post(
-          '/uploadFolder',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-            params: {
-              username: localStorage.getItem('username'),
-              fullPath: pathForGet,
-            },
-          },
-        )
-        // await getFiles().then((files) => setFiles(files))
-        //const data = await response.json()
-        console.log(response)
-      } catch (error) {
-        console.error(error)
-      }
-      //@ts-ignore
-      triggerGetFiles({ username, path: pathForGet })
-    }
-  }
+  useEffect(() => {}, [])
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget)
@@ -269,13 +170,8 @@ const Header = ({
             Monkey Cloud
           </Typography>{' '}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box>
-          <SearchField
-            triggerGetFiles={triggerGetFiles}
-            triggerSearch={triggerSearch}
-            triggerSearchByDate={triggerSearchByDate}
-          />
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title='Open settings'>
+            <Tooltip title='Настройки'>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar src={avatar} sx={{ bgcolor: 'lightBlue' }} />
               </IconButton>
@@ -337,4 +233,4 @@ const Header = ({
   )
 }
 
-export { Header }
+export { HeaderPrivate }

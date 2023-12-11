@@ -14,26 +14,26 @@ const CurrentPath = ({
 }) => {
   const dispatch = useDispatch()
   const username = localStorage.getItem('username')
-  const splittedPath = currentPath.split('/')
-  const handleClick = (currentPath: string) => () => {
+  const PathTransform = username + '/' + currentPath
+  const splittedPath = PathTransform.split('/')
+  console.log('SPLRTTKD', splittedPath)
+  const handleClick = (PathTransform: string) => () => {
     let index: number = 0
     for (let i = 0; i < splittedPath.length - 1; i++) {
-      if (splittedPath[i] === currentPath) {
+      if (splittedPath[i] === PathTransform) {
         index = i
         break
       }
     }
-    if (currentPath === splittedPath[0]) {
-      triggerGetFiles('')
-      dispatch(setCurrentPath(splittedPath[0]))
-    } else if (currentPath == splittedPath.at(-1)) {
+    if (PathTransform === splittedPath[0]) {
+      dispatch(setCurrentPath(''))
+    } else if (PathTransform == splittedPath.at(-1)) {
       const pathStr =
         splittedPath
           .slice(1)
           .map((element) => `/${element}`)
           .join('')
           .slice(1) + '/'
-      triggerGetFiles(pathStr)
       //setCurrentPath()
     } else {
       const pathStr =
@@ -42,15 +42,14 @@ const CurrentPath = ({
           .map((element) => `/${element}`)
           .join('')
           .slice(1) + '/'
-      triggerGetFiles(pathStr)
-      setCurrentPath(splittedPath[0] + '/' + pathStr.slice(0, -1))
+      dispatch(setCurrentPath(pathStr))
     }
     //`
   }
   return (
     <div>
       {splittedPath.map((currentPath) => {
-        return <a onClick={handleClick(currentPath)}>{currentPath} / </a>
+        return <a onClick={handleClick(currentPath)}>{currentPath}/ </a>
       })}
     </div>
   )

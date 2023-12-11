@@ -9,12 +9,16 @@ import UploadFileIcon from '@mui/icons-material/UploadFile'
 import { useMenus } from '../../hooks/useMenus'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
-import { useLazyGetFilesQuery } from '../../store/filesSlice'
+import {
+  useLazyGetFilesQuery,
+  useRenameFileMutation,
+  useUploadFileMutation,
+} from '../../store/filesSlice'
 import { IFile } from '../../store/types'
 import { axiosInstanceForUpload } from '../../api'
 import styles from '../Header/Header.module.scss'
 
-const Tooltip = () => {
+const ToolTip = () => {
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -26,9 +30,10 @@ const Tooltip = () => {
   const [file, setFile] = useState<File | null>(null)
   const [triggerGetFiles, result] = useLazyGetFilesQuery()
   const { data } = result
-
+  const [triggerUploadFile] = useUploadFileMutation()
   useEffect(() => {
-    triggerGetFiles('')
+    //@ts-ignore
+    triggerGetFiles({ username, path: '' })
     //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
   }, [])
 
@@ -49,7 +54,7 @@ const Tooltip = () => {
       formData.append('multipartFile', fileToUpload)
       formData.append('fileName', fileToUpload.name)
       let pathForGet = ''
-      if (pathForRequest === username || 'undefined') {
+      if (pathForRequest === username) {
         pathForGet = ''
       } else {
         pathForGet =
@@ -57,26 +62,15 @@ const Tooltip = () => {
         console.log(pathForGet)
       }
       try {
-        const response = await axiosInstanceForUpload.post(
-          '/uploadFile',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-            params: {
-              username: localStorage.getItem('username'),
-              fullPath: pathForGet,
-            },
-          },
-        )
-        // await getFiles().then((files) => setFiles(files))
-        //const data = await response.json()
-        console.log(response)
+        await triggerUploadFile({
+          data: formData,
+          fullPath: pathForGet,
+        })
+        //@ts-ignore
+        triggerGetFiles({ username, path: pathForGet })
       } catch (error) {
         console.error(error)
       }
-      triggerGetFiles(pathForGet)
       setOpen(false)
     }
   }
@@ -94,7 +88,7 @@ const Tooltip = () => {
     if (e.target.files) {
       const pathForRequest = localStorage.getItem('breadCrums')
       let pathForGet = ''
-      if (pathForRequest == username || 'undefined') {
+      if (pathForRequest === username) {
         pathForGet = ''
       } else {
         pathForGet =
@@ -128,7 +122,8 @@ const Tooltip = () => {
       } catch (error) {
         console.error(error)
       }
-      triggerGetFiles(pathForGet)
+      //@ts-ignore
+      triggerGetFiles({ username, path: pathForGet })
     }
   }
 
@@ -194,4 +189,4 @@ const Tooltip = () => {
   )
 }
 
-export { Tooltip }
+export { ToolTip }

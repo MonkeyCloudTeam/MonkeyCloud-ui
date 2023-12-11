@@ -10,6 +10,14 @@ export interface IFile {
   folderId: string
 }
 
+export interface IAdminFile {
+  bucket: string
+}
+
+export type Buckets = {
+  list: Array<IAdminFile>
+}
+
 export type Files = {
   list: Array<IFile>
 }
@@ -28,4 +36,9 @@ export type RenameFileRequestArgs = {
   fullPath: string
   oldName: string
   newName: string
+}
+
+export type UploadFileRequestArgs = {
+  data: FormData
+  fullPath: string
 }

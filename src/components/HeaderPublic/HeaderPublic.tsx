@@ -113,7 +113,8 @@ const HeaderPublic = ({
       } catch (error) {
         console.error(error)
       }
-      triggerGetFiles(pathForGet)
+      //@ts-ignore
+      triggerGetFiles({ username, path: pathForGet })
     }
   }
 
@@ -158,7 +159,8 @@ const HeaderPublic = ({
       } catch (error) {
         console.error(error)
       }
-      triggerGetFiles(pathForGet)
+      //@ts-ignore
+      triggerGetFiles({ username, path: pathForGet })
     }
   }
 

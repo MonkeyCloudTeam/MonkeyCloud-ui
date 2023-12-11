@@ -72,14 +72,11 @@ const SearchField = ({
   const searchString = useSelector(
     (state: RootState) => state.appState.searchString,
   )
-  console.log(searchString)
   const username = localStorage.getItem('username')
   const getSearchItem = (e: any) => {
     dispatch(setSearchString(e.target.value))
-    console.log(e)
   }
   const handleFileSearchClick = () => {
-    console.log(searchString)
     dispatch(setSearchMode(true))
     triggerSearch(searchString)
   }

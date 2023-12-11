@@ -31,69 +31,32 @@ const customStyles = {
   },
 }
 
-const PublicPage = () => {
-  const [triggerPublicFolders, resultPublicFolders] =
-    useLazyPublicFoldersQuery()
-  const [trigerPublicFiles, resultPublicFiles] = useLazyPublicFilesQuery()
+const PublicFilesPage = () => {
   const { path } = useParams()
+  const [trigerPublicFiles, resultPublicFiles] = useLazyPublicFilesQuery()
   const navigate = useNavigate()
-  const [itemsList, setItemsList] = useState(resultPublicFolders?.data)
-  const [modalIsOpen, setIsOpen] = useState(false)
-  const [searchString, setSearchString] = useState('')
+  const [itemsList, setItemsList] = useState([])
   const [currentPath, setCurrentPath] = useState(
     localStorage.getItem('username') || '',
   )
   const userToken = localStorage.getItem('token')
-  const data = resultPublicFolders?.data
   //@ts-ignore
   const filesData = resultPublicFiles?.data?.fileList
   useEffect(() => {
-    triggerPublicFolders('')
-    console.log(data)
-    //DownloadFile()
-    //openModal()
-  }, [])
-  // console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSS', trigerPublicFiles)
-  const getContent = () => {
-    //@ts-ignore
-    if (resultPublicFiles?.data && resultPublicFiles?.data?.fileList?.length) {
-      return (
-        <PublicFileList
-          triggerPublicFolders={triggerPublicFolders}
-          trigerPublicFiles={trigerPublicFiles}
-          setCurrentPath={setCurrentPath}
-          //@ts-ignore
-          data={resultPublicFiles?.data?.fileList}
-        />
-      )
-    } else {
-      return (
-        <PublicFileList
-          triggerPublicFolders={triggerPublicFolders}
-          trigerPublicFiles={trigerPublicFiles}
-          setCurrentPath={setCurrentPath}
-          //@ts-ignore
-          data={resultPublicFolders?.data}
-        />
-      )
+    if (path) {
+      trigerPublicFiles(path)
+      //@ts-ignore
+      setItemsList(resultPublicFiles?.data?.fileList)
     }
-  }
+  }, [path])
   if (!userToken) {
     return <Navigate to='/sign-in' />
-  }
-
-  function openModal() {
-    setIsOpen(true)
-  }
-
-  function closeModal() {
-    setIsOpen(false)
   }
 
   return (
     <Grid container spacing={0}>
       <Grid xs={12}>
-        <HeaderPublic setSearchString={setSearchString} />
+        <HeaderPublic />
       </Grid>
       <Grid xs={2}>
         <SideBar />
@@ -104,9 +67,14 @@ const PublicPage = () => {
         {/*  triggerGetFiles={triggerGetFiles}*/}
         {/*  setCurrentPath={setCurrentPath}*/}
         {/*/>*/}
-        {getContent()}
+        <PublicFileList
+          trigerPublicFiles={trigerPublicFiles}
+          setCurrentPath={setCurrentPath}
+          //@ts-ignore
+          data={resultPublicFiles?.data?.fileList}
+        />
       </Grid>
     </Grid>
   )
 }
-export { PublicPage }
+export { PublicFilesPage }

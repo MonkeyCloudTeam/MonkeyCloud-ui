@@ -153,21 +153,20 @@ const FavoriteFilesList = ({
         }
       }
     }
-    await triggerGetFiles(pathToTriger)
+    //@ts-ignore
+    await triggerGetFiles({ username, path: pathToTriger })
   }
 
   const handleTableRowClick = (file: IFile) => async () => {
     let headerPath = file.path
-    if (file.isDir) {
-      //@ts-ignore
-      await triggerGetFiles(headerPath).then((data1) => {
-        const bc = data1?.data?.list[0]?.breadCrums as string
-        let path_full = bc.substring(bc.indexOf('/') + 1) + '/'
-        localStorage.setItem('breadCrums', bc)
-        console.log('breadCrums', bc)
-        // dispatch(setCurrentPath(bc))
-      })
-    }
+    // if (file.isDir) {
+    //   await triggerGetFiles(headerPath).then((data1) => {
+    //     const bc = data1?.data?.list[0]?.breadCrums as string
+    //     let path_full = bc.substring(bc.indexOf('/') + 1) + '/'
+    //     localStorage.setItem('breadCrums', bc)
+    //     // dispatch(setCurrentPath(bc))
+    //   })
+    // }
     // const response = await axiosInstance.get('/getFiles', {
     //   params: {
     //     username: localStorage.getItem('username'),
@@ -337,7 +336,6 @@ const FavoriteFilesList = ({
       <Table sx={{ minWidth: 650 }} aria-label='customized table'>
         <TableBody>
           {data?.list.map((file: IFile, index: number) => {
-            console.log(file)
             if (!file.isFavorite) {
               return <></>
             }

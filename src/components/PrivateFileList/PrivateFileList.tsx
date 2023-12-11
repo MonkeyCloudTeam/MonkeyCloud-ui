@@ -21,13 +21,12 @@ import MenuItem from '@mui/material/MenuItem'
 import Modal from '@mui/material/Modal'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { axiosInstance, axiosInstanceForDownload } from '../../api'
-import styles from './PublicFileList.module.scss'
+import styles from './PrivateFileLiist.module.scss'
 import { useMenus } from '../../hooks/useMenus'
-import DownloadForOfflineOutlinedIcon from '@mui/icons-material/DownloadForOfflineOutlined'
 import {
   useGetFilesQuery,
   useLazyGetFilesQuery,
-  useLazyPublicFilesQuery,
+  useRenameFileMutation,
 } from '../../store/filesSlice'
 import { IFile } from '../../store/types'
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
@@ -38,6 +37,9 @@ import { Link, useParams } from 'react-router-dom'
 import { GoStar, GoStarFill } from 'react-icons/go'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarIcon from '@mui/icons-material/Star'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
+import { setCurrentPath } from '../../store/commonReducer'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -51,31 +53,21 @@ const style = {
   p: 4,
 }
 
-const PublicFileList = ({
-  setCurrentPath,
-  trigerPublicFiles,
+const PrivateFileList = ({
   data,
-  triggerPublicFolders,
+  trigerPublicFiles,
 }: {
-  setCurrentPath: (currentPath: string) => void
   data: any
-  triggerPublicFolders?: any
-  trigerPublicFiles?: any
+  trigerPublicFiles: any
 }) => {
-  // const bc = data?.list[0]?.breadCrums as string
-  // localStorage.setItem('breadCrums', bc)
-  const { path } = useParams()
-  const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
-  //const { data, error, isLoading } = useGetFilesQuery(path || '')
+  const bc = data?.list[0]?.breadCrums as string
+  localStorage.setItem('breadCrums', bc)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [menus, setMenus] = useState([])
   const open = Boolean(anchorEl)
-  const [openModal, setOpen] = React.useState(false)
-  const [openShareModal, setOpenShareModal] = React.useState(false)
-  const [openPublicAccessModal, setOpenPublicAccessModal] =
-    React.useState(false)
+  const dispatch = useDispatch()
+
   const username = localStorage.getItem('username')
-  const label1 = { inputProps: { 'aria-label': 'Checkbox none' } }
   useEffect(() => {
     if (data && data?.list) {
       const nextMenus = data.list.map((m: any) => false)
@@ -83,24 +75,6 @@ const PublicFileList = ({
       setMenus(nextMenus)
     }
   }, [data])
-  useEffect(() => {
-    const bc = data?.list[0]?.breadCrums as string
-    localStorage.setItem('breadCrums', bc)
-    //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
-  }, [])
-  const handleOpen = () => {
-    setOpen(true)
-  }
-  const handleOpenShareModal = () => {
-    setOpenShareModal(true)
-  }
-  const handleOpenPublicModal = () => {
-    setOpenPublicAccessModal(true)
-  }
-
-  const handleClose = () => setOpen(false)
-  const handleCloseShareModal = () => setOpenShareModal(false)
-  const handleClosePublicModal = () => setOpenPublicAccessModal(false)
 
   const handleClick =
     (index: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -110,26 +84,22 @@ const PublicFileList = ({
       setMenus(nextMenus)
       setAnchorEl(event.currentTarget)
     }
+
   const handleTableRowClick = (file: IFile) => async () => {
-    let FolderId = file.folderId
-    // if (file.isDir) {
-    //
-    // }
-    // const response = await axiosInstance.get('/getFiles', {
-    //   params: {
-    //     username: localStorage.getItem('username'),
-    //     folder: '123/',
-    //   },
-    // })
-    //setCurrentPath(file.breadCrums)
-    // // console.log(response)
-    // const menus = response.data.list.map((m: any) => false)
-    // setMenus(menus)
-    // }
-    //@ts-ignore
-    // const GetFilesFromFolder = (index: number) => async () => {
-    //   if (files[index].)
-    // }
+    let headerPath = file.folderId
+    trigerPublicFiles(headerPath)
+    console.log(headerPath)
+    if (file.isDir) {
+      dispatch(setCurrentPath(headerPath))
+      //@ts-ignore
+      // await triggerGetFiles(headerPath).then((data1) => {
+      //   const bc = data1?.data?.list[0]?.breadCrums as string
+      //   let path_full = bc.substring(bc.indexOf('/') + 1) + '/'
+      //   // localStorage.setItem('breadCrums', bc)
+      //   // console.log('breadCrums', bc)
+      //   setCurrentPath(bc)
+      // })
+    }
   }
 
   const handleMenuClose = (index: number) => () => {
@@ -176,53 +146,49 @@ const PublicFileList = ({
     handleMenuClose(index)
   }
 
-  // if (!data?.list.length) {
-  //   return <div>Папка пуста. Загрузите файлы.</div>
-  // }
+  if (!data?.list.length) {
+    return <div></div>
+  }
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label='customized table'>
         <TableBody>
           {data?.list.map((file: IFile, index: number) => (
-            <TableRow>
-              <Link className={styles.link} to={`/public/${file.folderId}`}>
-                <TableRow
-                  key={file.name}
-                  sx={{
-                    '&:last-child td, &:last-child th': { border: 0 },
-                    verticalAlign: 'baseline',
-                  }}
+            <TableRow
+              //Поставить on click и проверить is dir //set files // вызывать функцию
+              key={`${file.name}-${index}`}
+              sx={{
+                '&:last-child td, &:last-child th': { border: 0 },
+                verticalAlign: 'baseline',
+              }}
+            >
+              <Container
+                onClick={handleTableRowClick(file)}
+                className={styles.TableRowInnerContainer}
+              >
+                {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
+                <TableCell component='th' scope='row'>
+                  {file.name}
+                </TableCell>
+                <TableCell align='left'>{file.username}</TableCell>
+                <TableCell align='left'>{file.date}</TableCell>
+                {file.isDir !== true ? (
+                  <TableCell align='left'>{file.size}</TableCell>
+                ) : (
+                  <TableCell align='left'>‒</TableCell>
+                )}
+              </Container>
+              <TableCell align='right'>
+                <IconButton
+                  id='basic-button'
+                  aria-controls={open ? 'basic-menu' : undefined}
+                  aria-haspopup='true'
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={DownloadFile(index)}
                 >
-                  <Container
-                    onClick={handleTableRowClick(file)}
-                    className={styles.TableRowInnerContainer}
-                  >
-                    {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
-                    <TableCell component='th' scope='row'>
-                      {file.name}
-                    </TableCell>
-                    <TableCell align='left'>{file.username}</TableCell>
-                    <TableCell align='left'>{file.date}</TableCell>
-                    {file.isDir !== true ? (
-                      <TableCell align='left'>{file.size}</TableCell>
-                    ) : (
-                      <TableCell align='left'></TableCell>
-                    )}
-                  </Container>
-                  <TableCell align='right'>
-                    {file.isDir ? (
-                      <></>
-                    ) : (
-                      <IconButton
-                        id='basic-button'
-                        onClick={DownloadFile(index)}
-                      >
-                        <DownloadForOfflineOutlinedIcon />
-                      </IconButton>
-                    )}
-                  </TableCell>
-                </TableRow>
-              </Link>
+                  <MoreVertIcon />
+                </IconButton>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -230,5 +196,5 @@ const PublicFileList = ({
     </TableContainer>
   )
 }
-export { PublicFileList }
+export { PrivateFileList }
 //handleMenuCloseForRename(index)

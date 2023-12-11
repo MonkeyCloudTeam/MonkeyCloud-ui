@@ -1,9 +1,17 @@
 import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react'
-import type { Files, RenameFileRequestArgs } from './types'
+import type {
+  Files,
+  RenameFileRequestArgs,
+  UploadFileRequestArgs,
+} from './types'
 import { axiosInstance } from '../api'
 import type { AxiosError, AxiosRequestConfig } from 'axios'
-import { PublicFiles } from './types'
-import { BaseQueryArg } from '@reduxjs/toolkit/dist/query/baseQueryTypes'
+import { Buckets, PublicFiles } from './types'
+import {
+  BaseQueryArg,
+  BaseQueryMeta,
+  BaseQueryResult,
+} from '@reduxjs/toolkit/dist/query/baseQueryTypes'
 
 const axiosBaseQuery =
   (
@@ -42,15 +50,18 @@ export const filesApi = createApi({
   tagTypes: ['FILES'],
   baseQuery: axiosBaseQuery({ baseUrl: 'http://localhost:8080' }),
   endpoints: (builder) => ({
-    getFiles: builder.query<Files, string>({
-      query: (path = '') => ({
-        url: '/getFiles',
-        method: 'get',
-        params: {
-          username: localStorage.getItem('username'),
-          folder: path,
-        },
-      }),
+    getFiles: builder.query<Files, { username: string; path: string }>({
+      query: ({ username = '', path = '' }) => {
+        console.log('sssssssssss', username)
+        return {
+          url: '/getFiles',
+          method: 'get',
+          params: {
+            username: username,
+            folder: path,
+          },
+        }
+      },
       async onCacheEntryAdded(args, { getState }) {
         try {
           //await getState
@@ -128,6 +139,38 @@ export const filesApi = createApi({
       async onCacheEntryAdded(args, { getState }) {
         try {
           //await getState
+        } catch {}
+      },
+    }),
+    adminFiles: builder.query<Buckets, string>({
+      query: () => ({
+        url: '/getFilesByAdmin',
+        method: 'get',
+      }),
+      async onCacheEntryAdded(args, { getState }) {
+        try {
+          //await getState
+        } catch {}
+      },
+    }),
+    getPrivateFolder: builder.query<
+      Files,
+      { owner: string; customer: string; folderId: string }
+    >({
+      query: ({ owner = '', customer = '', folderId }) => {
+        return {
+          url: '/getPrivateFolder',
+          method: 'get',
+          params: {
+            owner: owner,
+            customer: customer,
+            folderId: folderId,
+          },
+        }
+      },
+      async onCacheEntryAdded(args, { getState }) {
+        try {
+          //await getState
           console.log('queryFulfilled', getState())
         } catch {}
       },
@@ -139,6 +182,23 @@ export const filesApi = createApi({
           url: '/renameFile',
           method: 'put',
           data: arg,
+        }
+      },
+      invalidatesTags: ['FILES'],
+    }),
+    uploadFile: builder.mutation<any, UploadFileRequestArgs>({
+      query: ({ data, fullPath }) => {
+        return {
+          url: '/uploadFile',
+          method: 'post',
+          data,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          params: {
+            username: localStorage.getItem('username'),
+            fullPath,
+          },
         }
       },
       invalidatesTags: ['FILES'],
@@ -249,11 +309,14 @@ export const {
   useGetFilesQuery,
   useLazyGetFilesQuery,
   useRenameFileMutation,
+  useUploadFileMutation,
   useLazySearchFilesByNameQuery,
   useLazyFilesFavoriteQuery,
   useLazySearchFilesByDateQuery,
   useLazyPublicFoldersQuery,
   useLazyPublicFilesQuery,
+  useLazyAdminFilesQuery,
+  useLazyGetPrivateFolderQuery,
 } = filesApi
 //export const { useSearchFilesByNameQuery, useLazySearchFilesByNameQuery } =
 //filesSearchApi

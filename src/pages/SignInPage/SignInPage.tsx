@@ -63,8 +63,13 @@ const SignInPage = () => {
       localStorage.setItem('token', response.data.accessToken)
       localStorage.setItem('username', response.data.username)
       localStorage.setItem('refreshToken', response.data.refreshToken)
+      localStorage.setItem('role', response.data.role)
       console.log(response)
-      navigate('/main')
+      if (response.data.role === 'admin') {
+        navigate('/admin')
+      } else {
+        navigate('/main')
+      }
     } catch (error) {
       console.error(error)
       //@ts-ignore

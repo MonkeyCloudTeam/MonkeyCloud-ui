@@ -206,7 +206,6 @@ const Header = ({
         username: username,
       })
       console.log(response)
-      localStorage.clear()
     } catch (error) {
       console.error(error)
     }

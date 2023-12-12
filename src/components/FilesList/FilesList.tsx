@@ -12,6 +12,7 @@ import {
   TextField,
   Checkbox,
 } from '@mui/material'
+import { BY_NAME_SEARCH_MODE, BY_DATE_SEARCH_MODE } from '../../constants'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import FolderIcon from '@mui/icons-material/Folder'
@@ -113,6 +114,10 @@ const FilesList = ({
   const handleCloseShareModal = () => setOpenShareModal(false)
   const handleClosePublicModal = () => setOpenPublicAccessModal(false)
 
+  const searchMode = useSelector(
+    (state: RootState) => state.appState.searchMode,
+  )
+
   const handleClick =
     (index: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
       const nextMenus = menus
@@ -178,12 +183,15 @@ const FilesList = ({
         }
       }
     }
-    //@ts-ignore
     if (searchString) {
-      triggerSearch(searchString)
+      if (searchMode === BY_NAME_SEARCH_MODE) {
+        triggerSearch(searchString)
+      } else {
+        triggerSearchByDate(searchString)
+      }
     } else {
       //@ts-ignore
-      await triggerGetFiles({ username, path: pathToTriger })
+      triggerGetFiles({ username, path: pathToTriger })
     }
   }
 
@@ -259,12 +267,15 @@ const FilesList = ({
         console.error(error)
       }
     }
-    //@ts-ignore
     if (searchString) {
-      triggerSearch(searchString)
+      if (searchMode === BY_NAME_SEARCH_MODE) {
+        triggerSearch(searchString)
+      } else {
+        triggerSearchByDate(searchString)
+      }
     } else {
       //@ts-ignore
-      await triggerGetFiles({ username, path: pathToTriger })
+      triggerGetFiles({ username, path: pathToTriger })
     }
     handleMenuClose(index)
   }
@@ -337,21 +348,12 @@ const FilesList = ({
           //@ts-ignore
           newName: (renameFile.value + extension) as string,
         })
-        // const response = await axiosInstance.put('/renameFile', {
-        //   username: username,
-        //   fullPath: cutPath,
-        //   //@ts-ignore
-        //   oldName: data.list[index].name,
-        //   //@ts-ignore
-        //   newName: renameFile.value + extension,
-        //   })
-        //   //@ts-ignore
-        //   data.list[index].name = renameFile.value + extension
-        // } catch (error) {
-        //   console.error(error)
-        // }
         if (searchString) {
-          triggerSearch(searchString)
+          if (searchMode === BY_NAME_SEARCH_MODE) {
+            triggerSearch(searchString)
+          } else {
+            triggerSearchByDate(searchString)
+          }
         } else {
           //@ts-ignore
           triggerGetFiles({ username, path: pathToTriger })
@@ -545,7 +547,7 @@ const FilesList = ({
                       >
                         Доступ - {file.name}
                       </Typography>
-                      <TextField fullWidth id='rename' />
+                      <div>{`http://localhost:3000/private/${file.username}/${file.folderId}`}</div>
                       <Button
                         onClick={handleCloseShareModal}
                         //@ts-ignore

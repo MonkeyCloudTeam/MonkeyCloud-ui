@@ -20,6 +20,15 @@ const style = {
   p: 4,
 }
 
+let pathToPage = ''
+if (localStorage.getItem('role') === 'user') {
+  pathToPage = '/sign-in'
+} else if (localStorage.getItem('role') === 'admin') {
+  pathToPage = 'admin'
+} else {
+  pathToPage = '/sign-in'
+}
+
 const StartPage = () => {
   const [openModal, setOpen] = React.useState(false)
   const handleOpen = () => {
@@ -31,7 +40,7 @@ const StartPage = () => {
     <div className='SignUp_section'>
       <h2>Hello</h2>
       <div>
-        <Link className={styles.link} to='/sign-in/'>
+        <Link className={styles.link} to={`${pathToPage}`}>
           <span>Войти</span>
         </Link>
       </div>

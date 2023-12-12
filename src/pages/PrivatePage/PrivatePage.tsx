@@ -40,7 +40,7 @@ const PrivatePage = () => {
   const [trigerPublicFiles, resultPublicFiles] = useLazyPublicFilesQuery()
   const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
   const data = resultPublicFolder.data
-  const { path } = useParams()
+  const params = useParams()
   const navigate = useNavigate()
   const [modalIsOpen, setIsOpen] = useState(false)
   // const [currentPath, setCurrentPath] = useState(
@@ -61,9 +61,14 @@ const PrivatePage = () => {
   useEffect(() => {
     //@ts-ignore
     triggerGetPublicFolder({
-      owner: 'user50',
-      customer: 'hsebanov',
-      folderId: '92',
+      //@ts-ignore
+      owner: params.owner,
+      //@ts-ignore
+      customer: username,
+      //@ts-ignore
+      folderId: params.folderId,
+    }).then((data) => {
+      console.log(data)
     })
   }, [])
 

@@ -18,6 +18,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import { setSearchMode, setSearchString } from '../../store/commonReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
+import { BY_DATE_SEARCH_MODE, BY_NAME_SEARCH_MODE } from '../../constants'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -58,7 +59,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }))
-
 const SearchField = ({
   triggerGetFiles,
   triggerSearch,
@@ -77,13 +77,13 @@ const SearchField = ({
     dispatch(setSearchString(e.target.value))
   }
   const handleFileSearchClick = () => {
-    dispatch(setSearchMode(true))
+    dispatch(setSearchMode(BY_NAME_SEARCH_MODE))
     triggerSearch(searchString)
   }
 
   const handleFileSearchByDateClick = () => {
     triggerSearchByDate(searchString)
-    dispatch(setSearchMode(true))
+    dispatch(setSearchMode(BY_DATE_SEARCH_MODE))
   }
 
   // const responseForSearchByName = () => async () => {

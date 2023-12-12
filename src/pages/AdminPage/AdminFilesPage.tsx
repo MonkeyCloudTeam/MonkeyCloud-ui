@@ -72,10 +72,10 @@ const AdminFilesPage = () => {
 
   useEffect(() => {
     //@ts-ignore
-    triggerGetFiles({ username: 'user50', path })
+    triggerGetFiles({ username: 'user1', path })
     if (path) {
       //@ts-ignore
-      triggerGetFiles({ username: 'user50', path })
+      triggerGetFiles({ username: 'user1', path })
       //@ts-ignore
       setItemsList(result?.data)
     }

@@ -37,31 +37,18 @@ const AdminSideBar = () => {
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
         <List>
-          {[
-            {
-              name: 'Мои файлы',
-              url: '/main',
-              onClick: () => {
-                dispatch(setSearchMode(false))
-                dispatch(setCurrentPath(''))
-                //@ts-ignore
-                triggerGetFiles({ username, path: '' })
-              },
-            },
-            { name: 'Общий доступ', url: '/public', onClick: () => {} },
-            { name: 'Избранное', url: '/favorites', onClick: () => {} },
-          ].map(({ name, url, onClick }, index) => (
-            <ListItem key={name} disablePadding>
-              <ListItemButton>
-                <Link onClick={onClick} to={url}>
-                  <ListItemIcon>
-                    {index === 1 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={name} />
-                </Link>
-              </ListItemButton>
-            </ListItem>
-          ))}
+          {[{ name: 'На главную', url: '/admin', onClick: () => {} }].map(
+            ({ name, url, onClick }, index) => (
+              <ListItem key={name} disablePadding>
+                <ListItemButton>
+                  <Link onClick={onClick} to={url}>
+                    <InboxIcon />
+                    <ListItemText primary={name} />
+                  </Link>
+                </ListItemButton>
+              </ListItem>
+            ),
+          )}
         </List>
         <Divider />
       </Box>

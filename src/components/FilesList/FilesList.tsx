@@ -179,7 +179,12 @@ const FilesList = ({
       }
     }
     //@ts-ignore
-    await triggerGetFiles({ username, path: pathToTriger })
+    if (searchString) {
+      triggerSearch(searchString)
+    } else {
+      //@ts-ignore
+      await triggerGetFiles({ username, path: pathToTriger })
+    }
   }
 
   const handleTableRowClick = (file: IFile) => async () => {
@@ -230,6 +235,7 @@ const FilesList = ({
     }
     if (data?.list[index].isDir === true) {
       try {
+        debugger
         const response = await axiosInstance.delete('/deleteFolder', {
           params: {
             username: username,
@@ -254,7 +260,12 @@ const FilesList = ({
       }
     }
     //@ts-ignore
-    await triggerGetFiles({ username, path: pathToTriger })
+    if (searchString) {
+      triggerSearch(searchString)
+    } else {
+      //@ts-ignore
+      await triggerGetFiles({ username, path: pathToTriger })
+    }
     handleMenuClose(index)
   }
 
@@ -274,6 +285,7 @@ const FilesList = ({
       console.log(error)
     }
     setOpenPublicAccessModal(false)
+    handleMenuClose(index)
   }
 
   const responseForRenameFile = (index: number) => async () => {

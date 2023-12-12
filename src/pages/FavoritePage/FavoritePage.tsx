@@ -26,44 +26,10 @@ const customStyles = {
 }
 
 const FavoritePage = () => {
-  const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
-  const { path } = useParams()
-  const navigate = useNavigate()
-  const [modalIsOpen, setIsOpen] = useState(false)
-  const [favorite, setFavorite] = useState([])
   const [triggerFavorite, resultFavorite] = useLazyFilesFavoriteQuery()
-  const favoriteData = resultFavorite.data
-  const [currentPath, setCurrentPath] = useState(
-    localStorage.getItem('username') || '',
-  )
   const userToken = localStorage.getItem('token')
-
   if (!userToken) {
     return <Navigate to='/sign-in' />
-  }
-
-  function openModal() {
-    setIsOpen(true)
-  }
-
-  function closeModal() {
-    setIsOpen(false)
-  }
-
-  const handleLogOff = async () => {
-    try {
-      const response = await axiosInstance.post('/sign-out')
-      console.log(response.data)
-      localStorage.clear()
-    } catch (error) {
-      console.error(error)
-      //@ts-ignore
-      if (error?.response.status === 409) {
-        localStorage.clear()
-        navigate('/sign-in')
-      }
-    }
-    navigate('/sign-in')
   }
 
   return (
@@ -75,11 +41,8 @@ const FavoritePage = () => {
         <SideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
-        {/*<CurrentPath currentPath={currentPath} />*/}
         <FavoriteFilesList
           triggerFavorite={triggerFavorite}
-          setCurrentPath={setCurrentPath}
-          triggerGetFiles={triggerGetFiles}
           data={resultFavorite?.data}
         />
       </Grid>

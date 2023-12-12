@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import {
-  Button,
   Container,
   IconButton,
   Paper,
@@ -9,36 +8,14 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  TextField,
-  Checkbox,
 } from '@mui/material'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import FolderIcon from '@mui/icons-material/Folder'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import Modal from '@mui/material/Modal'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { axiosInstance, axiosInstanceForDownload } from '../../api'
 import styles from './PrivateFileLiist.module.scss'
-import { useMenus } from '../../hooks/useMenus'
-import {
-  useGetFilesQuery,
-  useLazyGetFilesQuery,
-  useRenameFileMutation,
-} from '../../store/filesSlice'
 import { IFile } from '../../store/types'
-import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
-import Favorite from '@mui/icons-material/Favorite'
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
-import BookmarkIcon from '@mui/icons-material/Bookmark'
-import { Link, useParams } from 'react-router-dom'
-import { GoStar, GoStarFill } from 'react-icons/go'
-import StarBorderIcon from '@mui/icons-material/StarBorder'
-import StarIcon from '@mui/icons-material/Star'
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
 import { setCurrentPath } from '../../store/commonReducer'
 
 const style = {

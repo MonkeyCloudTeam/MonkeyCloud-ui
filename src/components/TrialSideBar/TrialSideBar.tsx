@@ -21,7 +21,7 @@ import { useDispatch } from 'react-redux'
 
 const drawerWidth = 320
 
-const SideBar = () => {
+const TrialSideBar = () => {
   const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
   const dispatch = useDispatch()
   const username = localStorage.getItem('username')
@@ -37,31 +37,20 @@ const SideBar = () => {
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
         <List>
-          {[
-            {
-              name: 'Мои файлы',
-              url: '/main',
-              onClick: () => {
-                dispatch(setSearchMode(false))
-                dispatch(setCurrentPath(''))
-                //@ts-ignore
-                triggerGetFiles({ username, path: '' })
-              },
-            },
-            { name: 'Общий доступ', url: '/public', onClick: () => {} },
-            { name: 'Избранное', url: '/favorites', onClick: () => {} },
-          ].map(({ name, url, onClick }, index) => (
-            <ListItem key={name} disablePadding>
-              <ListItemButton>
-                <Link onClick={onClick} to={url}>
-                  <ListItemIcon>
-                    {index === 1 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={name} />
-                </Link>
-              </ListItemButton>
-            </ListItem>
-          ))}
+          {[{ name: 'Общий доступ', url: '/trial', onClick: () => {} }].map(
+            ({ name, url, onClick }, index) => (
+              <ListItem key={name} disablePadding>
+                <ListItemButton>
+                  <Link onClick={onClick} to={url}>
+                    <ListItemIcon>
+                      <InboxIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={name} />
+                  </Link>
+                </ListItemButton>
+              </ListItem>
+            ),
+          )}
         </List>
         <Divider />
       </Box>
@@ -69,15 +58,4 @@ const SideBar = () => {
   )
 }
 
-export { SideBar }
-// <aside className={styles.SideBar}>
-//   <Link to='/main' className={styles.SideBar__link}>
-//     Мои файлы
-//   </Link>
-//   <Link to='/main' className={styles.SideBar__link}>
-//     Общий доступ
-//   </Link>
-//   <Link to='/favorites' className={styles.SideBar__link}>
-//     Избранное
-//   </Link>
-// </aside>
+export { TrialSideBar }

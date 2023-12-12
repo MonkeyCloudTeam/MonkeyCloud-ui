@@ -20,6 +20,9 @@ import {
 } from '../../store/filesSlice'
 import { HeaderPublic } from '../../components/HeaderPublic/HeaderPublic'
 import { PublicCurrentPath } from '../../components/PublicCurrentPath/PublicCurrentPath'
+import { TrialFileList } from '../../components/TrialFileList/TrialFileList'
+import { TrialSideBar } from '../../components/TrialSideBar/TrialSideBar'
+import { HeaderTrial } from '../../components/HeaderTrial/HeaderTrial'
 
 const customStyles = {
   content: {
@@ -32,7 +35,7 @@ const customStyles = {
   },
 }
 
-const PublicPage = () => {
+const TrialPage = () => {
   const [triggerPublicFolders, resultPublicFolders] =
     useLazyPublicFoldersQuery()
   const [trigerPublicFiles, resultPublicFiles] = useLazyPublicFilesQuery()
@@ -52,9 +55,6 @@ const PublicPage = () => {
     //openModal()
   }, [])
   // console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSS', trigerPublicFiles)
-  if (!userToken) {
-    return <Navigate to='/sign-in' />
-  }
 
   function openModal() {
     setIsOpen(true)
@@ -67,17 +67,17 @@ const PublicPage = () => {
   return (
     <Grid container spacing={0}>
       <Grid xs={12}>
-        <HeaderPublic setSearchString={setSearchString} />
+        <HeaderTrial />
       </Grid>
       <Grid xs={2}>
-        <SideBar />
+        <TrialSideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
         <PublicCurrentPath
           //@ts-ignore
           currentPath={resultPublicFiles?.data?.breadCrumbs}
         />
-        <PublicFileList
+        <TrialFileList
           currentPath={resultPublicFiles?.data?.breadCrumbs}
           triggerPublicFolders={triggerPublicFolders}
           trigerPublicFiles={trigerPublicFiles}
@@ -88,4 +88,4 @@ const PublicPage = () => {
     </Grid>
   )
 }
-export { PublicPage }
+export { TrialPage }

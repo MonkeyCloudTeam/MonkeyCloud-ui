@@ -13,6 +13,8 @@ import { AdminProtectedRoute } from './pages/ProtectedRoute/AdminProtectedRoute'
 import { PublicFilesPage } from './pages/PublicPage/PublicFilesPage'
 import { AdminFilesPage } from './pages/AdminPage/AdminFilesPage'
 import { PrivatePage } from './pages/PrivatePage/PrivatePage'
+import { TrialPage } from './pages/TrialPage/TrialPage'
+import { TrialFilesPage } from './pages/TrialPage/TrialFilesPage'
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -51,6 +53,10 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: '/trial',
+    element: <TrialPage />,
+  },
+  {
     path: '/private',
     element: (
       <ProtectedRoute>
@@ -65,6 +71,10 @@ export const router = createBrowserRouter([
         <PublicFilesPage />
       </ProtectedRoute>
     ),
+  },
+  {
+    path: '/trial/:path',
+    element: <TrialFilesPage />,
   },
   {
     path: '/admin',

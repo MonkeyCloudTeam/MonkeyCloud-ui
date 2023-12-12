@@ -4,7 +4,8 @@ import Typography from '@mui/material/Typography'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Link from '@mui/material/Link'
 import { setCurrentPath } from '../../store/commonReducer'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 const CurrentPath = ({
   currentPath,
   triggerGetFiles,

@@ -26,7 +26,10 @@ import { useMenus } from '../../hooks/useMenus'
 import {
   useGetFilesQuery,
   useLazyGetFilesQuery,
+  useLazySearchFilesByDateQuery,
+  useLazySearchFilesByNameQuery,
   useRenameFileMutation,
+  useRenameFolderMutation,
 } from '../../store/filesSlice'
 import { IFile } from '../../store/types'
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
@@ -74,12 +77,15 @@ const FilesList = ({
   const [menus, setMenus] = useState([])
   const open = Boolean(anchorEl)
   const [triggerRenameMutation, resultMutationRename] = useRenameFileMutation()
+  const [triggerRenameFolderMutation, resultMutationRenameFolder] =
+    useRenameFolderMutation()
   const [openModal, setOpen] = React.useState(false)
   const [openShareModal, setOpenShareModal] = React.useState(false)
   const [openPublicAccessModal, setOpenPublicAccessModal] =
     React.useState(false)
   const dispatch = useDispatch()
-
+  const [resultSearch] = useLazySearchFilesByNameQuery()
+  const [resultSearchByDate] = useLazySearchFilesByDateQuery()
   const searchString = useSelector(
     (state: RootState) => state.appState.searchString,
   )
@@ -295,15 +301,17 @@ const FilesList = ({
     //@ts-ignore
     if (data.list[index].isDir === true) {
       try {
-        const response = await axiosInstance.put('/renameFolder', {
-          username: username,
-          fullPath: cutPath,
+        await triggerRenameFolderMutation({
+          username: username as string,
+          fullPath: cutPath as string,
           //@ts-ignore
-          oldName: data.list[index].name,
-          //TODO Нельзя давать пользователю ставить расширешние (.) в название папки P.S Запретить пользователю использовать точку.
-          newName: renameFile.value,
+          oldName: data.list[index].name as string,
+          //@ts-ignore
+          newName: renameFile.value as string,
         })
-        console.log(response)
+        //@ts-ignore
+        triggerGetFiles({ username, path: pathToTriger })
+        handleClose()
       } catch (error) {
         console.error(error)
       }

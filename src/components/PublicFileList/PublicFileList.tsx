@@ -12,32 +12,16 @@ import {
   TextField,
   Checkbox,
 } from '@mui/material'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import FolderIcon from '@mui/icons-material/Folder'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import Modal from '@mui/material/Modal'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { axiosInstance, axiosInstanceForDownload } from '../../api'
 import styles from './PublicFileList.module.scss'
-import { useMenus } from '../../hooks/useMenus'
 import DownloadForOfflineOutlinedIcon from '@mui/icons-material/DownloadForOfflineOutlined'
-import {
-  useGetFilesQuery,
-  useLazyGetFilesQuery,
-  useLazyPublicFilesQuery,
-} from '../../store/filesSlice'
+import { setCurrentPath } from '../../store/commonReducer'
 import { IFile } from '../../store/types'
-import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
-import Favorite from '@mui/icons-material/Favorite'
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
-import BookmarkIcon from '@mui/icons-material/Bookmark'
+
 import { Link, useParams } from 'react-router-dom'
-import { GoStar, GoStarFill } from 'react-icons/go'
-import StarBorderIcon from '@mui/icons-material/StarBorder'
-import StarIcon from '@mui/icons-material/Star'
+import { useDispatch } from 'react-redux'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -52,15 +36,15 @@ const style = {
 }
 
 const PublicFileList = ({
-  setCurrentPath,
+  currentPath,
   trigerPublicFiles,
   data,
   triggerPublicFolders,
 }: {
-  setCurrentPath: (currentPath: string) => void
   data: any
   triggerPublicFolders?: any
   trigerPublicFiles?: any
+  currentPath: any
 }) => {
   // const bc = data?.list[0]?.breadCrums as string
   // localStorage.setItem('breadCrums', bc)
@@ -74,6 +58,7 @@ const PublicFileList = ({
   const [openShareModal, setOpenShareModal] = React.useState(false)
   const [openPublicAccessModal, setOpenPublicAccessModal] =
     React.useState(false)
+  const dispatch = useDispatch()
   const username = localStorage.getItem('username')
   const label1 = { inputProps: { 'aria-label': 'Checkbox none' } }
   useEffect(() => {
@@ -84,9 +69,9 @@ const PublicFileList = ({
     }
   }, [data])
   useEffect(() => {
-    const bc = data?.list[0]?.breadCrums as string
-    localStorage.setItem('breadCrums', bc)
-    //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
+    dispatch(setCurrentPath('...'))
+    //const bc = data.breadCrumbs
+    //localStorage.setItem('breadCrums', bc)
   }, [])
   const handleOpen = () => {
     setOpen(true)

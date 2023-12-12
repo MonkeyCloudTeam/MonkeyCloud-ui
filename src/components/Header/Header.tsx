@@ -202,10 +202,8 @@ const Header = ({
     ) as HTMLInputElement
     try {
       const response = await axiosInstance.post('/addTelegramId', {
-        body: {
-          telegramId: telegrammId.value,
-          username: username,
-        },
+        telegramId: telegrammId.value,
+        username: username,
       })
       console.log(response)
       localStorage.clear()

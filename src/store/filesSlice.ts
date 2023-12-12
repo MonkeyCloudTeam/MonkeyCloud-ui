@@ -186,6 +186,17 @@ export const filesApi = createApi({
       },
       invalidatesTags: ['FILES'],
     }),
+    renameFolder: builder.mutation<any, RenameFileRequestArgs>({
+      query: (arg) => {
+        console.log(arg)
+        return {
+          url: '/renameFolder',
+          method: 'put',
+          data: arg,
+        }
+      },
+      invalidatesTags: ['FILES'],
+    }),
     uploadFile: builder.mutation<any, UploadFileRequestArgs>({
       query: ({ data, fullPath }) => {
         return {
@@ -310,6 +321,7 @@ export const {
   useLazyGetFilesQuery,
   useRenameFileMutation,
   useUploadFileMutation,
+  useRenameFolderMutation,
   useLazySearchFilesByNameQuery,
   useLazyFilesFavoriteQuery,
   useLazySearchFilesByDateQuery,

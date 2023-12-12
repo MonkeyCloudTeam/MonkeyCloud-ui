@@ -86,6 +86,7 @@ const SignUpPage = () => {
       localStorage.setItem('token', response.data.accessToken)
       localStorage.setItem('username', response.data.username)
       localStorage.setItem('refreshToken', response.data.refreshToken)
+      localStorage.setItem('memory', response.data.size)
       console.log(response)
       navigate('/main')
     } catch (error) {

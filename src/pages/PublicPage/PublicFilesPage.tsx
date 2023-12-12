@@ -49,7 +49,7 @@ const PublicFilesPage = () => {
         <SideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
-        <PublicCurrentPath currentPath={currentPath} />
+        {/*<PublicCurrentPath currentPath={currentPath} />*/}
         <PublicFileList
           currentPath={currentPath}
           trigerPublicFiles={trigerPublicFiles}

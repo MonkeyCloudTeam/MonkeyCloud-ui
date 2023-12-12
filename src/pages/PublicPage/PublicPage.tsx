@@ -73,10 +73,10 @@ const PublicPage = () => {
         <SideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
-        <PublicCurrentPath
-          //@ts-ignore
-          currentPath={resultPublicFiles?.data?.breadCrumbs}
-        />
+        {/*<PublicCurrentPath*/}
+        {/*  //@ts-ignore*/}
+        {/*  currentPath={resultPublicFiles?.data?.breadCrumbs}*/}
+        {/*/>*/}
         <PublicFileList
           currentPath={resultPublicFiles?.data?.breadCrumbs}
           triggerPublicFolders={triggerPublicFolders}

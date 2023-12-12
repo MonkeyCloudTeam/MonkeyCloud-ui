@@ -63,6 +63,7 @@ const SignInPage = () => {
       localStorage.setItem('token', response.data.accessToken)
       localStorage.setItem('username', response.data.username)
       localStorage.setItem('refreshToken', response.data.refreshToken)
+      localStorage.setItem('memory', response.data.size)
       localStorage.setItem('role', response.data.role)
       console.log(response)
       if (response.data.role === 'admin') {

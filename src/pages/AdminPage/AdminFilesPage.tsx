@@ -126,10 +126,10 @@ const AdminFilesPage = () => {
         <AdminSideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
-        <CurrentPath
-          currentPath={currentPath}
-          triggerGetFiles={triggerGetFiles}
-        />
+        {/*<CurrentPath*/}
+        {/*  currentPath={currentPath}*/}
+        {/*  triggerGetFiles={triggerGetFiles}*/}
+        {/*/>*/}
         {/*<AdminFileList*/}
         {/*  triggerGetFiles={triggerGetFiles}*/}
         {/*  triggerAdminFiles={triggerAdminFiles}*/}

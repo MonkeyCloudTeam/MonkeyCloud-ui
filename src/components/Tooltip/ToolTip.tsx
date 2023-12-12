@@ -65,6 +65,12 @@ const ToolTip = () => {
         await triggerUploadFile({
           data: formData,
           fullPath: pathForGet,
+        }).then((data) => {
+          console.log(data)
+          if (data) {
+            //@ts-ignore
+            localStorage.setItem('memory', data.data.size)
+          }
         })
         //@ts-ignore
         triggerGetFiles({ username, path: pathForGet })
@@ -115,6 +121,7 @@ const ToolTip = () => {
             },
           },
         )
+        localStorage.setItem('memory', response.data.size)
         // await getFiles().then((files) => setFiles(files))
         //const data = await response.json()
         console.log(response)

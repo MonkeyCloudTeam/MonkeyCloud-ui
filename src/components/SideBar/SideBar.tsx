@@ -64,6 +64,10 @@ const SideBar = () => {
           ))}
         </List>
         <Divider />
+        <List>
+          <ListItem>Занято:</ListItem>
+          <ListItem>{localStorage.getItem('memory')} MB / 1 GB </ListItem>
+        </List>
       </Box>
     </Drawer>
   )

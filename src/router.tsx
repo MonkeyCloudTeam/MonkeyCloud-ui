@@ -15,6 +15,7 @@ import { AdminFilesPage } from './pages/AdminPage/AdminFilesPage'
 import { PrivatePage } from './pages/PrivatePage/PrivatePage'
 import { TrialPage } from './pages/TrialPage/TrialPage'
 import { TrialFilesPage } from './pages/TrialPage/TrialFilesPage'
+import { PrivateFilesPage } from './pages/PrivatePage/PrivateFilesPage'
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -57,10 +58,18 @@ export const router = createBrowserRouter([
     element: <TrialPage />,
   },
   {
-    path: '/private',
+    path: '/private/:owner/:folderId',
     element: (
       <ProtectedRoute>
         <PrivatePage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/private/:owner/:folderId/*',
+    element: (
+      <ProtectedRoute>
+        <PrivateFilesPage />
       </ProtectedRoute>
     ),
   },
@@ -92,9 +101,17 @@ export const router = createBrowserRouter([
       </AdminProtectedRoute>
     ),
   },
+  {
+    path: '/admin/:bucket/:filename/*',
+    element: (
+      <AdminProtectedRoute>
+        <AdminFilesPage />
+      </AdminProtectedRoute>
+    ),
+  },
 ])
 
-// children: [
+// children: [ PrivateFilePage
 //   {PublicPage PrivatePage
 //     path: 'main/favorites/',
 //     element: (AdminPage

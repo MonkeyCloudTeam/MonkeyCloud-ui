@@ -17,6 +17,8 @@ import styles from './PrivateFileLiist.module.scss'
 import { IFile } from '../../store/types'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCurrentPath } from '../../store/commonReducer'
+import { Link, useParams } from 'react-router-dom'
+import DownloadForOfflineOutlinedIcon from '@mui/icons-material/DownloadForOfflineOutlined'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -42,6 +44,7 @@ const PrivateFileList = ({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [menus, setMenus] = useState([])
   const open = Boolean(anchorEl)
+  const params = useParams()
   const dispatch = useDispatch()
 
   const username = localStorage.getItem('username')
@@ -61,10 +64,9 @@ const PrivateFileList = ({
       setMenus(nextMenus)
       setAnchorEl(event.currentTarget)
     }
-
   const handleTableRowClick = (file: IFile) => async () => {
     let headerPath = file.folderId
-    trigerPublicFiles(headerPath)
+    //trigerPublicFiles(headerPath)
     console.log(headerPath)
     if (file.isDir) {
       dispatch(setCurrentPath(headerPath))
@@ -131,41 +133,48 @@ const PrivateFileList = ({
       <Table sx={{ minWidth: 650 }} aria-label='customized table'>
         <TableBody>
           {data?.list.map((file: IFile, index: number) => (
-            <TableRow
-              //Поставить on click и проверить is dir //set files // вызывать функцию
-              key={`${file.name}-${index}`}
-              sx={{
-                '&:last-child td, &:last-child th': { border: 0 },
-                verticalAlign: 'baseline',
-              }}
-            >
-              <Container
-                onClick={handleTableRowClick(file)}
-                className={styles.TableRowInnerContainer}
+            <TableRow>
+              <Link
+                className={styles.link}
+                to={`/private/${params.owner}/${params.folderId}/${file.folderId}`}
               >
-                {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
-                <TableCell component='th' scope='row'>
-                  {file.name}
-                </TableCell>
-                <TableCell align='left'>{file.username}</TableCell>
-                <TableCell align='left'>{file.date}</TableCell>
-                {file.isDir !== true ? (
-                  <TableCell align='left'>{file.size}</TableCell>
-                ) : (
-                  <TableCell align='left'>‒</TableCell>
-                )}
-              </Container>
-              <TableCell align='right'>
-                <IconButton
-                  id='basic-button'
-                  aria-controls={open ? 'basic-menu' : undefined}
-                  aria-haspopup='true'
-                  aria-expanded={open ? 'true' : undefined}
-                  onClick={DownloadFile(index)}
+                <TableRow
+                  key={file.name}
+                  sx={{
+                    '&:last-child td, &:last-child th': { border: 0 },
+                    verticalAlign: 'baseline',
+                  }}
                 >
-                  <MoreVertIcon />
-                </IconButton>
-              </TableCell>
+                  <Container
+                    onClick={handleTableRowClick(file)}
+                    className={styles.TableRowInnerContainer}
+                  >
+                    {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
+                    <TableCell component='th' scope='row'>
+                      {file.name}
+                    </TableCell>
+                    <TableCell align='left'>{file.username}</TableCell>
+                    <TableCell align='left'>{file.date}</TableCell>
+                    {file.isDir !== true ? (
+                      <TableCell align='left'>{file.size}</TableCell>
+                    ) : (
+                      <TableCell align='left'></TableCell>
+                    )}
+                  </Container>
+                  <TableCell align='right'>
+                    {file.isDir ? (
+                      <></>
+                    ) : (
+                      <IconButton
+                        id='basic-button'
+                        onClick={DownloadFile(index)}
+                      >
+                        <DownloadForOfflineOutlinedIcon />
+                      </IconButton>
+                    )}
+                  </TableCell>
+                </TableRow>
+              </Link>
             </TableRow>
           ))}
         </TableBody>

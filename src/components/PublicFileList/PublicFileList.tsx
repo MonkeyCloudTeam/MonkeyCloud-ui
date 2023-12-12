@@ -170,14 +170,29 @@ const PublicFileList = ({
         <TableBody>
           {data?.list.map((file: IFile, index: number) => (
             <TableRow>
-              <Link className={styles.link} to={`/public/${file.folderId}`}>
-                <TableRow
-                  key={file.name}
-                  sx={{
-                    '&:last-child td, &:last-child th': { border: 0 },
-                    verticalAlign: 'baseline',
-                  }}
-                >
+              <TableRow
+                key={file.name}
+                sx={{
+                  '&:last-child td, &:last-child th': { border: 0 },
+                  verticalAlign: 'baseline',
+                }}
+              >
+                {file.isDir ? (
+                  <Link className={styles.link} to={`/public/${file.folderId}`}>
+                    <Container
+                      onClick={handleTableRowClick(file)}
+                      className={styles.TableRowInnerContainer}
+                    >
+                      {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
+                      <TableCell component='th' scope='row'>
+                        {file.name}
+                      </TableCell>
+                      <TableCell align='left'>{file.username}</TableCell>
+                      <TableCell align='left'>{file.date}</TableCell>
+                      <TableCell align='left'></TableCell>
+                    </Container>
+                  </Link>
+                ) : (
                   <Container
                     onClick={handleTableRowClick(file)}
                     className={styles.TableRowInnerContainer}
@@ -188,26 +203,19 @@ const PublicFileList = ({
                     </TableCell>
                     <TableCell align='left'>{file.username}</TableCell>
                     <TableCell align='left'>{file.date}</TableCell>
-                    {file.isDir !== true ? (
-                      <TableCell align='left'>{file.size}</TableCell>
-                    ) : (
-                      <TableCell align='left'></TableCell>
-                    )}
+                    <TableCell align='left'>{file.size}</TableCell>
                   </Container>
-                  <TableCell align='right'>
-                    {file.isDir ? (
-                      <></>
-                    ) : (
-                      <IconButton
-                        id='basic-button'
-                        onClick={DownloadFile(index)}
-                      >
-                        <DownloadForOfflineOutlinedIcon />
-                      </IconButton>
-                    )}
-                  </TableCell>
-                </TableRow>
-              </Link>
+                )}
+                <TableCell align='right'>
+                  {file.isDir ? (
+                    <></>
+                  ) : (
+                    <IconButton id='basic-button' onClick={DownloadFile(index)}>
+                      <DownloadForOfflineOutlinedIcon />
+                    </IconButton>
+                  )}
+                </TableCell>
+              </TableRow>
             </TableRow>
           ))}
         </TableBody>

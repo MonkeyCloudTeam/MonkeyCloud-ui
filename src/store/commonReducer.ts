@@ -5,7 +5,7 @@ export const appSlice = createSlice({
   initialState: {
     searchString: '',
     currentPath: '',
-    searchMode: false,
+    searchMode: '',
   },
   reducers: {
     setSearchString: (state, action) => {

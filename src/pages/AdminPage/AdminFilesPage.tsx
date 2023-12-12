@@ -39,7 +39,8 @@ const AdminFilesPage = () => {
   const [triggerSearchByDate, resultSearchByDate] =
     useLazySearchFilesByDateQuery()
   const [triggerAdminFiles, resultAdminFiles] = useLazyAdminFilesQuery()
-  const { path } = useParams()
+  const params = useParams()
+  console.log('FILEPAGEPATH', params)
   const navigate = useNavigate()
   const [itemsList, setItemsList] = useState([])
   const [data, setData] = useState()
@@ -69,18 +70,24 @@ const AdminFilesPage = () => {
   //   //DownloadFile()
   //   //openModal()
   // }, [searchMode, resultSearch, resultSearchByDate, result])
-
   useEffect(() => {
-    //@ts-ignore
-    triggerGetFiles({ username: 'user1', path })
-    if (path) {
-      //@ts-ignore
-      triggerGetFiles({ username: 'user1', path })
+    console.log('ParamsPath', `${params.filename}/${params['*']}`)
+    if (params) {
+      if (params.bucket && params.filename) {
+        //@ts-ignore
+        triggerGetFiles({
+          username: params.bucket,
+          path: `${params.filename}/${params['*']}`,
+        })
+      } else {
+        //@ts-ignore
+        triggerGetFiles({ username: params.bucket, path: '' })
+      }
       //@ts-ignore
       setItemsList(result?.data)
     }
     //triggerGetFiles()
-  }, [path])
+  }, [params])
 
   if (!userToken) {
     return <Navigate to='/sign-in' />

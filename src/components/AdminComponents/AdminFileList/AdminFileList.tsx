@@ -28,6 +28,7 @@ import {
   useLazyGetFilesQuery,
   useLazyPublicFilesQuery,
   useRenameFileMutation,
+  useRenameFolderMutation,
 } from '../../../store/filesSlice'
 import { IFile } from '../../../store/types'
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
@@ -67,7 +68,8 @@ const AdminFileList = ({
 }) => {
   // const bc = data?.list[0]?.breadCrums as string
   //localStorage.setItem('breadCrums', bc)
-  const { path } = useParams()
+  const params = useParams()
+  console.log('PARAMS', params)
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
   //const { data, error, isLoading } = useGetFilesQuery(path || '')
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -99,7 +101,8 @@ const AdminFileList = ({
     localStorage.setItem('breadCrums', bc)
     //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
   }, [])
-
+  const [triggerRenameFolderMutation, resultMutationRenameFolder] =
+    useRenameFolderMutation()
   const handleOpen = () => {
     setOpen(true)
   }
@@ -122,66 +125,6 @@ const AdminFileList = ({
       setMenus(nextMenus)
       setAnchorEl(event.currentTarget)
     }
-
-  const FavoriteFileRequest = (index: number) => async () => {
-    const Path = data?.list[index].breadCrums
-    let pathToTriger = ''
-    if (username === data?.list[index].breadCrums) {
-      pathToTriger = ''
-    } else {
-      pathToTriger = Path?.substring(Path?.indexOf('/') + 1) + '/'
-    }
-    if (data?.list[index].isDir) {
-      if (data?.list[index].isFavorite) {
-        try {
-          const response = await axiosInstance.post(
-            '/removeFolderFromFavorite',
-            {
-              username: username,
-              fullPath: data.list[index].path,
-            },
-          )
-          console.log(response)
-        } catch (error) {
-          console.error(error)
-        }
-      } else {
-        try {
-          const response = await axiosInstance.post('/addFolderToFavorite', {
-            username: username,
-            fullPath: data.list[index].path,
-          })
-          console.log(response)
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    } else {
-      if (data?.list[index].isFavorite) {
-        try {
-          const response = await axiosInstance.post('/removeFromFavorite', {
-            username: username,
-            fullPath: data?.list[index].path,
-          })
-          console.log(response)
-        } catch (error) {
-          console.error(error)
-        }
-      } else {
-        try {
-          const response = await axiosInstance.post('/addToFavorite', {
-            username: username,
-            fullPath: data?.list[index].path,
-          })
-          console.log(response)
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    }
-    //@ts-ignore
-    await triggerGetFiles({ username, path: pathToTriger })
-  }
 
   const handleTableRowClick = (file: IFile) => async () => {
     console.log(file)
@@ -225,7 +168,7 @@ const AdminFileList = ({
   const handleMenuCloseForDelete = (index: number) => async () => {
     const Path = data?.list[index].breadCrums
     let pathToTriger = ''
-    if (username === data?.list[index].breadCrums) {
+    if (data.list[index].username === data?.list[index].breadCrums) {
       pathToTriger = ''
     } else {
       pathToTriger = Path?.substring(Path?.indexOf('/') + 1) + '/'
@@ -234,7 +177,7 @@ const AdminFileList = ({
       try {
         const response = await axiosInstance.delete('/deleteFolder', {
           params: {
-            username: username,
+            username: data.list[index].username,
             fullPath: data.list[index].path,
           },
         })
@@ -246,7 +189,7 @@ const AdminFileList = ({
       try {
         const response = await axiosInstance.delete('/deleteFile', {
           params: {
-            username: username,
+            username: data.list[index].username,
             fullPath: data?.list[index].path,
           },
         })
@@ -255,8 +198,15 @@ const AdminFileList = ({
         console.error(error)
       }
     }
-    //@ts-ignore
-    await triggerGetFiles({ username, path: pathToTriger })
+    if (params.bucket && params.filename) {
+      triggerGetFiles({
+        username: params.bucket,
+        path: `${params.filename}/${params['*']}`,
+      })
+    } else {
+      //@ts-ignore
+      triggerGetFiles({ username: params.bucket, path: '' })
+    }
     handleMenuClose(index)
   }
 
@@ -280,65 +230,62 @@ const AdminFileList = ({
 
   const responseForRenameFile = (index: number) => async () => {
     const renameFile = document.getElementById('rename') as HTMLInputElement
-    console.log(renameFile)
-    //@ts-ignore
     const fileName = data.list[index].name
     const extension = fileName.substring(fileName.lastIndexOf('.'))
-    //@ts-ignore
     const path = data.list[index].breadCrums
     let cutPath = ''
-    //@ts-ignore
-    if (data.list[index].breadCrums === localStorage.getItem('username')) {
+    if (data.list[index].breadCrums === data.list[index].username) {
       cutPath = ''
     } else {
       cutPath = path.substring(path.indexOf('/') + 1) + '/'
     }
     const Path = data?.list[index].breadCrums
-    let pathToTriger = ''
-    if (username === data?.list[index].breadCrums) {
-      pathToTriger = ''
-    } else {
-      pathToTriger = Path?.substring(Path?.indexOf('/') + 1) + '/'
-    }
-    //@ts-ignore
     if (data.list[index].isDir === true) {
       try {
-        const response = await axiosInstance.put('/renameFolder', {
-          username: username,
-          fullPath: cutPath,
+        await triggerRenameFolderMutation({
+          username: data.list[index].username as string,
+          fullPath: cutPath as string,
           //@ts-ignore
-          oldName: data.list[index].name,
-          //TODO Нельзя давать пользователю ставить расширешние (.) в название папки P.S Запретить пользователю использовать точку.
-          newName: renameFile.value,
+          oldName: data.list[index].name as string,
+          //@ts-ignore
+          newName: renameFile.value as string,
         })
-        console.log(response)
+        //@ts-ignore
+        if (params.bucket && params.filename) {
+          //@ts-ignore
+          triggerGetFiles({
+            username: params.bucket,
+            path: `${params.filename}/${params['*']}`,
+          })
+        } else {
+          //@ts-ignore
+          triggerGetFiles({ username: params.bucket, path: '' })
+        }
+        handleClose()
       } catch (error) {
         console.error(error)
       }
     } else {
       try {
         await triggerRenameMutation({
-          username: username as string,
+          username: data.list[index].username as string,
           fullPath: cutPath as string,
           //@ts-ignore
           oldName: data.list[index].name as string,
           //@ts-ignore
           newName: (renameFile.value + extension) as string,
         })
-        // const response = await axiosInstance.put('/renameFile', {
-        //   username: username,
-        //   fullPath: cutPath,
-        //   //@ts-ignore
-        //   oldName: data.list[index].name,
-        //   //@ts-ignore
-        //   newName: renameFile.value + extension,
-        //   })
-        //   //@ts-ignore
-        //   data.list[index].name = renameFile.value + extension
-        // } catch (error) {
-        //   console.error(error)
-        // }
-        triggerGetFiles({ username, path: pathToTriger })
+        //@ts-ignore
+        if (params.bucket && params.filename) {
+          //@ts-ignore
+          triggerGetFiles({
+            username: params.bucket,
+            path: `${params.filename}/${params['*']}`,
+          })
+        } else {
+          //@ts-ignore
+          triggerGetFiles({ username: params.bucket, path: '' })
+        }
         handleClose()
       } catch (error) {
         console.log(error)
@@ -346,13 +293,6 @@ const AdminFileList = ({
     }
   }
 
-  // const downloadFile = () => {
-  //   window.open(
-  //     'http://localhost:8080/downloadFile?username=user1&fullPath=32.psd',
-  //     '_blank',
-  //     'noopener,noreferrer',
-  //   )
-  // }
   const DownloadFile = (index: number) => async () => {
     function saveAs(uri: any, filename: any) {
       const link = document.createElement('a')
@@ -390,7 +330,7 @@ const AdminFileList = ({
   }
 
   if (!data?.list.length) {
-    return <div>Папка пуста. Загрузите файлы.</div>
+    return <div>Пользователь ещё не загрузил файлы.</div>
   }
   return (
     <TableContainer component={Paper}>
@@ -398,14 +338,32 @@ const AdminFileList = ({
         <TableBody>
           {data?.list.map((file: IFile, index: number) => (
             <TableRow>
-              <Link className={styles.link} to={`/admin/${file.path}`}>
-                <TableRow
-                  key={`${file.name}-${index}`}
-                  sx={{
-                    '&:last-child td, &:last-child th': { border: 0 },
-                    verticalAlign: 'baseline',
-                  }}
-                >
+              <TableRow
+                key={`${file.name}-${index}`}
+                sx={{
+                  '&:last-child td, &:last-child th': { border: 0 },
+                  verticalAlign: 'baseline',
+                }}
+              >
+                {file.isDir ? (
+                  <Link
+                    className={styles.link}
+                    to={`/admin/${params.bucket}/${file.path}`}
+                  >
+                    <Container
+                      onClick={handleTableRowClick(file)}
+                      className={styles.TableRowInnerContainer}
+                    >
+                      {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
+                      <TableCell component='th' scope='row'>
+                        {file.name}
+                      </TableCell>
+                      <TableCell align='left'>{file.username}</TableCell>
+                      <TableCell align='left'>{file.date}</TableCell>
+                      <TableCell align='left'>‒</TableCell>
+                    </Container>
+                  </Link>
+                ) : (
                   <Container
                     onClick={handleTableRowClick(file)}
                     className={styles.TableRowInnerContainer}
@@ -416,140 +374,64 @@ const AdminFileList = ({
                     </TableCell>
                     <TableCell align='left'>{file.username}</TableCell>
                     <TableCell align='left'>{file.date}</TableCell>
-                    {file.isDir !== true ? (
-                      <TableCell align='left'>{file.size}</TableCell>
-                    ) : (
-                      <TableCell align='left'>‒</TableCell>
-                    )}
+                    <TableCell align='left'>{file.size}</TableCell>
                   </Container>
-                  <TableCell align='right'>
-                    <IconButton
-                      id='basic-button'
-                      aria-controls={open ? 'basic-menu' : undefined}
-                      aria-haspopup='true'
-                      aria-expanded={open ? 'true' : undefined}
-                      onClick={handleClick(index)}
+                )}
+                <TableCell align='right'>
+                  <IconButton
+                    id='basic-button'
+                    aria-controls={open ? 'basic-menu' : undefined}
+                    aria-haspopup='true'
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleClick(index)}
+                  >
+                    <MoreVertIcon />
+                  </IconButton>
+                  <Menu
+                    onClick={(event) => console.log(event)}
+                    id='basic-menu'
+                    anchorEl={anchorEl}
+                    open={menus[index]}
+                    onClose={handleMenuClose(index)}
+                    MenuListProps={{
+                      'aria-labelledby': 'basic-button',
+                    }}
+                  >
+                    <MenuItem onClick={DownloadFile(index)}>Скачать</MenuItem>
+                    <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
+                    <MenuItem onClick={handleMenuCloseForDelete(index)}>
+                      Удалить
+                    </MenuItem>
+                    <Modal
+                      open={openModal}
+                      aria-labelledby='modal-modal-title'
+                      aria-describedby='modal-modal-description'
                     >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                      onClick={(event) => console.log(event)}
-                      id='basic-menu'
-                      anchorEl={anchorEl}
-                      open={menus[index]}
-                      onClose={handleMenuClose(index)}
-                      MenuListProps={{
-                        'aria-labelledby': 'basic-button',
-                      }}
-                    >
-                      {file.isDir ? (
-                        <Box>
-                          <MenuItem onClick={handleOpenPublicModal}>
-                            Открыть доступ
-                          </MenuItem>
-                          <MenuItem onClick={handleOpenShareModal}>
-                            Поделиться
-                          </MenuItem>
-                        </Box>
-                      ) : (
-                        <MenuItem onClick={DownloadFile(index)}>
-                          Скачать
-                        </MenuItem>
-                      )}
-                      <MenuItem onClick={handleOpen}>Переименовать</MenuItem>
-                      <MenuItem onClick={handleMenuCloseForDelete(index)}>
-                        Удалить
-                      </MenuItem>
-                      <Modal
-                        open={openModal}
-                        aria-labelledby='modal-modal-title'
-                        aria-describedby='modal-modal-description'
-                      >
-                        <Box sx={style}>
-                          <Typography
-                            id='modal-modal-title'
-                            variant='h6'
-                            component='h2'
-                          >
-                            Переименовать
-                          </Typography>
-                          <TextField fullWidth id='rename' />
-                          <Button onClick={handleClose} variant='text'>
-                            Отмена
-                          </Button>
-                          <Button
-                            //@ts-ignore
-                            onClick={responseForRenameFile(index)}
-                            type='submit'
-                            variant='contained'
-                          >
-                            Ок
-                          </Button>
-                        </Box>
-                      </Modal>
-                      <Modal
-                        open={openShareModal}
-                        aria-labelledby='modal-modal-title'
-                        aria-describedby='modal-modal-description'
-                      >
-                        <Box sx={style}>
-                          <Typography
-                            id='modal-modal-title'
-                            variant='h6'
-                            component='h2'
-                          >
-                            Доступ - {file.name}
-                          </Typography>
-                          <TextField fullWidth id='rename' />
-                          <Button
-                            onClick={handleCloseShareModal}
-                            //@ts-ignore
-                            //onClick={responseForRenameFile(index)}
-                            type='submit'
-                            variant='contained'
-                          >
-                            Ок
-                          </Button>
-                        </Box>
-                      </Modal>
-                      <Modal
-                        open={openPublicAccessModal}
-                        aria-labelledby='modal-modal-title'
-                        aria-describedby='modal-modal-description'
-                      >
-                        <Box sx={style}>
-                          <Typography
-                            id='modal-modal-title'
-                            variant='h6'
-                            component='h2'
-                          >
-                            Вы действительно хотите открыть доступ?
-                          </Typography>
-                          {/*<TextField fullWidth id='rename' />*/}
-                          <Button
-                            //onClick={handleClosePublicModal}
-                            //@ts-ignore
-                            onClick={responseForPublicAccess(index)}
-                            type='submit'
-                            variant='contained'
-                          >
-                            Открыть
-                          </Button>
-                          <Button
-                            onClick={handleClosePublicModal}
-                            //@ts-ignore
-                            //onClick={responseForRenameFile(index)}
-                            type='submit'
-                            variant='contained'
-                          >
-                            Отмена
-                          </Button>
-                        </Box>
-                      </Modal>
-                    </Menu>
-                  </TableCell>
-                </TableRow>
-              </Link>
+                      <Box sx={style}>
+                        <Typography
+                          id='modal-modal-title'
+                          variant='h6'
+                          component='h2'
+                        >
+                          Переименовать
+                        </Typography>
+                        <TextField fullWidth id='rename' />
+                        <Button onClick={handleClose} variant='text'>
+                          Отмена
+                        </Button>
+                        <Button
+                          //@ts-ignore
+                          onClick={responseForRenameFile(index)}
+                          type='submit'
+                          variant='contained'
+                        >
+                          Ок
+                        </Button>
+                      </Box>
+                    </Modal>
+                  </Menu>
+                </TableCell>
+              </TableRow>
             </TableRow>
           ))}
         </TableBody>

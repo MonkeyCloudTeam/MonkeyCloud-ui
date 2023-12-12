@@ -17,20 +17,24 @@ const CurrentPath = ({
   const username = localStorage.getItem('username')
   const PathTransform = username + '/' + currentPath
   const splittedPath = PathTransform.split('/')
-  console.log('SPLRTTKD', splittedPath)
+  const pathFinal = splittedPath
+  let index = pathFinal.indexOf('')
+  if (index !== -1) {
+    pathFinal.splice(index, 1)
+  }
   const handleClick = (PathTransform: string) => () => {
     let index: number = 0
-    for (let i = 0; i < splittedPath.length - 1; i++) {
-      if (splittedPath[i] === PathTransform) {
+    for (let i = 0; i < pathFinal.length - 1; i++) {
+      if (pathFinal[i] === PathTransform) {
         index = i
         break
       }
     }
-    if (PathTransform === splittedPath[0]) {
+    if (PathTransform === pathFinal[0]) {
       dispatch(setCurrentPath(''))
-    } else if (PathTransform == splittedPath.at(-1)) {
+    } else if (PathTransform == pathFinal.at(-1)) {
       const pathStr =
-        splittedPath
+        pathFinal
           .slice(1)
           .map((element) => `/${element}`)
           .join('')
@@ -38,23 +42,21 @@ const CurrentPath = ({
       //setCurrentPath()
     } else {
       const pathStr =
-        splittedPath
+        pathFinal
           .slice(1, index + 1)
           .map((element) => `/${element}`)
           .join('')
           .slice(1) + '/'
       dispatch(setCurrentPath(pathStr))
     }
-    //`
   }
   return (
     <div>
       {splittedPath.map((currentPath) => {
-        return <a onClick={handleClick(currentPath)}>{currentPath}/ </a>
+        return <a onClick={handleClick(currentPath)}>{currentPath}/</a>
       })}
     </div>
   )
-  //return <div>{currentPath}</div>
 }
 
 export { CurrentPath }

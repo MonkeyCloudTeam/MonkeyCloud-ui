@@ -250,6 +250,7 @@ const FilesList = ({
             fullPath: data.list[index].path,
           },
         })
+        localStorage.setItem('memory', response.data.size)
         console.log(response)
       } catch (error) {
         console.error(error)
@@ -262,6 +263,7 @@ const FilesList = ({
             fullPath: data?.list[index].path,
           },
         })
+        localStorage.setItem('memory', response.data.size)
         console.log(response)
       } catch (error) {
         console.error(error)

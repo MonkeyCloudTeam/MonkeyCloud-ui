@@ -45,6 +45,7 @@ const PrivateFilesPage = () => {
   // const [currentPath, setCurrentPath] = useState(
   //   localStorage.getItem('username') || '',
   // )
+
   const userToken = localStorage.getItem('token')
   const username = localStorage.getItem('username')
   const searchMode = useSelector(
@@ -101,10 +102,10 @@ const PrivateFilesPage = () => {
         <SideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
-        <CurrentPath
-          triggerGetFiles={triggerGetFiles}
-          currentPath={currentPath}
-        />
+        {/*<CurrentPath*/}
+        {/*  triggerGetFiles={triggerGetFiles}*/}
+        {/*  currentPath={currentPath}*/}
+        {/*/>*/}
         <PrivateFileList
           trigerPublicFiles={trigerPublicFiles}
           //@ts-ignore

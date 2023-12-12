@@ -57,7 +57,10 @@ const HeaderPublic = ({
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
   )
-  const handleClose = () => setOpen(false)
+  const handleClose = () => {
+    setOpen(false)
+    handleCloseUserMenu()
+  }
 
   const handleOpen = () => {
     setOpen(true)
@@ -175,8 +178,12 @@ const HeaderPublic = ({
     setAnchorElNav(null)
   }
 
-  const handleCloseUserMenu = () => {
+  const handleOpenTelegramm = () => {
     setOpen(true)
+    setAnchorElNav(null)
+  }
+
+  const handleCloseUserMenu = () => {
     setAnchorElUser(null)
   }
 
@@ -213,6 +220,7 @@ const HeaderPublic = ({
     } catch (error) {
       console.error(error)
     }
+    handleCloseUserMenu()
     handleClose()
   }
 
@@ -297,7 +305,7 @@ const HeaderPublic = ({
                   {localStorage.getItem('username')}
                 </Typography>
               </MenuItem>
-              <MenuItem key='telegramId' onClick={handleCloseUserMenu}>
+              <MenuItem key='telegramId' onClick={handleOpenTelegramm}>
                 <Typography textAlign='center'>Telegram ID</Typography>
               </MenuItem>
               <MenuItem key='logoutButton' onClick={handleLogOff}>

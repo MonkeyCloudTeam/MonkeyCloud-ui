@@ -296,37 +296,12 @@ const AdminHeader = ({
                   {localStorage.getItem('username')}
                 </Typography>
               </MenuItem>
-              <MenuItem key='telegramId' onClick={handleCloseUserMenu}>
-                <Typography textAlign='center'>Telegram ID</Typography>
-              </MenuItem>
               <MenuItem key='logoutButton' onClick={handleLogOff}>
                 <Typography textAlign='center'>Выход</Typography>
               </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
-        <Modal
-          open={openModal}
-          aria-labelledby='modal-modal-title'
-          aria-describedby='modal-modal-description'
-        >
-          <Box sx={style}>
-            <Typography id='modal-modal-title' variant='h6' component='h2'>
-              Введите Telegram ID
-            </Typography>
-            <TextField fullWidth id='telegrammId' />
-            <Button onClick={handleClose} variant='text'>
-              Отмена
-            </Button>
-            <Button
-              onClick={handleTelegrammId}
-              type='submit'
-              variant='contained'
-            >
-              Ок
-            </Button>
-          </Box>
-        </Modal>
       </Container>
     </AppBar>
   )

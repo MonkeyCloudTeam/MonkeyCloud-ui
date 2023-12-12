@@ -21,6 +21,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Header } from '../../components/Header/Header'
 import { AdminBucketsList } from '../../components/AdminComponents/AdminFileList/AdminBucketsList'
+import { AdminSideBar } from '../../components/AdminComponents/AdminSideBar/AdminSideBar'
 
 const customStyles = {
   content: {
@@ -106,7 +107,7 @@ const AdminPage = () => {
         <AdminHeader triggerSearchByDate={triggerSearchByDate} />
       </Grid>
       <Grid xs={2}>
-        <SideBar />
+        <AdminSideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
         <CurrentPath

@@ -54,7 +54,7 @@ const ToolTip = () => {
       formData.append('multipartFile', fileToUpload)
       formData.append('fileName', fileToUpload.name)
       let pathForGet = ''
-      if (pathForRequest === username) {
+      if (pathForRequest === username || pathForRequest == 'undefined') {
         pathForGet = ''
       } else {
         pathForGet =
@@ -88,7 +88,7 @@ const ToolTip = () => {
     if (e.target.files) {
       const pathForRequest = localStorage.getItem('breadCrums')
       let pathForGet = ''
-      if (pathForRequest === username) {
+      if (pathForRequest === username || pathForRequest == 'undefined') {
         pathForGet = ''
       } else {
         pathForGet =
@@ -100,7 +100,6 @@ const ToolTip = () => {
         formData.append(`multipartFile`, structuredClone(e.target.files[i]))
         formData.append('fileName', structuredClone(e.target.files[i]).name)
       }
-      const Path = data?.list[0].breadCrums
       console.log(file)
       try {
         const response = await axiosInstanceForUpload.post(

@@ -158,26 +158,28 @@ const AdminBucketsList = ({
       <Table sx={{ minWidth: 650 }} aria-label='customized table'>
         <TableBody>
           {data?.list.map((file: IAdminFile, index: number) => (
-            <Link to={`/admin/${file.bucket}`}>
-              <TableRow
-                //Поставить on click и проверить is dir //set files // вызывать функцию
-                key={`${file.bucket}-${index}`}
-                sx={{
-                  '&:last-child td, &:last-child th': { border: 0 },
-                  verticalAlign: 'baseline',
-                }}
-              >
-                <Container
-                  onClick={handleTableRowClick(file)}
-                  className={styles.TableRowInnerContainer}
+            <TableRow>
+              <Link to={`/admin/${file.bucket}`} className={styles.link}>
+                <TableRow
+                  //Поставить on click и проверить is dir //set files // вызывать функцию
+                  key={`${file.bucket}-${index}`}
+                  sx={{
+                    '&:last-child td, &:last-child th': { border: 0 },
+                    verticalAlign: 'baseline',
+                  }}
                 >
-                  <FolderIcon />
-                  <TableCell component='th' scope='row'>
-                    {file.bucket}
-                  </TableCell>
-                </Container>
-              </TableRow>
-            </Link>
+                  <Container
+                    onClick={handleTableRowClick(file)}
+                    className={styles.TableRowInnerContainer}
+                  >
+                    <FolderIcon />
+                    <TableCell component='th' scope='row'>
+                      {file.bucket}
+                    </TableCell>
+                  </Container>
+                </TableRow>
+              </Link>
+            </TableRow>
           ))}
         </TableBody>
       </Table>

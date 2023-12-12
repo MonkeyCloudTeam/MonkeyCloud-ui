@@ -398,9 +398,8 @@ const AdminFileList = ({
         <TableBody>
           {data?.list.map((file: IFile, index: number) => (
             <TableRow>
-              <Link to={`/admin/${file.path}`}>
+              <Link className={styles.link} to={`/admin/${file.path}`}>
                 <TableRow
-                  //Поставить on click и проверить is dir //set files // вызывать функцию
                   key={`${file.name}-${index}`}
                   sx={{
                     '&:last-child td, &:last-child th': { border: 0 },

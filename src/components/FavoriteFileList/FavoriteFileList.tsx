@@ -48,28 +48,18 @@ const style = {
 }
 
 const FavoriteFilesList = ({
-  setCurrentPath,
-  triggerGetFiles,
   data,
   triggerFavorite,
 }: {
-  setCurrentPath: (currentPath: string) => void
-  triggerGetFiles: any
   triggerFavorite: any
   data: any
 }) => {
-  const dispatch = useDispatch()
-  const bc = data?.list[0]?.breadCrums as string
-  localStorage.setItem('breadCrums', bc)
-  const { path } = useParams()
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
-  //const { data, error, isLoading } = useGetFilesQuery(path || '')
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [menus, setMenus] = useState([])
   const open = Boolean(anchorEl)
   const [openModal, setOpen] = React.useState(false)
   const username = localStorage.getItem('username')
-  const label1 = { inputProps: { 'aria-label': 'Checkbox none' } }
   useEffect(() => {
     if (data && data?.list) {
       const nextMenus = data.list.map((m: any) => false)
@@ -77,11 +67,9 @@ const FavoriteFilesList = ({
       setMenus(nextMenus)
     }
   }, [data])
+
   useEffect(() => {
     triggerFavorite('')
-    const bc = data?.list[0]?.breadCrums as string
-    localStorage.setItem('breadCrums', bc)
-    //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
   }, [])
 
   const handleOpen = () => {
@@ -153,35 +141,8 @@ const FavoriteFilesList = ({
         }
       }
     }
-    //@ts-ignore
-    await triggerGetFiles({ username, path: pathToTriger })
+    await triggerFavorite('')
   }
-
-  const handleTableRowClick = (file: IFile) => async () => {
-    let headerPath = file.path
-    // if (file.isDir) {
-    //   await triggerGetFiles(headerPath).then((data1) => {
-    //     const bc = data1?.data?.list[0]?.breadCrums as string
-    //     let path_full = bc.substring(bc.indexOf('/') + 1) + '/'
-    //     localStorage.setItem('breadCrums', bc)
-    //     // dispatch(setCurrentPath(bc))
-    //   })
-    // }
-    // const response = await axiosInstance.get('/getFiles', {
-    //   params: {
-    //     username: localStorage.getItem('username'),
-    //     folder: '123/',
-    //   },
-    // })
-    //setCurrentPath(file.breadCrums)
-    // // console.log(response)
-    // const menus = response.data.list.map((m: any) => false)
-    // setMenus(menus)
-  }
-  //@ts-ignore
-  // const GetFilesFromFolder = (index: number) => async () => {
-  //   if (files[index].)
-  // }
 
   const handleMenuClose = (index: number) => () => {
     const nextMenus = menus
@@ -250,7 +211,7 @@ const FavoriteFilesList = ({
       pathToTriger = Path?.substring(Path?.indexOf('/') + 1) + '/'
     }
     //@ts-ignore
-    if (data.list[index].isDir === true) {
+    if (data.list[index].isDir) {
       try {
         const response = await axiosInstance.put('/renameFolder', {
           username: username,
@@ -285,27 +246,14 @@ const FavoriteFilesList = ({
     handleClose()
   }
 
-  // const downloadFile = () => {
-  //   window.open(
-  //     'http://localhost:8080/downloadFile?username=user1&fullPath=32.psd',
-  //     '_blank',
-  //     'noopener,noreferrer',
-  //   )
-  // }
   const DownloadFile = (index: number) => async () => {
     function saveAs(uri: any, filename: any) {
       const link = document.createElement('a')
       if (typeof link.download === 'string') {
         link.href = uri
         link.download = filename
-
-        //Firefox requires the link to be in the body
         document.body.appendChild(link)
-
-        //simulate click
         link.click()
-
-        //remove the link when done
         document.body.removeChild(link)
       } else {
         window.open(uri)
@@ -329,7 +277,7 @@ const FavoriteFilesList = ({
   }
 
   if (!data?.list.length) {
-    return <div>Папка пуста. Загрузите файлы.</div>
+    return <div>Нет избранных файлов.</div>
   }
   return (
     <TableContainer component={Paper}>
@@ -341,28 +289,20 @@ const FavoriteFilesList = ({
             }
             return (
               <TableRow
-                //Поставить on click и проверить is dir //set files // вызывать функцию
                 key={file.name}
                 sx={{
                   '&:last-child td, &:last-child th': { border: 0 },
                   verticalAlign: 'baseline',
                 }}
               >
-                <Container
-                  onClick={handleTableRowClick(file)}
-                  className={styles.TableRowInnerContainer}
-                >
+                <Container className={styles.TableRowInnerContainer}>
                   {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
                   <TableCell component='th' scope='row'>
                     {file.name}
                   </TableCell>
                   <TableCell align='left'>{file.username}</TableCell>
-                  {/*<TableCell align='left'>{file.data}</TableCell>*/}
-                  {file.isDir !== true ? (
-                    <TableCell align='left'>{file.size}</TableCell>
-                  ) : (
-                    <TableCell align='left'>‒</TableCell>
-                  )}
+                  <TableCell align='left'>{file.date}</TableCell>
+                  <TableCell align='left'>{file.size}</TableCell>
                 </Container>
                 {file.isFavorite ? (
                   <Container>

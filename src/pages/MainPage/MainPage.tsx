@@ -53,13 +53,10 @@ const MainPage = () => {
   const searchString = useSelector(
     (state: RootState) => state.appState.searchString,
   )
-  let dataForFileList = result?.data
-  if (resultSearch?.data) {
-    dataForFileList = resultSearch.data
-  }
-  // const data = searchString ? resultSearch?.data : result?.data
   useEffect(() => {
-    const data = searchMode ? resultSearch?.data : result?.data
+    const data = searchMode
+      ? resultSearch?.data || resultSearchByDate?.data
+      : result?.data
     setData(data)
     //DownloadFile()
     //openModal()

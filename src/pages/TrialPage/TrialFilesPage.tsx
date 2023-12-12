@@ -8,6 +8,9 @@ import { PublicFileList } from '../../components/PublicFileList/PublicFileList'
 import { useLazyPublicFilesQuery } from '../../store/filesSlice'
 import { HeaderPublic } from '../../components/HeaderPublic/HeaderPublic'
 import { PublicCurrentPath } from '../../components/PublicCurrentPath/PublicCurrentPath'
+import { TrialFileList } from '../../components/TrialFileList/TrialFileList'
+import { TrialSideBar } from '../../components/TrialSideBar/TrialSideBar'
+import { HeaderTrial } from '../../components/HeaderTrial/HeaderTrial'
 
 const customStyles = {
   content: {
@@ -20,7 +23,7 @@ const customStyles = {
   },
 }
 
-const PublicFilesPage = () => {
+const TrialFilesPage = () => {
   const { path } = useParams()
   const [trigerPublicFiles, resultPublicFiles] = useLazyPublicFilesQuery()
   const navigate = useNavigate()
@@ -36,21 +39,18 @@ const PublicFilesPage = () => {
       setItemsList(resultPublicFiles?.data?.fileList)
     }
   }, [path])
-  if (!userToken) {
-    return <Navigate to='/sign-in' />
-  }
 
   return (
     <Grid container spacing={0}>
       <Grid xs={12}>
-        <HeaderPublic />
+        <HeaderTrial />
       </Grid>
       <Grid xs={2}>
-        <SideBar />
+        <TrialSideBar />
       </Grid>
       <Grid xs={10} padding='8px'>
         <PublicCurrentPath currentPath={currentPath} />
-        <PublicFileList
+        <TrialFileList
           currentPath={currentPath}
           trigerPublicFiles={trigerPublicFiles}
           //@ts-ignore
@@ -60,4 +60,4 @@ const PublicFilesPage = () => {
     </Grid>
   )
 }
-export { PublicFilesPage }
+export { TrialFilesPage }

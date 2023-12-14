@@ -111,7 +111,7 @@ const PrivateFileList = ({
     try {
       const response = await axiosInstanceForDownload.get('/downloadFile', {
         params: {
-          username: username,
+          username: data?.list[index].username,
           fullPath: data?.list[index].path,
         },
       })

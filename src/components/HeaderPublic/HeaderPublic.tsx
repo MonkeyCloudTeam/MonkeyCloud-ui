@@ -30,6 +30,8 @@ import { useLazyGetFilesQuery } from '../../store/filesSlice'
 import { IFile } from '../../store/types'
 import { SearchField } from '../Search/Search'
 import Modal from '@mui/material/Modal'
+import { setCurrentPath } from '../../store/commonReducer'
+import { useDispatch } from 'react-redux'
 //TODO Вставить картинку 133
 
 const style = {
@@ -65,6 +67,7 @@ const HeaderPublic = ({
   const handleOpen = () => {
     setOpen(true)
   }
+  const dispatch = useDispatch()
   const username = localStorage.getItem('username')
   const { setMenus } = useMenus()
   const navigate = useNavigate()
@@ -196,6 +199,7 @@ const HeaderPublic = ({
       console.error(error)
       //@ts-ignore
       if (error?.response.status === 409) {
+        dispatch(setCurrentPath(''))
         localStorage.clear()
         navigate('/sign-in')
       }

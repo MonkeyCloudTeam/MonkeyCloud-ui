@@ -30,6 +30,8 @@ import { useLazyGetFilesQuery } from '../../store/filesSlice'
 import { IFile } from '../../store/types'
 import { SearchField } from '../Search/Search'
 import Modal from '@mui/material/Modal'
+import { setCurrentPath } from '../../store/commonReducer'
+import { useDispatch } from 'react-redux'
 //TODO Вставить картинку 133
 
 const style = {
@@ -64,7 +66,7 @@ const HeaderPrivate = ({}: {}) => {
   const [triggerGetFiles, result] = useLazyGetFilesQuery()
   const { data } = result
   const [openModal, setOpen] = React.useState(false)
-
+  const dispatch = useDispatch()
   useEffect(() => {}, [])
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -91,6 +93,7 @@ const HeaderPrivate = ({}: {}) => {
       console.error(error)
       //@ts-ignore
       if (error?.response.status === 409) {
+        dispatch(setCurrentPath(''))
         localStorage.clear()
         navigate('/sign-in')
       }

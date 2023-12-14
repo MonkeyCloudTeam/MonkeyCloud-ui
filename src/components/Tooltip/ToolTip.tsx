@@ -94,7 +94,6 @@ const ToolTip = () => {
           fullPath: pathForGet,
           //@ts-ignore
         }).then((data) => {
-          debugger
           console.log('DATA', data)
           //@ts-ignore
           if (data?.error) {

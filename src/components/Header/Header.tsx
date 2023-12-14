@@ -73,7 +73,8 @@ const Header = ({
   const [triggerGetFiles, result] = useLazyGetFilesQuery()
   const { data } = result
   const [openModal, setOpen] = React.useState(false)
-
+  const [textField, setTextField] = useState(true)
+  const [textError, setTextError] = useState(false)
   useEffect(() => {
     //@ts-ignore
     triggerGetFiles({ username, path: '' })
@@ -177,6 +178,7 @@ const Header = ({
   }
 
   const handleOpenTelegramm = () => {
+    setTextField(true)
     setOpen(true)
     setAnchorElNav(null)
   }
@@ -210,17 +212,24 @@ const Header = ({
     const telegrammId = document.getElementById(
       'telegrammId',
     ) as HTMLInputElement
-    try {
-      const response = await axiosInstance.post('/addTelegramId', {
-        telegramId: telegrammId.value,
-        username: username,
-      })
-      console.log(response)
-    } catch (error) {
-      console.error(error)
+    if (telegrammId.value != '') {
+      try {
+        const response = await axiosInstance.post('/addTelegramId', {
+          telegramId: telegrammId.value,
+          username: username,
+        })
+        handleCloseUserMenu()
+        handleClose()
+        console.log(response)
+      } catch (error) {
+        //@ts-ignore
+        if (error?.response.status === 400) {
+          setTextField(false)
+        }
+      }
+    } else {
+      setTextField(false)
     }
-    handleCloseUserMenu()
-    handleClose()
   }
 
   return (
@@ -327,7 +336,16 @@ const Header = ({
             <Typography id='modal-modal-title' variant='h6' component='h2'>
               Введите Telegram ID
             </Typography>
-            <TextField fullWidth id='telegrammId' />
+            {textField && <TextField required fullWidth id='telegrammId' />}
+            {!textField && (
+              <TextField
+                error
+                helperText='Ошибка добавления Telegram Id.'
+                required
+                fullWidth
+                id='telegrammId'
+              />
+            )}
             <Button onClick={handleClose} variant='text'>
               Отмена
             </Button>

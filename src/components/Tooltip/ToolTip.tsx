@@ -17,25 +17,49 @@ import {
 import { IFile } from '../../store/types'
 import { axiosInstanceForUpload } from '../../api'
 import styles from '../Header/Header.module.scss'
+import Typography from '@mui/material/Typography'
+import { Button, TextField } from '@mui/material'
+import Modal from '@mui/material/Modal'
+import { Simulate } from 'react-dom/test-utils'
+import error = Simulate.error
 
 const ToolTip = () => {
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
+  const handleOpenModal = () => setOpenModal(true)
   const handleClose = () => setOpen(false)
+  const handleCloseModal = () => setOpenModal(false)
   const inputRefFolder = React.useRef<HTMLInputElement>(null)
   const inputRefFile = React.useRef<HTMLInputElement>(null)
   const username = localStorage.getItem('username')
   const { setMenus } = useMenus()
   const navigate = useNavigate()
+  const [textInModal, setTextInModal] = useState(
+    'Файл загружается,пожалуйста подождите...',
+  )
+  const [buttonIsVisible, setButtonIsVisible] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [triggerGetFiles, result] = useLazyGetFilesQuery()
   const { data } = result
   const [triggerUploadFile] = useUploadFileMutation()
+  const [openModal, setOpenModal] = React.useState(false)
   useEffect(() => {
     //@ts-ignore
     triggerGetFiles({ username, path: '' })
     //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
   }, [])
+
+  const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  }
 
   const handleUploadInputFileClick = () => {
     if (inputRefFile.current) {
@@ -47,7 +71,9 @@ const ToolTip = () => {
     e: React.ChangeEvent<HTMLInputElement>,
     file: IFile,
   ) => {
-    if (e.target.files) {
+    if (e.target.files?.length) {
+      setButtonIsVisible(false)
+      setTextInModal('Файл загружается,пожалуйста подождите...')
       const pathForRequest = localStorage.getItem('breadCrums')
       const fileToUpload = structuredClone(e.target.files[0])
       const formData = new FormData()
@@ -62,12 +88,24 @@ const ToolTip = () => {
         console.log(pathForGet)
       }
       try {
+        handleOpenModal()
         await triggerUploadFile({
           data: formData,
           fullPath: pathForGet,
+          //@ts-ignore
         }).then((data) => {
-          console.log(data)
-          if (data) {
+          debugger
+          console.log('DATA', data)
+          //@ts-ignore
+          if (data?.error) {
+            setButtonIsVisible(true)
+            setTextInModal('Не хватает места на диске.')
+          } else if (data) {
+            //@ts-ignore
+            if (data.data.massage === 'Файл загружен корректно') {
+              setButtonIsVisible(true)
+              setTextInModal('Файл загружен успешно.')
+            }
             //@ts-ignore
             localStorage.setItem('memory', data.data.size)
           }
@@ -75,7 +113,8 @@ const ToolTip = () => {
         //@ts-ignore
         triggerGetFiles({ username, path: pathForGet })
       } catch (error) {
-        console.error(error)
+        //@ts-ignore
+        console.log(error)
       }
       setOpen(false)
     }
@@ -91,7 +130,9 @@ const ToolTip = () => {
     e: React.ChangeEvent<HTMLInputElement>,
     file: IFile,
   ) => {
-    if (e.target.files) {
+    if (e.target?.files?.length) {
+      setButtonIsVisible(false)
+      setTextInModal('Папка загружается,пожалуйста подождите...')
       const pathForRequest = localStorage.getItem('breadCrums')
       let pathForGet = ''
       if (pathForRequest === username || pathForRequest == 'undefined') {
@@ -99,15 +140,14 @@ const ToolTip = () => {
       } else {
         pathForGet =
           pathForRequest?.substring(pathForRequest?.indexOf('/') + 1) + '/'
-        console.log(pathForGet)
       }
       const formData = new FormData()
       for (let i = 0; i < e.target.files.length; i++) {
         formData.append(`multipartFile`, structuredClone(e.target.files[i]))
         formData.append('fileName', structuredClone(e.target.files[i]).name)
       }
-      console.log(file)
       try {
+        handleOpenModal()
         const response = await axiosInstanceForUpload.post(
           '/uploadFolder',
           formData,
@@ -121,12 +161,17 @@ const ToolTip = () => {
             },
           },
         )
+        if (response.request.status === 200) {
+          setButtonIsVisible(true)
+          setTextInModal('Папка загружена успешно.')
+        }
         localStorage.setItem('memory', response.data.size)
-        // await getFiles().then((files) => setFiles(files))
-        //const data = await response.json()
-        console.log(response)
-      } catch (error) {
-        console.error(error)
+        console.log('RDAD', response)
+      } catch (response: any) {
+        if (response.request.status === 400) {
+          setButtonIsVisible(true)
+          setTextInModal('Не хватает места на диске.')
+        }
       }
       //@ts-ignore
       triggerGetFiles({ username, path: pathForGet })
@@ -191,6 +236,22 @@ const ToolTip = () => {
         //@ts-ignore
         onChange={handleFolderChange}
       />
+      <Modal
+        open={openModal}
+        aria-labelledby='modal-modal-title'
+        aria-describedby='modal-modal-description'
+      >
+        <Box sx={style}>
+          <Typography id='modal-modal-title' variant='h6' component='h2'>
+            {textInModal}
+          </Typography>
+          {buttonIsVisible && (
+            <Button variant='contained' onClick={handleCloseModal}>
+              Ок
+            </Button>
+          )}
+        </Box>
+      </Modal>
     </Box>
   )
 }

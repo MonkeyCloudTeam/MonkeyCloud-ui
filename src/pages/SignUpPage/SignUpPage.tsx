@@ -30,6 +30,7 @@ type Inputs = {
   login: string
   password: string
   passwordSubmit: string
+  telegramId: string
 }
 
 const SignUpPage = () => {
@@ -72,6 +73,7 @@ const SignUpPage = () => {
     lastName,
     login,
     password,
+    telegramId,
   }) => {
     const requestBody = {
       username: login,
@@ -79,7 +81,7 @@ const SignUpPage = () => {
       password: password,
       name: name,
       last_name: lastName,
-      telegramId: '',
+      telegramId: telegramId,
     }
     try {
       const response = await axiosInstance.post('/sign-up', requestBody)
@@ -174,7 +176,12 @@ const SignUpPage = () => {
               <span className='icon'>
                 <LiaTelegramPlane />
               </span>
-              <input className='telegramInput' type='text' id='telegrammId' />
+              <input
+                className='telegramInput'
+                type='text'
+                id='telegrammId'
+                {...register('telegramId')}
+              />
               <label className='labelTelegram'>Telegram id</label>
             </div>
             <ErrorMessage

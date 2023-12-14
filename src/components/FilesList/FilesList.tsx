@@ -243,7 +243,6 @@ const FilesList = ({
     }
     if (data?.list[index].isDir === true) {
       try {
-        debugger
         const response = await axiosInstance.delete('/deleteFolder', {
           params: {
             username: username,

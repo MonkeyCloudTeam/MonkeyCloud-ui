@@ -32,6 +32,7 @@ import { SearchField } from '../Search/Search'
 import Modal from '@mui/material/Modal'
 import { setCurrentPath } from '../../store/commonReducer'
 import { useDispatch } from 'react-redux'
+import { deepOrange } from '@mui/material/colors'
 //TODO Вставить картинку 133
 
 const style = {
@@ -233,15 +234,26 @@ const Header = ({
   }
 
   return (
-    <AppBar position='static' className={styles.Header}>
-      <Container maxWidth='xl'>
+    <AppBar
+      position='static'
+      className={styles.Header}
+      sx={{ justifyContent: 'flex-start' }}
+    >
+      <Container maxWidth='xl' sx={{ justifyContent: 'flex-start' }}>
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Avatar
+            sx={{
+              display: { xs: 'none', md: 'flex' },
+              bgcolor: deepOrange[500],
+            }}
+            variant='square'
+          />
+          {/*<AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />*/}
           <Typography
+            className={styles.Typography}
             variant='h6'
             noWrap
             component='a'
-            href='#app-bar-with-responsive-menu'
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -266,26 +278,6 @@ const Header = ({
               <MenuIcon />
             </IconButton>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant='h5'
-            noWrap
-            component='a'
-            href='#app-bar-with-responsive-menu'
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Monkey Cloud
-          </Typography>{' '}
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box>
           <SearchField
             triggerGetFiles={triggerGetFiles}
             triggerSearch={triggerSearch}

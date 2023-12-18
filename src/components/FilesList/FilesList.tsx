@@ -12,6 +12,7 @@ import {
   TextField,
   Checkbox,
 } from '@mui/material'
+import { initializeFileTypeIcons } from '@fluentui/react-file-type-icons'
 import { BY_NAME_SEARCH_MODE, BY_DATE_SEARCH_MODE } from '../../constants'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -23,7 +24,20 @@ import Modal from '@mui/material/Modal'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { axiosInstance, axiosInstanceForDownload } from '../../api'
 import styles from './FilesList.module.scss'
+import ImageIcon from '@mui/icons-material/Image'
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
+import TerminalRoundedIcon from '@mui/icons-material/TerminalRounded'
 import { useMenus } from '../../hooks/useMenus'
+import { FcFile } from 'react-icons/fc'
+import { BsFiletypeDocx } from 'react-icons/bs'
+import { FaFilePdf } from 'react-icons/fa'
+import { BsFiletypeXlsx } from 'react-icons/bs'
+import { Icon } from '@fluentui/react'
+import {
+  getFileTypeIconProps,
+  FileIconType,
+} from '@fluentui/react-file-type-icons'
+import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded'
 import {
   useGetFilesQuery,
   useLazyGetFilesQuery,
@@ -42,8 +56,11 @@ import { GoStar, GoStarFill } from 'react-icons/go'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarIcon from '@mui/icons-material/Star'
 import { useDispatch, useSelector } from 'react-redux'
+import AudioFileRoundedIcon from '@mui/icons-material/AudioFileRounded'
 import { RootState } from '../../store/store'
 import { setCurrentPath } from '../../store/commonReducer'
+import { BsFiletypeExe } from 'react-icons/bs'
+import { BsFiletypePptx } from 'react-icons/bs'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -409,6 +426,86 @@ const FilesList = ({
     handleMenuClose(index)
   }
 
+  const getFilesIcon = (index: any) => {
+    const last = data?.list[index].name
+    let exection = last.substring(last.lastIndexOf('.'))
+    if (
+      exection === '.jpg' ||
+      exection === '.png' ||
+      exection === '.jpeg' ||
+      exection === '.gif'
+    ) {
+      exection = 'picture'
+    }
+    if (exection === '.pdf') {
+      exection = 'pdf'
+    }
+    if (exection === '.docx' || exection === '.doc') {
+      exection = 'document'
+    }
+    if (exection === '.xls' || exection === '.xlsx' || exection === '.xlsm') {
+      exection = 'exel'
+    }
+    if (exection === '.ppt' || exection === '.pptx') {
+      exection = 'presentation'
+    }
+    if (
+      exection === '.mp4' ||
+      exection === '.mov' ||
+      exection === '.avi' ||
+      exection === '.webm' ||
+      exection === '.mkv' ||
+      exection === '.wmv'
+    ) {
+      exection = 'video'
+    }
+    if (
+      exection === '.mp3' ||
+      exection === '.ogg' ||
+      exection === '.wav' ||
+      exection === '.aif' ||
+      exection === '.m4a' ||
+      exection === '.m4b'
+    ) {
+      exection = 'music'
+    }
+    if (
+      exection === '.py' ||
+      exection === '.java' ||
+      exection === '.cpp' ||
+      exection === '.js' ||
+      exection === '.jsx'
+    ) {
+      exection = 'program'
+    }
+    switch (exection) {
+      case 'music':
+        return <AudioFileRoundedIcon className={styles.Music} />
+      case 'presentation':
+        return <BsFiletypePptx className={styles.Presentation} />
+      case '.exe':
+        return <BsFiletypeExe className={styles.Exe} />
+      case 'exel':
+        return <BsFiletypeXlsx className={styles.Exel} />
+      case 'picture':
+        return <ImageIcon className={styles.Image} />
+      case 'document':
+        return <BsFiletypeDocx className={styles.Document} />
+      case 'program':
+        return <TerminalRoundedIcon className={styles.Program} />
+      case '.txt':
+        return <DescriptionRoundedIcon className={styles.Image} />
+      case 'pdf':
+        return <FaFilePdf className={styles.Pdf} />
+      default:
+        return (
+          <InsertDriveFileIcon
+            className={styles.tableCell}
+            sx={{ color: 'rgba(102, 158, 242, 1)' }}
+          />
+        )
+    }
+  }
   if (!data?.list.length) {
     return <div></div>
   }
@@ -418,7 +515,7 @@ const FilesList = ({
         <TableBody>
           {data?.list.map((file: IFile, index: number) => (
             <TableRow
-              //Поставить on click и проверить is dir //set files // вызывать функцию
+              className={styles.tableRow}
               key={`${file.name}-${index}`}
               sx={{
                 '&:last-child td, &:last-child th': { border: 0 },
@@ -429,39 +526,62 @@ const FilesList = ({
                 onClick={handleTableRowClick(file)}
                 className={styles.TableRowInnerContainer}
               >
-                {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
-                <TableCell component='th' scope='row'>
+                {file.isDir ? (
+                  <FolderIcon
+                    sx={{ color: 'rgba(255, 202, 40, 1)' }}
+                    className={styles.tableCell}
+                  />
+                ) : (
+                  getFilesIcon(index)
+                )}
+                <TableCell
+                  className={styles.tableCellName}
+                  component='th'
+                  scope='row'
+                >
                   {file.name}
                 </TableCell>
-                <TableCell align='left'>{file.username}</TableCell>
-                <TableCell align='left'>{file.date}</TableCell>
+                <TableCell className={styles.tableCellElement} align='left'>
+                  {file.username}
+                </TableCell>
+                <TableCell className={styles.tableCellElement} align='left'>
+                  {file.date}
+                </TableCell>
                 {file.isDir !== true ? (
-                  <TableCell align='left'>{file.size}</TableCell>
+                  <TableCell className={styles.tableCellElement} align='left'>
+                    {file.size}
+                  </TableCell>
                 ) : (
-                  <TableCell align='left'>‒</TableCell>
+                  <TableCell className={styles.tableCellElement} align='left'>
+                    ‒
+                  </TableCell>
                 )}
               </Container>
               {file.isFavorite ? (
-                <Container>
+                <Container className={styles.favorite}>
                   {file.isDir !== true ? (
                     <Checkbox
                       onClick={FavoriteFileRequest(index)}
-                      className={styles.TableRowInnerFavorite}
+                      className=''
                       id='favorite'
                       {...label}
-                      icon={<StarIcon />}
-                      checkedIcon={<StarIcon />}
+                      icon={
+                        <StarIcon sx={{ color: 'rgba(200, 193, 25, 1)' }} />
+                      }
+                      checkedIcon={
+                        <StarIcon sx={{ color: 'rgba(200, 193, 25, 1)' }} />
+                      }
                     />
                   ) : (
                     <></>
                   )}
                 </Container>
               ) : (
-                <Container>
+                <Container className={styles.favorite}>
                   {file.isDir !== true ? (
                     <Checkbox
                       onClick={FavoriteFileRequest(index)}
-                      className={styles.TableRowInnerFavorite}
+                      className=''
                       id='favorite'
                       {...label}
                       icon={<StarBorderIcon />}
@@ -472,7 +592,7 @@ const FilesList = ({
                   )}
                 </Container>
               )}
-              <TableCell align='right'>
+              <TableCell align='right' className={styles.tableMenuCell}>
                 <IconButton
                   id='basic-button'
                   aria-controls={open ? 'basic-menu' : undefined}

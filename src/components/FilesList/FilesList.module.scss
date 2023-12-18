@@ -1,10 +1,107 @@
 .TableRowInnerContainer{
+  margin: 0;
   display: flex;
-  flex-grow: initial;
-
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .TableRowInnerFavorite{
   display: flex;
   flex-grow: initial;
+}
+
+.tableCell{
+  border-bottom: 0;
+
+}
+
+.menu{
+}
+
+.tableRow{
+  display: flex;
+  border-bottom: 1px solid lightgray;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.favorite{
+  margin: 0;
+  width: 44px;
+  padding: 0;
+}
+
+.tableMenuCell{
+  border-bottom: 0;
+  margin: 0;
+  width: 100px;
+  padding: 0;
+}
+
+.tableCellName{
+  border-bottom: 0;
+  margin: 0;
+  width: 50%;
+  //padding: 5px;
+}
+
+.tableCellElement{
+  border-bottom: 0;
+  margin: 0;
+  width: 20%;
+}
+
+.Pdf{
+  border-bottom: 0;
+  scale: 130%;
+  margin-left: 4px;
+  color: red;
+  border-radius: 3px;
+}
+
+.Image{
+color:rgba(36, 109, 161, 1);
+  border-bottom: 0;
+}
+
+.Exel{
+  border-bottom: 0;
+  scale: 165%;
+  margin-left: 6px;
+  color: rgb(61, 183, 22);
+  border-radius: 3px;
+}
+
+.Program{
+  color: rgb(32, 51, 23);
+  border-bottom: 0;
+}
+
+.Document{
+  border-bottom: 0;
+  scale: 165%;
+  margin-left: 6px;
+  color: rgb(5, 46, 148);
+  border-radius: 3px;
+}
+
+.Music{
+  color:rgba(36, 109, 161, 1);
+  border-bottom: 0;
+}
+
+.Exe{
+  border-bottom: 0;
+  scale: 165%;
+  margin-left: 6px;
+  color: rgb(0, 0, 0);
+  border-radius: 3px;
+}
+
+.Presentation{
+  border-bottom: 0;
+  scale: 165%;
+  margin-left: 6px;
+  color: rgb(143, 14, 14);
+  border-radius: 3px;
 }

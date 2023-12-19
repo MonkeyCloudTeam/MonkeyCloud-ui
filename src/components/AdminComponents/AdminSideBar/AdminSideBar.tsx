@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import styles from './SideBar.module.scss'
+import styles from '../../SideBar/SideBar.module.scss'
 import React from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -40,9 +40,9 @@ const AdminSideBar = () => {
           {[{ name: 'На главную', url: '/admin', onClick: () => {} }].map(
             ({ name, url, onClick }, index) => (
               <ListItem key={name} disablePadding>
+                <InboxIcon sx={{ marginLeft: '70px', color: '#030129' }} />
                 <ListItemButton>
-                  <Link onClick={onClick} to={url}>
-                    <InboxIcon />
+                  <Link className={styles.link} onClick={onClick} to={url}>
                     <ListItemText primary={name} />
                   </Link>
                 </ListItemButton>

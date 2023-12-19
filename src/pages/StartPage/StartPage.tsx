@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom'
 import './StartPage'
 import { inspect } from 'util'
-import styles from './StartPage.module.scss'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { Button, TextField } from '@mui/material'
 import Modal from '@mui/material/Modal'
 import React from 'react'
-
+import styles from './StartPage.module.scss'
+import Container from '@mui/material/Container'
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -37,41 +37,114 @@ const StartPage = () => {
   const handleClose = () => setOpen(false)
   const path = localStorage.getItem('username')
   return (
-    <div className='SignUp_section'>
-      <h2>Hello</h2>
-      <div>
+    <div className={styles.start}>
+      <div className='SignUp_section'>
         <Link className={styles.link} to={`${pathToPage}`}>
-          <span>Войти</span>
-        </Link>
-      </div>
-      <div>
-        <Link className={styles.link} to='/sign-up'>
-          <span>Зарегистрироваться</span>
-        </Link>
-      </div>
-      <div onClick={handleOpen} className={styles.link}>
-        Продолжить без регистрации
-      </div>
-      <Modal
-        open={openModal}
-        aria-labelledby='modal-modal-title'
-        aria-describedby='modal-modal-description'
-      >
-        <Box sx={style}>
-          <Typography id='modal-modal-title' variant='h6' component='h2'>
-            Вам будет доступен только просмотр общих файлов. Вы действительно
-            хотите продолжить?
-          </Typography>
-          <Button onClick={handleClose} variant='text'>
-            Отмена
+          <Button className={styles.link1}>
+            <span>Войти</span>
           </Button>
-          <Link to='/trial'>
-            <Button type='submit' variant='contained'>
-              Продолжить
+        </Link>
+        <Link className={styles.link} to='/sign-up'>
+          <Button className={styles.link}>
+            <span>Зарегистрироваться</span>
+          </Button>
+        </Link>
+        <Button onClick={handleOpen} className={styles.link}>
+          Продолжить без регистрации
+        </Button>
+        <Modal
+          open={openModal}
+          aria-labelledby='modal-modal-title'
+          aria-describedby='modal-modal-description'
+        >
+          <Box sx={style}>
+            <Typography
+              sx={{ marginBottom: '10px' }}
+              id='modal-modal-title'
+              variant='h6'
+              component='h2'
+            >
+              Вам будет доступен только просмотр общих файлов. Вы действительно
+              хотите продолжить?
+            </Typography>
+            <Button
+              sx={{ color: '#030129 ', marginTop: '10px' }}
+              onClick={handleClose}
+              variant='text'
+            >
+              Отмена
             </Button>
-          </Link>
-        </Box>
-      </Modal>
+            <Link to='/trial'>
+              <Button
+                sx={{ backgroundColor: '#030129 ', marginTop: '10px' }}
+                type='submit'
+                variant='contained'
+              >
+                Продолжить
+              </Button>
+            </Link>
+          </Box>
+        </Modal>
+      </div>
+      <Box className={styles.title}>Monkey Cloud</Box>
+      <div className={styles.stars}>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+        <div className={styles.star}></div>
+      </div>
     </div>
   )
 }

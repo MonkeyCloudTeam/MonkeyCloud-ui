@@ -86,7 +86,7 @@ const SignInPage = () => {
       <div className='signIn_section'>
         <div className='formBox'>
           <form onSubmit={handleSubmit(onSubmit)} id='signIn-form'>
-            <h2>Вход</h2>
+            <h2 className='h2'>Вход</h2>
             <div className='inputBox'>
               <span className='icon'>
                 <SiSurveymonkey />
@@ -116,7 +116,7 @@ const SignInPage = () => {
               Вход
             </button>
             <div className='createAccount'>
-              <p>
+              <p className='h2'>
                 Нет аккаунта?
                 <a> </a>
                 <a>

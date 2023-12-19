@@ -18,9 +18,10 @@ import MailIcon from '@mui/icons-material/Mail'
 import { useLazyGetFilesQuery } from '../../store/filesSlice'
 import { setCurrentPath, setSearchMode } from '../../store/commonReducer'
 import { useDispatch } from 'react-redux'
-
+import ScreenShareIcon from '@mui/icons-material/ScreenShare'
+import Inventory2Icon from '@mui/icons-material/Inventory2'
+import StarIcon from '@mui/icons-material/Star'
 const drawerWidth = 320
-
 const SideBar = () => {
   const [triggerGetFiles, result, lastPromiseInfo] = useLazyGetFilesQuery()
   const dispatch = useDispatch()
@@ -41,6 +42,9 @@ const SideBar = () => {
             {
               name: 'Мои файлы',
               url: '/main',
+              icon: (
+                <Inventory2Icon sx={{ marginLeft: '70px', color: '#030129' }} />
+              ),
               onClick: () => {
                 dispatch(setSearchMode(false))
                 dispatch(setCurrentPath(''))
@@ -48,13 +52,25 @@ const SideBar = () => {
                 triggerGetFiles({ username, path: '' })
               },
             },
-            { name: 'Общий доступ', url: '/public', onClick: () => {} },
-            { name: 'Избранное', url: '/favorites', onClick: () => {} },
-          ].map(({ name, url, onClick }, index) => (
+            {
+              name: 'Общий доступ',
+              url: '/public',
+              icon: (
+                <ScreenShareIcon
+                  sx={{ marginLeft: '70px', color: '#030129' }}
+                />
+              ),
+              onClick: () => {},
+            },
+            {
+              name: 'Избранное',
+              url: '/favorites',
+              icon: <StarIcon sx={{ marginLeft: '70px', color: '#030129' }} />,
+              onClick: () => {},
+            },
+          ].map(({ name, url, onClick, icon }, index) => (
             <ListItem key={name} disablePadding>
-              <ListItemIcon>
-                <MailIcon />
-              </ListItemIcon>
+              <ListItemIcon>{icon}</ListItemIcon>
               <ListItemButton>
                 <Link className={styles.link} onClick={onClick} to={url}>
                   <ListItemText primary={name} />
@@ -64,8 +80,8 @@ const SideBar = () => {
           ))}
         </List>
         <Divider />
-        <List>
-          <ListItem>Занято:</ListItem>
+        <List sx={{ marginTop: '500px', marginLeft: '50px' }}>
+          <ListItem sx={{ marginLeft: 'center' }}>Занято:</ListItem>
           <ListItem>{localStorage.getItem('memory')} MB / 1 GB </ListItem>
         </List>
       </Box>

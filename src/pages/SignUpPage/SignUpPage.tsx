@@ -106,7 +106,7 @@ const SignUpPage = () => {
       <div className='signUp_section'>
         <div className='boxForm'>
           <form onSubmit={handleSubmit(onSubmit)} id='registration-form'>
-            <h2>Регистрация</h2>
+            <h2 className='h2'>Регистрация</h2>
             <div className='inputBox'>
               <span className='icon'>
                 <AiOutlineUser />
@@ -195,7 +195,7 @@ const SignUpPage = () => {
               Вход
             </button>
             <div className='alreadyHave'>
-              <p>
+              <p className='h2'>
                 У вас уже есть аккаунт?
                 <a> </a>
                 <a>

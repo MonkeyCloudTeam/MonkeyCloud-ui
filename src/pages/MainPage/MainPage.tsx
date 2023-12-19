@@ -118,6 +118,7 @@ const MainPage = () => {
         <ToolTip />
         <SideBar />
       </Grid>
+
       <Grid xs={10} padding='8px'>
         <CurrentPath
           currentPath={currentPath}

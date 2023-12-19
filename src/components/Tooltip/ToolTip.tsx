@@ -192,9 +192,8 @@ const ToolTip = () => {
 
   return (
     <Box>
-      <Backdrop open={open} />
       <SpeedDial
-        ariaLabel='SpeedDial tooltip example'
+        ariaLabel='SpeedDial basic example'
         sx={{
           position: 'absolute',
           bottom: 16,

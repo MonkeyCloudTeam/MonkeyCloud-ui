@@ -52,11 +52,11 @@ const SideBar = () => {
             { name: 'Избранное', url: '/favorites', onClick: () => {} },
           ].map(({ name, url, onClick }, index) => (
             <ListItem key={name} disablePadding>
+              <ListItemIcon>
+                <MailIcon />
+              </ListItemIcon>
               <ListItemButton>
-                <Link onClick={onClick} to={url}>
-                  <ListItemIcon>
-                    {index === 1 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
+                <Link className={styles.link} onClick={onClick} to={url}>
                   <ListItemText primary={name} />
                 </Link>
               </ListItemButton>

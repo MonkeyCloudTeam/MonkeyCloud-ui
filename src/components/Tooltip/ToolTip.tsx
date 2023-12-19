@@ -191,11 +191,15 @@ const ToolTip = () => {
   ]
 
   return (
-    <Box sx={{ height: 100, flexGrow: 1 }}>
+    <Box>
       <Backdrop open={open} />
       <SpeedDial
         ariaLabel='SpeedDial tooltip example'
-        sx={{ position: 'absolute', bottom: 16, right: 20 }}
+        sx={{
+          position: 'absolute',
+          bottom: 16,
+          right: 20,
+        }}
         icon={<SpeedDialIcon />}
         onClose={handleClose}
         onOpen={handleOpen}

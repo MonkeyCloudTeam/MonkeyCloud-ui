@@ -5,6 +5,9 @@
   padding: 0;
 }
 
+
+
+
 body  {
   /*background-size: auto;*/
 }
@@ -20,10 +23,18 @@ body  {
 }
 
 
-.css-hip9hq-MuiPaper-root-MuiAppBar-root{
-  /*background-color: #af943c !important;*/
+.css-fmifby-MuiPaper-root-MuiAppBar-root{
+  background-color: #030129 !important;
 }
 
 .css-12i7wg6-MuiPaper-root-MuiDrawer-paper{
   position: relative !important;
+}
+
+.css-7dv1rb-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab{
+  background-color: #030129 !important;
+}
+
+.css-hip9hq-MuiPaper-root-MuiAppBar-root{
+  background-color: #030129 !important;
 }

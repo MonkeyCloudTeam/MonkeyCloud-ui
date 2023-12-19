@@ -13,12 +13,20 @@ import { useLazyGetFilesQuery } from '../../store/filesSlice'
 import { IFile } from '../../store/types'
 import { axiosInstance, axiosInstanceForUpload } from '../../api'
 import styles from '../Header/Header.module.scss'
-import { alpha, InputBase, styled } from '@mui/material'
+import { alpha, Button, InputBase, styled } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import { setSearchMode, setSearchString } from '../../store/commonReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { BY_DATE_SEARCH_MODE, BY_NAME_SEARCH_MODE } from '../../constants'
+import IconButton from '@mui/material/IconButton'
+import MenuIcon from '@mui/icons-material/Menu'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import EditNoteIcon from '@mui/icons-material/EditNote'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -79,13 +87,23 @@ const SearchField = ({
   const handleFileSearchClick = () => {
     dispatch(setSearchMode(BY_NAME_SEARCH_MODE))
     triggerSearch(searchString)
+    handleCloseSearch()
   }
 
   const handleFileSearchByDateClick = () => {
     triggerSearchByDate(searchString)
     dispatch(setSearchMode(BY_DATE_SEARCH_MODE))
+    handleCloseSearch()
   }
-
+  const [anchorElSearch, setAnchorElSearch] =
+    React.useState<null | HTMLElement>(null)
+  const openSearch = Boolean(anchorElSearch)
+  const handleClickSearch = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorElSearch(event.currentTarget)
+  }
+  const handleCloseSearch = () => {
+    setAnchorElSearch(null)
+  }
   // const responseForSearchByName = () => async () => {
   //   try {
   //     const response = await axiosInstance.get('/privateSearchByFilename', {
@@ -122,11 +140,54 @@ const SearchField = ({
       <StyledInputBase
         value={searchString}
         onChange={getSearchItem}
-        placeholder='Search…'
+        placeholder='Поиск…'
         inputProps={{ 'aria-label': 'search' }}
       />
-      <button onClick={handleFileSearchClick}>Name</button>
-      <button onClick={handleFileSearchByDateClick}>Date</button>
+      <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+        <IconButton
+          size='large'
+          aria-label='account of current user'
+          aria-controls='menu-appbar'
+          aria-haspopup='true'
+          onClick={handleClickSearch}
+          color='inherit'
+        >
+          <MenuIcon />
+        </IconButton>
+      </Box>
+      <Button
+        id='basic-button'
+        aria-controls={openSearch ? 'basic-menu' : undefined}
+        aria-haspopup='true'
+        aria-expanded={openSearch ? 'true' : undefined}
+        onClick={handleClickSearch}
+      >
+        <ExpandMoreIcon sx={{ color: 'white' }} />
+      </Button>
+      <Menu
+        id='basic-menu'
+        anchorEl={anchorElSearch}
+        open={openSearch}
+        onClose={handleCloseSearch}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleFileSearchClick}>
+          <ListItemIcon sx={{ color: 'black' }}>
+            <EditNoteIcon fontSize='small' />
+          </ListItemIcon>
+          По имени
+        </MenuItem>
+        <MenuItem onClick={handleFileSearchByDateClick}>
+          <ListItemIcon sx={{ color: 'black' }}>
+            <CalendarMonthIcon fontSize='small' />
+          </ListItemIcon>
+          По дате
+        </MenuItem>
+      </Menu>
+      {/*<button onClick={handleFileSearchClick}>Name</button>*/}
+      {/*<button onClick={handleFileSearchByDateClick}>Date</button>*/}
     </Search>
   )
 }

@@ -42,6 +42,18 @@ import StarIcon from '@mui/icons-material/Star'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 import { setCurrentPath } from '../../../store/commonReducer'
+import AudioFileRoundedIcon from '@mui/icons-material/AudioFileRounded'
+import {
+  BsFiletypeDocx,
+  BsFiletypeExe,
+  BsFiletypePptx,
+  BsFiletypeXlsx,
+} from 'react-icons/bs'
+import ImageIcon from '@mui/icons-material/Image'
+import TerminalRoundedIcon from '@mui/icons-material/TerminalRounded'
+import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded'
+import { FaFilePdf } from 'react-icons/fa'
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -329,6 +341,87 @@ const AdminFileList = ({
     handleMenuClose(index)
   }
 
+  const getFilesIcon = (index: any) => {
+    const last = data?.list[index].name
+    let exection = last.substring(last.lastIndexOf('.'))
+    if (
+      exection === '.jpg' ||
+      exection === '.png' ||
+      exection === '.jpeg' ||
+      exection === '.gif'
+    ) {
+      exection = 'picture'
+    }
+    if (exection === '.pdf') {
+      exection = 'pdf'
+    }
+    if (exection === '.docx' || exection === '.doc') {
+      exection = 'document'
+    }
+    if (exection === '.xls' || exection === '.xlsx' || exection === '.xlsm') {
+      exection = 'exel'
+    }
+    if (exection === '.ppt' || exection === '.pptx') {
+      exection = 'presentation'
+    }
+    if (
+      exection === '.mp4' ||
+      exection === '.mov' ||
+      exection === '.avi' ||
+      exection === '.webm' ||
+      exection === '.mkv' ||
+      exection === '.wmv'
+    ) {
+      exection = 'video'
+    }
+    if (
+      exection === '.mp3' ||
+      exection === '.ogg' ||
+      exection === '.wav' ||
+      exection === '.aif' ||
+      exection === '.m4a' ||
+      exection === '.m4b'
+    ) {
+      exection = 'music'
+    }
+    if (
+      exection === '.py' ||
+      exection === '.java' ||
+      exection === '.cpp' ||
+      exection === '.js' ||
+      exection === '.jsx'
+    ) {
+      exection = 'program'
+    }
+    switch (exection) {
+      case 'music':
+        return <AudioFileRoundedIcon className={styles.Music} />
+      case 'presentation':
+        return <BsFiletypePptx className={styles.Presentation} />
+      case '.exe':
+        return <BsFiletypeExe className={styles.Exe} />
+      case 'exel':
+        return <BsFiletypeXlsx className={styles.Exel} />
+      case 'picture':
+        return <ImageIcon className={styles.Image} />
+      case 'document':
+        return <BsFiletypeDocx className={styles.Document} />
+      case 'program':
+        return <TerminalRoundedIcon className={styles.Program} />
+      case '.txt':
+        return <DescriptionRoundedIcon className={styles.Image} />
+      case 'pdf':
+        return <FaFilePdf className={styles.Pdf} />
+      default:
+        return (
+          <InsertDriveFileIcon
+            className={styles.tableCell}
+            sx={{ color: 'rgba(102, 158, 242, 1)' }}
+          />
+        )
+    }
+  }
+
   if (!data?.list.length) {
     return <div>Пользователь ещё не загрузил файлы.</div>
   }
@@ -339,6 +432,7 @@ const AdminFileList = ({
           {data?.list.map((file: IFile, index: number) => (
             <TableRow>
               <TableRow
+                className={styles.tableRow}
                 key={`${file.name}-${index}`}
                 sx={{
                   '&:last-child td, &:last-child th': { border: 0 },
@@ -354,13 +448,39 @@ const AdminFileList = ({
                       onClick={handleTableRowClick(file)}
                       className={styles.TableRowInnerContainer}
                     >
-                      {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
-                      <TableCell component='th' scope='row'>
+                      {file.isDir ? (
+                        <FolderIcon
+                          sx={{ color: 'rgba(255, 202, 40, 1)' }}
+                          className={styles.tableCell}
+                        />
+                      ) : (
+                        getFilesIcon(index)
+                      )}
+                      <TableCell
+                        className={styles.tableCellName}
+                        component='th'
+                        scope='row'
+                      >
                         {file.name}
                       </TableCell>
-                      <TableCell align='left'>{file.username}</TableCell>
-                      <TableCell align='left'>{file.date}</TableCell>
-                      <TableCell align='left'>‒</TableCell>
+                      <TableCell
+                        className={styles.tableCellElement}
+                        align='left'
+                      >
+                        {file.username}
+                      </TableCell>
+                      <TableCell
+                        className={styles.tableCellElement}
+                        align='left'
+                      >
+                        {file.date}
+                      </TableCell>
+                      <TableCell
+                        className={styles.tableCellElement}
+                        align='left'
+                      >
+                        ‒
+                      </TableCell>
                     </Container>
                   </Link>
                 ) : (
@@ -368,16 +488,33 @@ const AdminFileList = ({
                     onClick={handleTableRowClick(file)}
                     className={styles.TableRowInnerContainer}
                   >
-                    {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
-                    <TableCell component='th' scope='row'>
+                    {file.isDir ? (
+                      <FolderIcon
+                        sx={{ color: 'rgba(255, 202, 40, 1)' }}
+                        className={styles.tableCell}
+                      />
+                    ) : (
+                      getFilesIcon(index)
+                    )}
+                    <TableCell
+                      className={styles.tableCellName}
+                      component='th'
+                      scope='row'
+                    >
                       {file.name}
                     </TableCell>
-                    <TableCell align='left'>{file.username}</TableCell>
-                    <TableCell align='left'>{file.date}</TableCell>
-                    <TableCell align='left'>{file.size}</TableCell>
+                    <TableCell className={styles.tableCellElement} align='left'>
+                      {file.username}
+                    </TableCell>
+                    <TableCell className={styles.tableCellElement} align='left'>
+                      {file.date}
+                    </TableCell>
+                    <TableCell className={styles.tableCellElement} align='left'>
+                      {file.size}
+                    </TableCell>
                   </Container>
                 )}
-                <TableCell align='right'>
+                <TableCell className={styles.tableCellElement} align='right'>
                   <IconButton
                     id='basic-button'
                     aria-controls={open ? 'basic-menu' : undefined}
@@ -409,6 +546,7 @@ const AdminFileList = ({
                     >
                       <Box sx={style}>
                         <Typography
+                          sx={{ marginBottom: '10px' }}
                           id='modal-modal-title'
                           variant='h6'
                           component='h2'
@@ -416,10 +554,18 @@ const AdminFileList = ({
                           Переименовать
                         </Typography>
                         <TextField fullWidth id='rename' />
-                        <Button onClick={handleClose} variant='text'>
+                        <Button
+                          sx={{ color: '#030129 ', marginTop: '10px' }}
+                          onClick={handleClose}
+                          variant='text'
+                        >
                           Отмена
                         </Button>
                         <Button
+                          sx={{
+                            backgroundColor: '#030129 ',
+                            marginTop: '10px',
+                          }}
                           //@ts-ignore
                           onClick={responseForRenameFile(index)}
                           type='submit'

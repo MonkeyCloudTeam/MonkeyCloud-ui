@@ -151,7 +151,7 @@ const AdminBucketsList = ({
   // }
 
   if (!data?.list.length) {
-    return <div>Папка пуста. Загрузите файлы.</div>
+    return <div>Пользователей не существует.</div>
   }
   return (
     <TableContainer component={Paper}>
@@ -161,7 +161,7 @@ const AdminBucketsList = ({
             <TableRow>
               <Link to={`/admin/${file.bucket}`} className={styles.link}>
                 <TableRow
-                  //Поставить on click и проверить is dir //set files // вызывать функцию
+                  className={styles.tableRow}
                   key={`${file.bucket}-${index}`}
                   sx={{
                     '&:last-child td, &:last-child th': { border: 0 },
@@ -172,8 +172,15 @@ const AdminBucketsList = ({
                     onClick={handleTableRowClick(file)}
                     className={styles.TableRowInnerContainer}
                   >
-                    <FolderIcon />
-                    <TableCell component='th' scope='row'>
+                    <FolderIcon
+                      sx={{ color: 'rgba(255, 202, 40, 1)' }}
+                      className={styles.tableCell}
+                    />
+                    <TableCell
+                      className={styles.tableCellName}
+                      component='th'
+                      scope='row'
+                    >
                       {file.bucket}
                     </TableCell>
                   </Container>

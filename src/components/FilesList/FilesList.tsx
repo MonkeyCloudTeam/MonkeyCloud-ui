@@ -15,6 +15,7 @@ import {
 import { initializeFileTypeIcons } from '@fluentui/react-file-type-icons'
 import { BY_NAME_SEARCH_MODE, BY_DATE_SEARCH_MODE } from '../../constants'
 import Box from '@mui/material/Box'
+import { IoIosLink } from 'react-icons/io'
 import Typography from '@mui/material/Typography'
 import FolderIcon from '@mui/icons-material/Folder'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
@@ -127,8 +128,9 @@ const FilesList = ({
     setOpenPublicAccessModal(true)
   }
 
-  const handleClose = () => setOpen(false)
-  const handleCloseShareModal = () => setOpenShareModal(false)
+  const handleClose = () => {
+    setOpen(false)
+  }
   const handleClosePublicModal = () => setOpenPublicAccessModal(false)
 
   const searchMode = useSelector(
@@ -250,6 +252,11 @@ const FilesList = ({
     setAnchorEl(null)
   }
 
+  const handleCloseShareModal = (index: any) => {
+    setOpenShareModal(false)
+    handleClose()
+  }
+
   const handleMenuCloseForDelete = (index: number) => async () => {
     const Path = data?.list[index].breadCrums
     let pathToTriger = ''
@@ -313,6 +320,7 @@ const FilesList = ({
     } catch (error) {
       console.log(error)
     }
+    handleClose()
     setOpenPublicAccessModal(false)
     handleMenuClose(index)
   }
@@ -635,6 +643,7 @@ const FilesList = ({
                   >
                     <Box sx={style}>
                       <Typography
+                        sx={{ marginBottom: '10px' }}
                         id='modal-modal-title'
                         variant='h6'
                         component='h2'
@@ -642,10 +651,15 @@ const FilesList = ({
                         Переименовать
                       </Typography>
                       <TextField fullWidth id='rename' />
-                      <Button onClick={handleClose} variant='text'>
+                      <Button
+                        onClick={handleClose}
+                        variant='text'
+                        sx={{ color: '#030129 ', marginTop: '10px' }}
+                      >
                         Отмена
                       </Button>
                       <Button
+                        sx={{ backgroundColor: '#030129 ', marginTop: '10px' }}
                         //@ts-ignore
                         onClick={responseForRenameFile(index)}
                         type='submit'
@@ -668,15 +682,33 @@ const FilesList = ({
                       >
                         Доступ - {file.name}
                       </Typography>
-                      <div>{`http://localhost:3000/private/${file.username}/${file.folderId}`}</div>
+                      <div
+                        className={styles.div}
+                      >{`http://localhost:3000/private/${file.username}/${file.folderId}`}</div>
                       <Button
+                        sx={{ color: '#030129 ' }}
                         onClick={handleCloseShareModal}
+                        //@ts-ignore
+                        //onClick={responseForRenameFile(index)}
+                        type='submit'
+                        variant='text'
+                      >
+                        Ок
+                      </Button>
+                      <Button
+                        sx={{ backgroundColor: '#030129 ' }}
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            `http://localhost:3000/private/${file.username}/${file.folderId}`,
+                          )
+                        }
                         //@ts-ignore
                         //onClick={responseForRenameFile(index)}
                         type='submit'
                         variant='contained'
                       >
-                        Ок
+                        <IoIosLink className={styles.shareLink} />
+                        Копировать
                       </Button>
                     </Box>
                   </Modal>
@@ -695,6 +727,7 @@ const FilesList = ({
                       </Typography>
                       {/*<TextField fullWidth id='rename' />*/}
                       <Button
+                        sx={{ backgroundColor: '#030129 ', marginTop: '10px' }}
                         //onClick={handleClosePublicModal}
                         //@ts-ignore
                         onClick={responseForPublicAccess(index)}
@@ -704,11 +737,12 @@ const FilesList = ({
                         Открыть
                       </Button>
                       <Button
+                        sx={{ color: '#030129 ', marginTop: '10px' }}
                         onClick={handleClosePublicModal}
                         //@ts-ignore
                         //onClick={responseForRenameFile(index)}
                         type='submit'
-                        variant='contained'
+                        variant='text'
                       >
                         Отмена
                       </Button>

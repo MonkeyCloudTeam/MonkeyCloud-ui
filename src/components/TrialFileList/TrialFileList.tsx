@@ -22,6 +22,18 @@ import { IFile } from '../../store/types'
 
 import { Link, useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
+import AudioFileRoundedIcon from '@mui/icons-material/AudioFileRounded'
+import {
+  BsFiletypeDocx,
+  BsFiletypeExe,
+  BsFiletypePptx,
+  BsFiletypeXlsx,
+} from 'react-icons/bs'
+import ImageIcon from '@mui/icons-material/Image'
+import TerminalRoundedIcon from '@mui/icons-material/TerminalRounded'
+import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded'
+import { FaFilePdf } from 'react-icons/fa'
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -69,6 +81,87 @@ const TrialFileList = ({
     }
   }, [data])
 
+  const getFilesIcon = (index: any) => {
+    const last = data?.list[index].name
+    let exection = last.substring(last.lastIndexOf('.'))
+    if (
+      exection === '.jpg' ||
+      exection === '.png' ||
+      exection === '.jpeg' ||
+      exection === '.gif'
+    ) {
+      exection = 'picture'
+    }
+    if (exection === '.pdf') {
+      exection = 'pdf'
+    }
+    if (exection === '.docx' || exection === '.doc') {
+      exection = 'document'
+    }
+    if (exection === '.xls' || exection === '.xlsx' || exection === '.xlsm') {
+      exection = 'exel'
+    }
+    if (exection === '.ppt' || exection === '.pptx') {
+      exection = 'presentation'
+    }
+    if (
+      exection === '.mp4' ||
+      exection === '.mov' ||
+      exection === '.avi' ||
+      exection === '.webm' ||
+      exection === '.mkv' ||
+      exection === '.wmv'
+    ) {
+      exection = 'video'
+    }
+    if (
+      exection === '.mp3' ||
+      exection === '.ogg' ||
+      exection === '.wav' ||
+      exection === '.aif' ||
+      exection === '.m4a' ||
+      exection === '.m4b'
+    ) {
+      exection = 'music'
+    }
+    if (
+      exection === '.py' ||
+      exection === '.java' ||
+      exection === '.cpp' ||
+      exection === '.js' ||
+      exection === '.jsx'
+    ) {
+      exection = 'program'
+    }
+    switch (exection) {
+      case 'music':
+        return <AudioFileRoundedIcon className={styles.Music} />
+      case 'presentation':
+        return <BsFiletypePptx className={styles.Presentation} />
+      case '.exe':
+        return <BsFiletypeExe className={styles.Exe} />
+      case 'exel':
+        return <BsFiletypeXlsx className={styles.Exel} />
+      case 'picture':
+        return <ImageIcon className={styles.Image} />
+      case 'document':
+        return <BsFiletypeDocx className={styles.Document} />
+      case 'program':
+        return <TerminalRoundedIcon className={styles.Program} />
+      case '.txt':
+        return <DescriptionRoundedIcon className={styles.Image} />
+      case 'pdf':
+        return <FaFilePdf className={styles.Pdf} />
+      default:
+        return (
+          <InsertDriveFileIcon
+            className={styles.tableCell}
+            sx={{ color: 'rgba(102, 158, 242, 1)' }}
+          />
+        )
+    }
+  }
+
   if (!data?.list.length) {
     return <div>Нет файлов в общем доступе.</div>
   }
@@ -80,6 +173,7 @@ const TrialFileList = ({
             <TableRow>
               <Link className={styles.link} to={`/trial/${file.folderId}`}>
                 <TableRow
+                  className={styles.tableRow}
                   key={file.name}
                   sx={{
                     '&:last-child td, &:last-child th': { border: 0 },
@@ -87,16 +181,39 @@ const TrialFileList = ({
                   }}
                 >
                   <Container className={styles.TableRowInnerContainer}>
-                    {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
-                    <TableCell component='th' scope='row'>
+                    {file.isDir ? (
+                      <FolderIcon
+                        sx={{ color: 'rgba(255, 202, 40, 1)' }}
+                        className={styles.tableCell}
+                      />
+                    ) : (
+                      getFilesIcon(index)
+                    )}
+                    <TableCell
+                      className={styles.tableCellName}
+                      component='th'
+                      scope='row'
+                    >
                       {file.name}
                     </TableCell>
-                    <TableCell align='left'>{file.username}</TableCell>
-                    <TableCell align='left'>{file.date}</TableCell>
+                    <TableCell className={styles.tableCellElement} align='left'>
+                      {file.username}
+                    </TableCell>
+                    <TableCell className={styles.tableCellElement} align='left'>
+                      {file.date}
+                    </TableCell>
                     {file.isDir !== true ? (
-                      <TableCell align='left'>{file.size}</TableCell>
+                      <TableCell
+                        className={styles.tableCellElement}
+                        align='left'
+                      >
+                        {file.size}
+                      </TableCell>
                     ) : (
-                      <TableCell align='left'></TableCell>
+                      <TableCell
+                        className={styles.tableCellElement}
+                        align='left'
+                      ></TableCell>
                     )}
                   </Container>
                 </TableRow>

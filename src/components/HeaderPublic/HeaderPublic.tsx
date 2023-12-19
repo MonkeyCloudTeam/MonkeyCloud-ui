@@ -23,7 +23,7 @@ import {
   styled,
   TextField,
 } from '@mui/material'
-import styles from './HeaderPublic.module.scss'
+import styles from '../Header/Header.module.scss'
 import SearchIcon from '@mui/icons-material/Search'
 import { useMenus } from '../../hooks/useMenus'
 import { useLazyGetFilesQuery } from '../../store/filesSlice'
@@ -32,7 +32,8 @@ import { SearchField } from '../Search/Search'
 import Modal from '@mui/material/Modal'
 import { setCurrentPath } from '../../store/commonReducer'
 import { useDispatch } from 'react-redux'
-//TODO Вставить картинку 133
+import avatarItem from '../../assets/images/monkey2.png'
+import Divider from '@mui/material/Divider'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -60,8 +61,8 @@ const HeaderPublic = ({
     null,
   )
   const handleClose = () => {
-    setOpen(false)
     handleCloseUserMenu()
+    setOpen(false)
   }
 
   const handleOpen = () => {
@@ -75,9 +76,11 @@ const HeaderPublic = ({
   const [triggerGetFiles, result] = useLazyGetFilesQuery()
   const { data } = result
   const [openModal, setOpen] = React.useState(false)
-
+  const [textField, setTextField] = useState(true)
+  const [textError, setTextError] = useState(false)
   useEffect(() => {
-    //triggerGetFiles('')
+    //@ts-ignore
+    triggerGetFiles({ username, path: '' })
     //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
   }, [])
 
@@ -177,12 +180,12 @@ const HeaderPublic = ({
     setAnchorElUser(event.currentTarget)
   }
 
-  const handleCloseNavMenu = () => {
+  const handleOpenTelegramm = () => {
+    setTextField(true)
+    setOpen(true)
     setAnchorElNav(null)
   }
-
-  const handleOpenTelegramm = () => {
-    setOpen(true)
+  const handleCloseNavMenu = () => {
     setAnchorElNav(null)
   }
 
@@ -199,11 +202,11 @@ const HeaderPublic = ({
       console.error(error)
       //@ts-ignore
       if (error?.response.status === 409) {
-        dispatch(setCurrentPath(''))
         localStorage.clear()
         navigate('/sign-in')
       }
     }
+    dispatch(setCurrentPath(''))
     handleCloseUserMenu()
     navigate('/sign-in')
   }
@@ -212,32 +215,46 @@ const HeaderPublic = ({
     const telegrammId = document.getElementById(
       'telegrammId',
     ) as HTMLInputElement
-    try {
-      const response = await axiosInstance.post('/addTelegramId', {
-        body: {
+    if (telegrammId.value != '') {
+      try {
+        const response = await axiosInstance.post('/addTelegramId', {
           telegramId: telegrammId.value,
           username: username,
-        },
-      })
-      console.log(response)
-      localStorage.clear()
-    } catch (error) {
-      console.error(error)
+        })
+        handleCloseUserMenu()
+        handleClose()
+        console.log(response)
+      } catch (error) {
+        //@ts-ignore
+        if (error?.response.status === 400) {
+          setTextField(false)
+        }
+      }
+    } else {
+      setTextField(false)
     }
-    handleCloseUserMenu()
-    handleClose()
   }
 
   return (
-    <AppBar position='static' className={styles.Header}>
-      <Container maxWidth='xl'>
+    <AppBar
+      position='static'
+      className={styles.Header}
+      sx={{ justifyContent: 'flex-start', color: 'black' }}
+    >
+      <Container maxWidth='xl' sx={{ justifyContent: 'flex-start' }}>
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Avatar
+            sx={{ marginRight: '15px' }}
+            className={styles.iconHeader}
+            src={avatarItem}
+            variant='square'
+          />
+          {/*<AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />*/}
           <Typography
+            className={styles.Typography}
             variant='h6'
             noWrap
             component='a'
-            href='#app-bar-with-responsive-menu'
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -246,43 +263,12 @@ const HeaderPublic = ({
               letterSpacing: '.1rem',
               color: 'inherit',
               textDecoration: 'none',
+              width: '13%',
             }}
           >
             Monkey Cloud
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size='large'
-              aria-label='account of current user'
-              aria-controls='menu-appbar'
-              aria-haspopup='true'
-              onClick={handleOpenNavMenu}
-              color='inherit'
-            >
-              <MenuIcon />
-            </IconButton>
-          </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant='h5'
-            noWrap
-            component='a'
-            href='#app-bar-with-responsive-menu'
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Monkey Cloud
-          </Typography>{' '}
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box>
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, marginLeft: '1140px' }}>
             <Tooltip title='Настройки'>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar src={avatar} sx={{ bgcolor: 'lightBlue' }} />
@@ -305,10 +291,13 @@ const HeaderPublic = ({
               onClose={handleCloseUserMenu}
             >
               <MenuItem key='userName'>
-                <Typography textAlign='center'>
+                <Typography sx={{ textAlign: 'center', marginLeft: '20px' }}>
                   {localStorage.getItem('username')}
                 </Typography>
               </MenuItem>
+              <Divider
+                sx={{ color: 'black', borderColor: 'rgba(0, 0, 0, 0.32)' }}
+              />
               <MenuItem key='telegramId' onClick={handleOpenTelegramm}>
                 <Typography textAlign='center'>Telegram ID</Typography>
               </MenuItem>
@@ -324,14 +313,36 @@ const HeaderPublic = ({
           aria-describedby='modal-modal-description'
         >
           <Box sx={style}>
-            <Typography id='modal-modal-title' variant='h6' component='h2'>
+            <Typography
+              sx={{ marginBottom: '10px' }}
+              id='modal-modal-title'
+              variant='h6'
+              component='h2'
+            >
               Введите Telegram ID
             </Typography>
-            <TextField fullWidth id='telegrammId' />
-            <Button onClick={handleClose} variant='text'>
+            {textField && <TextField required fullWidth id='telegrammId' />}
+            {!textField && (
+              <TextField
+                error
+                helperText='Ошибка добавления Telegram Id.'
+                required
+                fullWidth
+                id='telegrammId'
+              />
+            )}
+            <Button
+              sx={{ color: '#030129 ', marginTop: '10px' }}
+              onClick={handleClose}
+              variant='text'
+            >
               Отмена
             </Button>
             <Button
+              sx={{
+                backgroundColor: '#030129 ',
+                marginTop: '10px',
+              }}
               onClick={handleTelegrammId}
               type='submit'
               variant='contained'

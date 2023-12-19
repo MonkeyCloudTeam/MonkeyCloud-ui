@@ -20,6 +20,7 @@ import { useMenus } from '../../hooks/useMenus'
 import { useLazyGetFilesQuery } from '../../store/filesSlice'
 import { IFile } from '../../store/types'
 import Modal from '@mui/material/Modal'
+import avatarItem from '../../assets/images/monkey2.png'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -82,7 +83,12 @@ const HeaderTrial = ({}: {}) => {
     <AppBar position='static' className={styles.Header}>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Avatar
+            sx={{ marginRight: '15px' }}
+            className={styles.iconHeader}
+            src={avatarItem}
+            variant='square'
+          />
           <Typography
             variant='h6'
             noWrap
@@ -90,7 +96,7 @@ const HeaderTrial = ({}: {}) => {
             href='#app-bar-with-responsive-menu'
             sx={{
               mr: 2,
-              display: { xs: 'none', md: 'flex' },
+              display: { xs: 'none', md: 'flex', color: 'white' },
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.1rem',
@@ -112,25 +118,6 @@ const HeaderTrial = ({}: {}) => {
               <MenuIcon />
             </IconButton>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant='h5'
-            noWrap
-            component='a'
-            href='#app-bar-with-responsive-menu'
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Monkey Cloud
-          </Typography>{' '}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title='Настройки'>

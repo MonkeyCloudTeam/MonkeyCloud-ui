@@ -34,6 +34,18 @@ import { GoStar, GoStarFill } from 'react-icons/go'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarIcon from '@mui/icons-material/Star'
 import { useDispatch } from 'react-redux'
+import AudioFileRoundedIcon from '@mui/icons-material/AudioFileRounded'
+import {
+  BsFiletypeDocx,
+  BsFiletypeExe,
+  BsFiletypePptx,
+  BsFiletypeXlsx,
+} from 'react-icons/bs'
+import ImageIcon from '@mui/icons-material/Image'
+import TerminalRoundedIcon from '@mui/icons-material/TerminalRounded'
+import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded'
+import { FaFilePdf } from 'react-icons/fa'
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -218,7 +230,6 @@ const FavoriteFilesList = ({
           fullPath: cutPath,
           //@ts-ignore
           oldName: data.list[index].name,
-          //TODO Нельзя давать пользователю ставить расширешние (.) в название папки P.S Запретить пользователю использовать точку.
           newName: renameFile.value,
         })
         console.log(response)
@@ -232,7 +243,6 @@ const FavoriteFilesList = ({
           fullPath: cutPath,
           //@ts-ignore
           oldName: data.list[index].name,
-          //TODO Нельзя давать пользователю менять расширение файла
           //@ts-ignore
           newName: renameFile.value + extension,
         })
@@ -275,7 +285,86 @@ const FavoriteFilesList = ({
     }
     handleMenuClose(index)
   }
-
+  const getFilesIcon = (index: any) => {
+    const last = data?.list[index].name
+    let exection = last.substring(last.lastIndexOf('.'))
+    if (
+      exection === '.jpg' ||
+      exection === '.png' ||
+      exection === '.jpeg' ||
+      exection === '.gif'
+    ) {
+      exection = 'picture'
+    }
+    if (exection === '.pdf') {
+      exection = 'pdf'
+    }
+    if (exection === '.docx' || exection === '.doc') {
+      exection = 'document'
+    }
+    if (exection === '.xls' || exection === '.xlsx' || exection === '.xlsm') {
+      exection = 'exel'
+    }
+    if (exection === '.ppt' || exection === '.pptx') {
+      exection = 'presentation'
+    }
+    if (
+      exection === '.mp4' ||
+      exection === '.mov' ||
+      exection === '.avi' ||
+      exection === '.webm' ||
+      exection === '.mkv' ||
+      exection === '.wmv'
+    ) {
+      exection = 'video'
+    }
+    if (
+      exection === '.mp3' ||
+      exection === '.ogg' ||
+      exection === '.wav' ||
+      exection === '.aif' ||
+      exection === '.m4a' ||
+      exection === '.m4b'
+    ) {
+      exection = 'music'
+    }
+    if (
+      exection === '.py' ||
+      exection === '.java' ||
+      exection === '.cpp' ||
+      exection === '.js' ||
+      exection === '.jsx'
+    ) {
+      exection = 'program'
+    }
+    switch (exection) {
+      case 'music':
+        return <AudioFileRoundedIcon className={styles.Music} />
+      case 'presentation':
+        return <BsFiletypePptx className={styles.Presentation} />
+      case '.exe':
+        return <BsFiletypeExe className={styles.Exe} />
+      case 'exel':
+        return <BsFiletypeXlsx className={styles.Exel} />
+      case 'picture':
+        return <ImageIcon className={styles.Image} />
+      case 'document':
+        return <BsFiletypeDocx className={styles.Document} />
+      case 'program':
+        return <TerminalRoundedIcon className={styles.Program} />
+      case '.txt':
+        return <DescriptionRoundedIcon className={styles.Image} />
+      case 'pdf':
+        return <FaFilePdf className={styles.Pdf} />
+      default:
+        return (
+          <InsertDriveFileIcon
+            className={styles.tableCell}
+            sx={{ color: 'rgba(102, 158, 242, 1)' }}
+          />
+        )
+    }
+  }
   if (!data?.list.length) {
     return <div>Нет избранных файлов.</div>
   }
@@ -289,6 +378,7 @@ const FavoriteFilesList = ({
             }
             return (
               <TableRow
+                className={styles.tableRow}
                 key={file.name}
                 sx={{
                   '&:last-child td, &:last-child th': { border: 0 },
@@ -296,30 +386,46 @@ const FavoriteFilesList = ({
                 }}
               >
                 <Container className={styles.TableRowInnerContainer}>
-                  {file.isDir ? <FolderIcon /> : <PictureAsPdfIcon />}
-                  <TableCell component='th' scope='row'>
+                  {file.isDir ? (
+                    <FolderIcon className={styles.tableCell} />
+                  ) : (
+                    getFilesIcon(index)
+                  )}
+                  <TableCell
+                    component='th'
+                    scope='row'
+                    className={styles.tableCellName}
+                  >
                     {file.name}
                   </TableCell>
-                  <TableCell align='left'>{file.username}</TableCell>
-                  <TableCell align='left'>{file.date}</TableCell>
-                  <TableCell align='left'>{file.size}</TableCell>
+                  <TableCell className={styles.tableCellElement} align='left'>
+                    {file.username}
+                  </TableCell>
+                  <TableCell className={styles.tableCellElement} align='left'>
+                    {file.date}
+                  </TableCell>
+                  <TableCell className={styles.tableCellElement} align='left'>
+                    {file.size}
+                  </TableCell>
                 </Container>
                 {file.isFavorite ? (
-                  <Container>
+                  <Container className={styles.favorite}>
                     <Checkbox
                       onClick={FavoriteFileRequest(index)}
-                      className={styles.TableRowInnerFavorite}
                       id='favorite'
                       {...label}
-                      icon={<StarIcon />}
-                      checkedIcon={<StarIcon />}
+                      icon={
+                        <StarIcon sx={{ color: 'rgba(200, 193, 25, 1)' }} />
+                      }
+                      checkedIcon={
+                        <StarIcon sx={{ color: 'rgba(200, 193, 25, 1)' }} />
+                      }
                     />
                   </Container>
                 ) : (
-                  <Container>
+                  <Container className={styles.favorite}>
                     <Checkbox
                       onClick={FavoriteFileRequest(index)}
-                      className={styles.TableRowInnerFavorite}
                       id='favorite'
                       {...label}
                       icon={<StarBorderIcon />}
@@ -327,7 +433,7 @@ const FavoriteFilesList = ({
                     />
                   </Container>
                 )}
-                <TableCell align='right'>
+                <TableCell className={styles.tableMenuCell} align='right'>
                   <IconButton
                     id='basic-button'
                     aria-controls={open ? 'basic-menu' : undefined}
@@ -365,6 +471,7 @@ const FavoriteFilesList = ({
                     >
                       <Box sx={style}>
                         <Typography
+                          sx={{ marginBottom: '10px' }}
                           id='modal-modal-title'
                           variant='h6'
                           component='h2'
@@ -372,10 +479,18 @@ const FavoriteFilesList = ({
                           Переименовать
                         </Typography>
                         <TextField fullWidth id='rename' />
-                        <Button onClick={handleClose} variant='text'>
+                        <Button
+                          sx={{ color: '#030129 ', marginTop: '10px' }}
+                          onClick={handleClose}
+                          variant='text'
+                        >
                           Отмена
                         </Button>
                         <Button
+                          sx={{
+                            backgroundColor: '#030129 ',
+                            marginTop: '10px',
+                          }}
                           //@ts-ignore
                           onClick={responseForRenameFile(index)}
                           type='submit'

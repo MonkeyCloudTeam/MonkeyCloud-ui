@@ -30,6 +30,10 @@ import { useLazyGetFilesQuery } from '../../../store/filesSlice'
 import { IFile } from '../../../store/types'
 import { SearchField } from '../../Search/Search'
 import Modal from '@mui/material/Modal'
+import avatarItem from '../../../assets/images/monkey2.png'
+import Divider from '@mui/material/Divider'
+import { setCurrentPath } from '../../../store/commonReducer'
+import { useDispatch } from 'react-redux'
 //TODO Вставить картинку 133
 
 const style = {
@@ -73,7 +77,7 @@ const AdminHeader = ({
     triggerGetFiles({ username, path: '' })
     //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
   }, [])
-
+  const dispatch = useDispatch()
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     file: IFile,
@@ -193,6 +197,7 @@ const AdminHeader = ({
       }
     }
     handleCloseUserMenu()
+    dispatch(setCurrentPath(''))
     navigate('/sign-in')
   }
 
@@ -219,12 +224,16 @@ const AdminHeader = ({
     <AppBar position='static' className={styles.Header}>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Avatar
+            sx={{ marginRight: '15px' }}
+            className={styles.iconHeader}
+            src={avatarItem}
+            variant='square'
+          />
           <Typography
             variant='h6'
             noWrap
             component='a'
-            href='#app-bar-with-responsive-menu'
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -237,37 +246,6 @@ const AdminHeader = ({
           >
             Monkey Cloud
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size='large'
-              aria-label='account of current user'
-              aria-controls='menu-appbar'
-              aria-haspopup='true'
-              onClick={handleOpenNavMenu}
-              color='inherit'
-            >
-              <MenuIcon />
-            </IconButton>
-          </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant='h5'
-            noWrap
-            component='a'
-            href='#app-bar-with-responsive-menu'
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Monkey Cloud
-          </Typography>{' '}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title='Open settings'>
@@ -296,6 +274,9 @@ const AdminHeader = ({
                   {localStorage.getItem('username')}
                 </Typography>
               </MenuItem>
+              <Divider
+                sx={{ color: 'black', borderColor: 'rgba(0, 0, 0, 0.32)' }}
+              />
               <MenuItem key='logoutButton' onClick={handleLogOff}>
                 <Typography textAlign='center'>Выход</Typography>
               </MenuItem>

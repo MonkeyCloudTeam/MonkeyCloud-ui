@@ -11,8 +11,10 @@ import MenuIcon from '@mui/icons-material/Menu'
 import Container from '@mui/material/Container'
 import Avatar from '@mui/material/Avatar'
 import avatar from '../../assets/images/avatar.jpg'
+import avatarItem from '../../assets/images/monkey2.png'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AdbIcon from '@mui/icons-material/Adb'
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail'
 import {
@@ -23,7 +25,7 @@ import {
   styled,
   TextField,
 } from '@mui/material'
-import styles from './HeaderPrivate.module.scss'
+import styles from '../Header/Header.module.scss'
 import SearchIcon from '@mui/icons-material/Search'
 import { useMenus } from '../../hooks/useMenus'
 import { useLazyGetFilesQuery } from '../../store/filesSlice'
@@ -32,8 +34,8 @@ import { SearchField } from '../Search/Search'
 import Modal from '@mui/material/Modal'
 import { setCurrentPath } from '../../store/commonReducer'
 import { useDispatch } from 'react-redux'
-import avatarItem from '../../assets/images/monkey2.png'
-//TODO Вставить картинку 133
+import { deepOrange } from '@mui/material/colors'
+import Divider from '@mui/material/Divider'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -47,19 +49,26 @@ const style = {
   p: 4,
 }
 
-const HeaderPrivate = ({}: {}) => {
+const HeaderFavorite = ({
+  triggerSearch,
+  triggerSearchByDate,
+}: {
+  triggerSearch?: any
+  triggerSearchByDate?: any
+}) => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
   )
   const handleClose = () => {
-    setOpen(false)
     handleCloseUserMenu()
+    setOpen(false)
   }
 
   const handleOpen = () => {
     setOpen(true)
   }
+  const dispatch = useDispatch()
   const username = localStorage.getItem('username')
   const { setMenus } = useMenus()
   const navigate = useNavigate()
@@ -67,8 +76,102 @@ const HeaderPrivate = ({}: {}) => {
   const [triggerGetFiles, result] = useLazyGetFilesQuery()
   const { data } = result
   const [openModal, setOpen] = React.useState(false)
-  const dispatch = useDispatch()
-  useEffect(() => {}, [])
+  const [textField, setTextField] = useState(true)
+  const [textError, setTextError] = useState(false)
+  useEffect(() => {
+    //@ts-ignore
+    triggerGetFiles({ username, path: '' })
+    //setCurrentPath(result?.data?.list[0]?.breadCrums as string)
+  }, [])
+
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    file: IFile,
+  ) => {
+    if (e.target.files) {
+      const pathForRequest = localStorage.getItem('breadCrums')
+      const fileToUpload = structuredClone(e.target.files[0])
+      const formData = new FormData()
+      formData.append('multipartFile', fileToUpload)
+      formData.append('fileName', fileToUpload.name)
+      let pathForGet = ''
+      if (pathForRequest === username) {
+        pathForGet = ''
+      } else {
+        pathForGet =
+          pathForRequest?.substring(pathForRequest?.indexOf('/') + 1) + '/'
+        console.log(pathForGet)
+      }
+      try {
+        const response = await axiosInstanceForUpload.post(
+          '/uploadFile',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            params: {
+              username: localStorage.getItem('username'),
+              fullPath: pathForGet,
+            },
+          },
+        )
+        // await getFiles().then((files) => setFiles(files))
+        //const data = await response.json()
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+      //@ts-ignore
+      triggerGetFiles({ username, path: pathForGet })
+    }
+  }
+
+  const handleFolderChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    file: IFile,
+  ) => {
+    if (e.target.files) {
+      const pathForRequest = localStorage.getItem('breadCrums')
+      let pathForGet = ''
+      if (pathForRequest === username) {
+        pathForGet = ''
+      } else {
+        pathForGet =
+          pathForRequest?.substring(pathForRequest?.indexOf('/') + 1) + '/'
+        console.log(pathForGet)
+      }
+      const formData = new FormData()
+      for (let i = 0; i < e.target.files.length; i++) {
+        formData.append(`multipartFile`, structuredClone(e.target.files[i]))
+        formData.append('fileName', structuredClone(e.target.files[i]).name)
+      }
+      const Path = data?.list[0].breadCrums
+      console.log(file)
+      try {
+        const response = await axiosInstanceForUpload.post(
+          '/uploadFolder',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            params: {
+              username: localStorage.getItem('username'),
+              fullPath: pathForGet,
+            },
+          },
+        )
+        // await getFiles().then((files) => setFiles(files))
+        //const data = await response.json()
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+      //@ts-ignore
+      triggerGetFiles({ username, path: pathForGet })
+    }
+  }
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget)
@@ -77,6 +180,11 @@ const HeaderPrivate = ({}: {}) => {
     setAnchorElUser(event.currentTarget)
   }
 
+  const handleOpenTelegramm = () => {
+    setTextField(true)
+    setOpen(true)
+    setAnchorElNav(null)
+  }
   const handleCloseNavMenu = () => {
     setAnchorElNav(null)
   }
@@ -94,11 +202,11 @@ const HeaderPrivate = ({}: {}) => {
       console.error(error)
       //@ts-ignore
       if (error?.response.status === 409) {
-        dispatch(setCurrentPath(''))
         localStorage.clear()
         navigate('/sign-in')
       }
     }
+    dispatch(setCurrentPath(''))
     handleCloseUserMenu()
     navigate('/sign-in')
   }
@@ -107,25 +215,33 @@ const HeaderPrivate = ({}: {}) => {
     const telegrammId = document.getElementById(
       'telegrammId',
     ) as HTMLInputElement
-    try {
-      const response = await axiosInstance.post('/addTelegramId', {
-        body: {
+    if (telegrammId.value != '') {
+      try {
+        const response = await axiosInstance.post('/addTelegramId', {
           telegramId: telegrammId.value,
           username: username,
-        },
-      })
-      console.log(response)
-      localStorage.clear()
-    } catch (error) {
-      console.error(error)
+        })
+        handleCloseUserMenu()
+        handleClose()
+        console.log(response)
+      } catch (error) {
+        //@ts-ignore
+        if (error?.response.status === 400) {
+          setTextField(false)
+        }
+      }
+    } else {
+      setTextField(false)
     }
-    handleCloseUserMenu()
-    handleClose()
   }
 
   return (
-    <AppBar position='static' className={styles.Header}>
-      <Container maxWidth='xl'>
+    <AppBar
+      position='static'
+      className={styles.Header}
+      sx={{ justifyContent: 'flex-start', color: 'black' }}
+    >
+      <Container maxWidth='xl' sx={{ justifyContent: 'flex-start' }}>
         <Toolbar disableGutters>
           <Avatar
             sx={{ marginRight: '15px' }}
@@ -133,37 +249,26 @@ const HeaderPrivate = ({}: {}) => {
             src={avatarItem}
             variant='square'
           />
+          {/*<AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />*/}
           <Typography
+            className={styles.Typography}
             variant='h6'
             noWrap
             component='a'
-            href='#app-bar-with-responsive-menu'
             sx={{
               mr: 2,
-              display: { xs: 'none', md: 'flex', color: 'white' },
+              display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.1rem',
               color: 'inherit',
               textDecoration: 'none',
+              width: '13%',
             }}
           >
             Monkey Cloud
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size='large'
-              aria-label='account of current user'
-              aria-controls='menu-appbar'
-              aria-haspopup='true'
-              onClick={handleOpenNavMenu}
-              color='inherit'
-            >
-              <MenuIcon />
-            </IconButton>
-          </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box>
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, marginLeft: '1140px' }}>
             <Tooltip title='Настройки'>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar src={avatar} sx={{ bgcolor: 'lightBlue' }} />
@@ -186,11 +291,14 @@ const HeaderPrivate = ({}: {}) => {
               onClose={handleCloseUserMenu}
             >
               <MenuItem key='userName'>
-                <Typography textAlign='center'>
+                <Typography sx={{ textAlign: 'center', marginLeft: '20px' }}>
                   {localStorage.getItem('username')}
                 </Typography>
               </MenuItem>
-              <MenuItem key='telegramId' onClick={handleOpen}>
+              <Divider
+                sx={{ color: 'black', borderColor: 'rgba(0, 0, 0, 0.32)' }}
+              />
+              <MenuItem key='telegramId' onClick={handleOpenTelegramm}>
                 <Typography textAlign='center'>Telegram ID</Typography>
               </MenuItem>
               <MenuItem key='logoutButton' onClick={handleLogOff}>
@@ -213,7 +321,16 @@ const HeaderPrivate = ({}: {}) => {
             >
               Введите Telegram ID
             </Typography>
-            <TextField fullWidth id='telegrammId' />
+            {textField && <TextField required fullWidth id='telegrammId' />}
+            {!textField && (
+              <TextField
+                error
+                helperText='Ошибка добавления Telegram Id.'
+                required
+                fullWidth
+                id='telegrammId'
+              />
+            )}
             <Button
               sx={{ color: '#030129 ', marginTop: '10px' }}
               onClick={handleClose}
@@ -239,4 +356,4 @@ const HeaderPrivate = ({}: {}) => {
   )
 }
 
-export { HeaderPrivate }
+export { HeaderFavorite }

@@ -11,8 +11,10 @@ import MenuIcon from '@mui/icons-material/Menu'
 import Container from '@mui/material/Container'
 import Avatar from '@mui/material/Avatar'
 import avatar from '../../assets/images/avatar.jpg'
+import avatarItem from '../../assets/images/monkey2.png'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AdbIcon from '@mui/icons-material/Adb'
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail'
 import {
@@ -33,6 +35,7 @@ import Modal from '@mui/material/Modal'
 import { setCurrentPath } from '../../store/commonReducer'
 import { useDispatch } from 'react-redux'
 import { deepOrange } from '@mui/material/colors'
+import Divider from '@mui/material/Divider'
 //TODO Вставить картинку 133
 
 const style = {
@@ -237,15 +240,14 @@ const Header = ({
     <AppBar
       position='static'
       className={styles.Header}
-      sx={{ justifyContent: 'flex-start' }}
+      sx={{ justifyContent: 'flex-start', color: 'black' }}
     >
       <Container maxWidth='xl' sx={{ justifyContent: 'flex-start' }}>
         <Toolbar disableGutters>
           <Avatar
-            sx={{
-              display: { xs: 'none', md: 'flex' },
-              bgcolor: deepOrange[500],
-            }}
+            sx={{ marginRight: '15px' }}
+            className={styles.iconHeader}
+            src={avatarItem}
             variant='square'
           />
           {/*<AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />*/}
@@ -262,29 +264,18 @@ const Header = ({
               letterSpacing: '.1rem',
               color: 'inherit',
               textDecoration: 'none',
+              width: '13%',
             }}
           >
             Monkey Cloud
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size='large'
-              aria-label='account of current user'
-              aria-controls='menu-appbar'
-              aria-haspopup='true'
-              onClick={handleOpenNavMenu}
-              color='inherit'
-            >
-              <MenuIcon />
-            </IconButton>
-          </Box>
           <SearchField
             triggerGetFiles={triggerGetFiles}
             triggerSearch={triggerSearch}
             triggerSearchByDate={triggerSearchByDate}
           />
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title='Open settings'>
+          <Box sx={{ flexGrow: 0, marginLeft: '800px' }}>
+            <Tooltip title='Настройки'>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar src={avatar} sx={{ bgcolor: 'lightBlue' }} />
               </IconButton>
@@ -306,10 +297,13 @@ const Header = ({
               onClose={handleCloseUserMenu}
             >
               <MenuItem key='userName'>
-                <Typography textAlign='center'>
+                <Typography sx={{ textAlign: 'center', marginLeft: '20px' }}>
                   {localStorage.getItem('username')}
                 </Typography>
               </MenuItem>
+              <Divider
+                sx={{ color: 'black', borderColor: 'rgba(0, 0, 0, 0.32)' }}
+              />
               <MenuItem key='telegramId' onClick={handleOpenTelegramm}>
                 <Typography textAlign='center'>Telegram ID</Typography>
               </MenuItem>
@@ -325,7 +319,12 @@ const Header = ({
           aria-describedby='modal-modal-description'
         >
           <Box sx={style}>
-            <Typography id='modal-modal-title' variant='h6' component='h2'>
+            <Typography
+              sx={{ marginBottom: '10px' }}
+              id='modal-modal-title'
+              variant='h6'
+              component='h2'
+            >
               Введите Telegram ID
             </Typography>
             {textField && <TextField required fullWidth id='telegrammId' />}
@@ -338,10 +337,18 @@ const Header = ({
                 id='telegrammId'
               />
             )}
-            <Button onClick={handleClose} variant='text'>
+            <Button
+              sx={{ color: '#030129 ', marginTop: '10px' }}
+              onClick={handleClose}
+              variant='text'
+            >
               Отмена
             </Button>
             <Button
+              sx={{
+                backgroundColor: '#030129 ',
+                marginTop: '10px',
+              }}
               onClick={handleTelegrammId}
               type='submit'
               variant='contained'

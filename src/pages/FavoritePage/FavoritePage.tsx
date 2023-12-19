@@ -13,6 +13,7 @@ import {
   useLazyFilesFavoriteQuery,
   useLazyGetFilesQuery,
 } from '../../store/filesSlice'
+import { HeaderFavorite } from '../../components/HeaderFavorite/HeaderFavorite'
 
 const customStyles = {
   content: {
@@ -35,7 +36,7 @@ const FavoritePage = () => {
   return (
     <Grid container spacing={0}>
       <Grid xs={12}>
-        <Header />
+        <HeaderFavorite />
       </Grid>
       <Grid xs={2}>
         <SideBar />

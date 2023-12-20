@@ -48,7 +48,7 @@ const axiosBaseQuery =
 export const filesApi = createApi({
   reducerPath: 'FILES',
   tagTypes: ['FILES'],
-  baseQuery: axiosBaseQuery({ baseUrl: 'http://localhost:8080' }),
+  baseQuery: axiosBaseQuery({ baseUrl: 'http://89.104.71.158:8080' }),
   endpoints: (builder) => ({
     getFiles: builder.query<Files, { username: string; path: string }>({
       query: ({ username = '', path = '' }) => {

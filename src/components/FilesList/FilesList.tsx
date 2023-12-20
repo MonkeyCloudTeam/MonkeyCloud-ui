@@ -573,12 +573,8 @@ const FilesList = ({
                       className=''
                       id='favorite'
                       {...label}
-                      icon={
-                        <StarIcon sx={{ color: 'rgba(200, 193, 25, 1)' }} />
-                      }
-                      checkedIcon={
-                        <StarIcon sx={{ color: 'rgba(200, 193, 25, 1)' }} />
-                      }
+                      icon={<StarIcon sx={{ color: '#030129' }} />}
+                      checkedIcon={<StarIcon sx={{ color: '#030129' }} />}
                     />
                   ) : (
                     <></>
@@ -684,7 +680,7 @@ const FilesList = ({
                       </Typography>
                       <div
                         className={styles.div}
-                      >{`http://localhost:3000/private/${file.username}/${file.folderId}`}</div>
+                      >{`http://89.104.71.158/private/${file.username}/${file.folderId}`}</div>
                       <Button
                         sx={{ color: '#030129 ' }}
                         onClick={handleCloseShareModal}
@@ -699,7 +695,7 @@ const FilesList = ({
                         sx={{ backgroundColor: '#030129 ' }}
                         onClick={() =>
                           navigator.clipboard.writeText(
-                            `http://localhost:3000/private/${file.username}/${file.folderId}`,
+                            `http://89.104.71.158/private/${file.username}/${file.folderId}`,
                           )
                         }
                         //@ts-ignore

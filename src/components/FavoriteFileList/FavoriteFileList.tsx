@@ -414,12 +414,8 @@ const FavoriteFilesList = ({
                       onClick={FavoriteFileRequest(index)}
                       id='favorite'
                       {...label}
-                      icon={
-                        <StarIcon sx={{ color: 'rgba(200, 193, 25, 1)' }} />
-                      }
-                      checkedIcon={
-                        <StarIcon sx={{ color: 'rgba(200, 193, 25, 1)' }} />
-                      }
+                      icon={<StarIcon sx={{ color: '#030129' }} />}
+                      checkedIcon={<StarIcon sx={{ color: '#030129' }} />}
                     />
                   </Container>
                 ) : (

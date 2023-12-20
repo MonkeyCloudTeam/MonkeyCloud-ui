@@ -18,7 +18,7 @@ import { IFile } from '../../store/types'
 import { axiosInstanceForUpload } from '../../api'
 import styles from '../Header/Header.module.scss'
 import Typography from '@mui/material/Typography'
-import { Button, TextField } from '@mui/material'
+import { Button, CircularProgress, TextField } from '@mui/material'
 import Modal from '@mui/material/Modal'
 import { Simulate } from 'react-dom/test-utils'
 import error = Simulate.error
@@ -244,11 +244,20 @@ const ToolTip = () => {
         aria-describedby='modal-modal-description'
       >
         <Box sx={style}>
-          <Typography id='modal-modal-title' variant='h6' component='h2'>
+          <Typography
+            sx={{ marginBottom: '15px' }}
+            id='modal-modal-title'
+            variant='h6'
+            component='h2'
+          >
             {textInModal}
           </Typography>
           {buttonIsVisible && (
-            <Button variant='contained' onClick={handleCloseModal}>
+            <Button
+              sx={{ backgroundColor: '#030129' }}
+              variant='contained'
+              onClick={handleCloseModal}
+            >
               Ок
             </Button>
           )}

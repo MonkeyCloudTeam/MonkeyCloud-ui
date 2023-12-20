@@ -3,7 +3,7 @@ import createAuthRefreshInterceptor from 'axios-auth-refresh'
 import { useMenus } from '../hooks/useMenus'
 
 export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://89.104.71.158:8080',
   timeout: 300000,
   headers: {
     'Access-Control-Allow-Origin': '*',
@@ -12,7 +12,7 @@ export const axiosInstance = axios.create({
 })
 
 export const axiosInstanceForUpload = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://89.104.71.158:8080',
   timeout: 300000,
   headers: {
     'Access-Control-Allow-Origin': '*',
@@ -21,7 +21,7 @@ export const axiosInstanceForUpload = axios.create({
 })
 
 export const axiosInstanceForDownload = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://89.104.71.158:8080',
   timeout: 300000,
   responseType: 'blob',
   headers: {

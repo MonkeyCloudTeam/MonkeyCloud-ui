@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 .signIn_section{
-    border: 2px solid rgb(175, 148, 60);
+    border: 2px solid #030129;
     height: 490px;
     width: 400px;
     position: absolute;
@@ -14,7 +14,7 @@
 }
 
 .signIn_section:hover{
-    box-shadow: 0 0 60px #7d8626;
+    box-shadow: 0 0 60px #030129;
 }
 
 .signIn_section .formBox{
@@ -85,7 +85,7 @@
     cursor: pointer;
     font-size: 16px;
     color: #fff;
-    background: #c2bc29;
+    background: #030129;
     box-shadow: rgba(0,0,0,0.4);
 
 }
@@ -119,7 +119,7 @@
 .main{
     height: 100vh;
     background-size: cover;
-    background-image: url("../../assets/images/background_banana.png");
+    background-image: url("../../assets/images/background_nature.jpg");
 }
 
 .h2{

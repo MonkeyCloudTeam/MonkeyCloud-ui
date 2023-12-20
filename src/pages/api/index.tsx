@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios'
 import createAuthRefreshInterceptor from 'axios-auth-refresh'
 
 export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://89.104.71.158:8080',
   timeout: 300000,
   headers: {
     'Access-Control-Allow-Origin': '*',

@@ -18,7 +18,7 @@ import { TrialFilesPage } from './pages/TrialPage/TrialFilesPage'
 import { PrivateFilesPage } from './pages/PrivatePage/PrivateFilesPage'
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/start',
     element: <StartPage />,
   },
   {

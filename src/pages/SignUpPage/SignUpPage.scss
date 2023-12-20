@@ -1,7 +1,7 @@
 //@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 .signUp_section{
-    border: 2px solid rgba(173, 159, 47, 0.87);
+    border: 2px solid #030129;
     height: 900px;
     width: 550px;
     position: absolute;
@@ -14,7 +14,7 @@
 }
 
 .signUp_section:hover{
-    box-shadow: 0 0 60px #7d8626;
+    box-shadow: 0 0 60px #030129;
 }
 
 .signUp_section .boxForm{
@@ -108,7 +108,7 @@
     cursor: pointer;
     font-size: 16px;
     color: #fff;
-    background: #c2bc29;
+    background: #030129;
     box-shadow: rgba(0,0,0,0.4);
 
 }
@@ -148,7 +148,7 @@
 .signUp{
     height: 100vh;
     background-size: cover;
-    background-image: url("../../assets/images/background_banana.png");
+    background-image: url("../../assets/images/background_nature.jpg");
 }
 
 .h2{
